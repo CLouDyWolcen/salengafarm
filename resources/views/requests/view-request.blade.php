@@ -759,22 +759,36 @@
 
     <!-- Send Response Confirmation Modal -->
     <div class="modal fade" id="sendResponseModal" tabindex="-1" aria-labelledby="sendResponseModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="sendResponseModalLabel">Confirm Send Response</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="border: none; border-radius: 15px; overflow: hidden;">
+                <div class="modal-header" style="background: linear-gradient(135deg, #2d5016 0%, #3d6b1f 100%); color: white; border: none; padding: 20px 25px;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <i class="fas fa-paper-plane" style="font-size: 24px;"></i>
+                        <h5 class="modal-title" id="sendResponseModalLabel" style="margin: 0; font-weight: 600;">Confirm Send Response</h5>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
-                    <p class="mb-3">This will mark the @if($request->request_type == 'user')inquiry @else request @endif as responded and notify the @if($request->request_type == 'user')user @else client @endif.</p>
-                    <p class="mb-0"><strong>Continue?</strong></p>
+                <div class="modal-body" style="padding: 30px 25px;">
+                    <div style="text-align: center; margin-bottom: 20px;">
+                        <div style="width: 60px; height: 60px; background: #e8f5e9; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px;">
+                            <i class="fas fa-check-circle" style="font-size: 30px; color: #2d5016;"></i>
+                        </div>
+                    </div>
+                    <p style="text-align: center; font-size: 16px; color: #333; margin-bottom: 10px;">
+                        This will mark the @if($request->request_type == 'user')inquiry @else request @endif as <strong style="color: #2d5016;">responded</strong> and notify the @if($request->request_type == 'user')user @else client @endif.
+                    </p>
+                    <p style="text-align: center; font-size: 14px; color: #666; margin-bottom: 0;">
+                        The @if($request->request_type == 'user')user @else client @endif will receive a notification in their dashboard.
+                    </p>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <form action="{{ route('requests.send-response', $request->id) }}" method="POST" style="display: inline;">
+                <div class="modal-footer" style="border: none; padding: 15px 25px 25px; justify-content: center; gap: 10px;">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="padding: 10px 30px; border-radius: 8px;">
+                        <i class="fas fa-times me-1"></i>Cancel
+                    </button>
+                    <form action="{{ route('requests.send-response', $request->id) }}" method="POST" style="display: inline; margin: 0;">
                         @csrf
-                        <button type="submit" class="btn btn-primary" id="confirmSendResponseBtn">
-                            Send Response
+                        <button type="submit" class="btn btn-success" id="confirmSendResponseBtn" style="padding: 10px 30px; border-radius: 8px; background: linear-gradient(135deg, #2d5016 0%, #3d6b1f 100%); border: none;">
+                            <i class="fas fa-paper-plane me-1"></i>Send Response
                         </button>
                     </form>
                 </div>
@@ -1017,9 +1031,28 @@
             });
             
             // Send Response confirmation modal - add loading state
-            $('#confirmSendResponseBtn').on('click', function() {
+            $('#confirmSendResponseBtn').on('click', function(e) {
                 const btn = $(this);
+                const form = btn.closest('form');
+                
+                // Prevent double submission
+                if (btn.prop('disabled')) {
+                    e.preventDefault();
+                    return false;
+                }
+                
                 btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Sending...');
+                
+                // Set a timeout to re-enable button if submission takes too long
+                setTimeout(function() {
+                    if (btn.prop('disabled')) {
+                        btn.prop('disabled', false).html('Send Response');
+                        alert('Request timed out. Please try again.');
+                    }
+                }, 30000); // 30 second timeout
+                
+                // ACTUALLY SUBMIT THE FORM
+                form.submit();
             });
         });
     </script>

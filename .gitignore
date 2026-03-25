@@ -28,3 +28,11 @@ yarn-error.log
 
 # SQLite database file in root (should be in database/ folder)
 /inventory
+
+# Database backups (sensitive data)
+*.sql
+salenga_farm_backup.sql
+
+# Sensitive documentation (may contain credentials)
+*_backup.sql
+database_backup*.sql

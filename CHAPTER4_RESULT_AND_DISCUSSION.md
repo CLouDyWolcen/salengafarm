@@ -22,36 +22,24 @@ BEGIN
     Display "User Management" Interface
     Load AllUsers FROM Database
     
-    Display UserTable WITH columns:
-        Name, Email, Role, Status, Actions
-    
     WHEN "Add User" Clicked:
-        Display RegistrationForm
         IF InputValid THEN
-            Create NewUser IN Database
-            Assign Role TO NewUser
-            Refresh UserTable
+            Create NewUser
+            Assign Role
             Display "User created successfully"
         END IF
     
-    WHEN "Edit" Clicked FOR SelectedUser:
-        Retrieve UserData FROM Database
-        Display EditForm WITH UserData
+    WHEN "Edit" Clicked:
         IF UpdateValid THEN
-            Update UserRecord IN Database
-            Refresh UserTable
+            Update UserRecord
             Display "User updated successfully"
         END IF
     
-    WHEN "Delete" Clicked FOR SelectedUser:
-        Display ConfirmationDialog
+    WHEN "Delete" Clicked:
         IF Confirmed THEN
-            Delete UserAccount FROM Database
-            Refresh UserTable
+            Delete UserAccount
             Display "User deleted successfully"
         END IF
-    
-    Enable SearchAndFilter BY Name, Email, Role
 END
 
 Figure [X+1]. Pseudocode for Super Admin Module That Manages User Accounts
@@ -72,29 +60,20 @@ BEGIN
     Display "System Logs" Interface
     Load LogEntries FROM LogFiles
     
-    Display LogTable WITH columns:
-        Timestamp, Level, Message, Context
-    
     WHEN FilterApplied:
-        Get FilterCriteria (DateRange, LogLevel, Keyword)
-        Filter LogEntries BASED ON Criteria
+        Filter LogEntries BY Criteria
         Display FilteredResults
     
     WHEN "Download Logs" Clicked:
         Generate LogFile
-        Download LogFile TO UserDevice
+        Download TO UserDevice
         Display "Logs downloaded successfully"
     
     WHEN "Clear Logs" Clicked:
-        Display ConfirmationDialog
         IF Confirmed THEN
-            Delete OldLogEntries FROM LogFiles
-            Refresh LogTable
+            Delete OldLogEntries
             Display "Logs cleared successfully"
         END IF
-    
-    Enable Pagination FOR LargeLogData
-    Enable RealTimeSearch WITHIN LogEntries
 END
 
 Figure [X+1]. Pseudocode for Super Admin Module That Monitors System Logs
@@ -108,49 +87,31 @@ Figure [X] shows the Plant Inventory Management interface where the Administrato
 
 [INSERT FIGURE: GUI for Admin Module That Manages Plant Inventory]
 
-The pseudocode in Figure [X+1] demonstrates how the plant inventory management function works. When the Admin accesses the inventory page, the system retrieves all plant records from the database and displays them in a table. If the "Add Plant" button is clicked, a form appears where the Admin can enter plant details such as name, scientific name, category, stock quantity, price, and upload a photo. When the "Edit" button is clicked for a specific plant, the system loads the plant's current data into an editable form. After making changes, the Admin saves the updates, and the system refreshes the inventory table. If the "Delete" button is clicked, the system asks for confirmation before removing the plant record and its associated photo from storage. This function ensures that the plant catalog remains accurate, organized, and accessible.
+The pseudocode in Figure [X+1] demonstrates how the plant inventory management function works. When the Admin accesses the inventory page, the system retrieves all plant records from the database and displays them in a table. If the "Add Plant" button is clicked, a form appears where the Admin can enter plant details such as name, scientific name, category, stock quantity, price, and upload a photo. When the "Edit" button is clicked for a specific plant, the system loads the plant's current data into an editable form. After making changes, the Admin saves the updates, and the system refreshes the inventory table. If the "Delete" button is clicked, the system asks for confirmation before removing the plant record and its associated photo from storage. This function ensures that the plant catalog remains accurate, organized, and accessible. Additionally, the system provides search and filter capabilities to help administrators quickly locate specific plants by name, category, or stock level.
 
 FUNCTION: Admin Manages Plant Inventory
 BEGIN
     Display "Plant Inventory" Interface
     Load AllPlants FROM Database
     
-    Display PlantTable WITH columns:
-        Name, Category, Stock, Price, Photo, Actions
-    
     WHEN "Add Plant" Clicked:
-        Display PlantForm
         IF InputValid THEN
-            Upload PlantPhoto TO Storage
-            Create PlantRecord IN Database
-            Refresh PlantTable
+            Upload PlantPhoto
+            Create PlantRecord
             Display "Plant added successfully"
         END IF
     
-    WHEN "Edit" Clicked FOR SelectedPlant:
-        Retrieve PlantData FROM Database
-        Display EditForm WITH PlantData
+    WHEN "Edit" Clicked:
         IF UpdateValid THEN
-            IF NewPhoto Uploaded THEN
-                Delete OldPhoto FROM Storage
-                Upload NewPhoto TO Storage
-            END IF
-            Update PlantRecord IN Database
-            Refresh PlantTable
+            Update PlantRecord
             Display "Plant updated successfully"
         END IF
     
-    WHEN "Delete" Clicked FOR SelectedPlant:
-        Display ConfirmationDialog
+    WHEN "Delete" Clicked:
         IF Confirmed THEN
-            Delete PlantPhoto FROM Storage
-            Delete PlantRecord FROM Database
-            Refresh PlantTable
+            Delete PlantRecord
             Display "Plant deleted successfully"
         END IF
-    
-    Enable SearchAndFilter BY Name, Category, Stock
-    Enable BulkUpdate FOR MultipleRecords
 END
 
 Figure [X+1]. Pseudocode for Admin Module That Manages Plant Inventory
@@ -158,9 +119,9 @@ Figure [X+1]. Pseudocode for Admin Module That Manages Plant Inventory
 
 Admin Module That Processes Walk-In Sales Transactions
 
-This module allows the Administrator to process walk-in sales transactions through a point-of-sale (POS) interface. The system enables the Admin to select plants, specify quantities, calculate totals automatically, and complete sales transactions. Upon completing a sale, the system automatically deducts the sold quantities from the inventory and generates a sales record for tracking and reporting purposes.
+This module allows the Administrator to process walk-in sales transactions through a point-of-sale (POS) interface. The system enables the Admin to select plants, specify quantities, calculate totals automatically, and complete sales transactions. Upon completing a sale, the system automatically deducts the sold quantities from the inventory and generates a sales record for tracking and reporting purposes. The POS interface also includes real-time stock validation to prevent overselling and ensures accurate transaction processing with immediate database updates.
 
-Figure [X] shows the Walk-In Sales interface where the Administrator can process customer purchases. The interface displays available plants with their current stock levels and prices. The Admin can add plants to the cart, adjust quantities, and view the running total. Once the customer is ready to pay, the Admin clicks the "Complete Sale" button to finalize the transaction.
+Figure [X] shows the Walk-In Sales interface where the Administrator can process customer purchases. The interface displays available plants with their current stock levels and prices. The Admin can add plants to the cart, adjust quantities, and view the running total. Once the customer is ready to pay, the Admin clicks the "Complete Sale" button to finalize the transaction. The system automatically validates stock availability before processing the sale to prevent overselling. Upon successful completion, the transaction is recorded in the sales database and inventory levels are immediately updated to reflect the new stock quantities. The interface also provides options to remove items from the cart or modify quantities during the checkout process.
 
 [INSERT FIGURE: GUI for Admin Module That Processes Walk-In Sales]
 
@@ -169,44 +130,21 @@ The pseudocode in Figure [X+1] explains how the walk-in sales processing functio
 FUNCTION: Admin Processes Walk-In Sales
 BEGIN
     Display "Point of Sale" Interface
-    Load AvailablePlants FROM Database
-    Initialize ShoppingCart AS Empty
-    
-    Display PlantList WITH Stock AND Price
+    Load AvailablePlants
     
     WHEN PlantSelected:
-        Get PlantID, Quantity
         IF Quantity <= AvailableStock THEN
             Add Item TO ShoppingCart
-            Calculate ItemSubtotal
-            Update GrandTotal
         ELSE
-            Display "Insufficient stock available"
+            Display "Insufficient stock"
         END IF
     
-    Display ShoppingCart WITH Items AND GrandTotal
-    
     WHEN "Complete Sale" Clicked:
-        FOR EACH Item IN ShoppingCart DO
-            Verify StockAvailability
-            IF InsufficientStock THEN
-                Display "Cannot complete sale - insufficient stock"
-                EXIT
-            END IF
-        END FOR
-        
-        Create SaleRecord IN Database
-        FOR EACH Item IN ShoppingCart DO
-            Deduct Quantity FROM PlantStock
-            Update InventoryRecord
-        END FOR
-        
-        Clear ShoppingCart
-        Display "Sale completed successfully"
-        Refresh PlantList
-    
-    Enable RemoveItem FROM ShoppingCart
-    Enable UpdateQuantity IN ShoppingCart
+        IF StockAvailable THEN
+            Create SaleRecord
+            Deduct Quantity FROM Stock
+            Display "Sale completed successfully"
+        END IF
 END
 
 Figure [X+1]. Pseudocode for Admin Module That Processes Walk-In Sales
@@ -214,71 +152,36 @@ Figure [X+1]. Pseudocode for Admin Module That Processes Walk-In Sales
 
 Admin Module That Manages Client Requests and Generates Quotations
 
-This module allows the Administrator to manage client requests for quotation (RFQ) and user plant inquiries. The system displays all submitted requests in a tabbed interface, separating client RFQs from user inquiries. For client RFQs, the Admin can set pricing for each requested plant, generate PDF quotations, and send them via email. For user inquiries, the Admin can set availability status for each plant and send responses with remarks.
+This module allows the Administrator to manage client requests for quotation (RFQ) and user plant inquiries through a comprehensive request management system that displays all submitted requests in a tabbed interface, separating client RFQs from user inquiries, where for client RFQs, the Admin can set pricing for each requested plant, generate professional PDF quotations with detailed specifications and calculations, and send them via email with automatic status updates, while for user inquiries, the Admin can set availability status for each plant (Available, Limited Stock, Out of Stock, Pre-order) and send detailed responses with personalized remarks and recommendations.
 
-Figure [X] shows the Request Management interface where the Administrator can view and process both client RFQs and user inquiries. The interface includes tabs for "Client Requests" and "User Inquiries," allowing the Admin to switch between request types easily. Each request displays the client or user name, email, request date, status, and action buttons for viewing details and sending responses.
+Figure [X] shows the Request Management interface where the Administrator can view and process both client RFQs and user inquiries. The interface includes tabs for "Client Requests" and "User Inquiries," allowing the Admin to switch between request types easily. Each request displays the client or user name, email, request date, status, and action buttons for viewing details and sending responses. The interface also provides filtering and sorting capabilities to efficiently manage large volumes of requests.
 
 [INSERT FIGURE: GUI for Admin Module That Manages Client Requests]
 
-The pseudocode in Figure [X+1] demonstrates how the request management function works. When the Admin opens the requests page, the system loads all requests from the database and separates them by type. For client RFQs, when the Admin clicks "View Details," the system displays the requested plants with input fields for setting unit prices. The Admin enters prices, and the system calculates totals automatically. When "Generate PDF" is clicked, the system creates a quotation document and saves it to storage. The Admin can then send the quotation via email by clicking "Send Email," which triggers the email service to deliver the PDF to the client. For user inquiries, the Admin sets availability status (Available, Limited Stock, Out of Stock, Pre-order) and adds remarks for each plant. When "Send Response" is clicked, the system updates the inquiry status, creates a notification for the user, and sends an email with a link to view the response. This function streamlines request processing and ensures timely communication with clients and users.
+The pseudocode in Figure [X+1] demonstrates how the request management function works. When the Admin opens the requests page, the system loads all requests from the database and separates them by type. For client RFQs, the Admin enters prices and the system calculates totals automatically, then generates PDF quotations and sends them via email to clients. For user inquiries, the Admin sets availability status (Available, Limited Stock, Out of Stock, Pre-order) and adds remarks for each plant, then sends responses that update the inquiry status and notify users via email. This function streamlines request processing and ensures timely communication with clients and users.
 
 FUNCTION: Admin Manages Requests and Generates Quotations
 BEGIN
     Display "Request Management" Interface
-    Load ClientRequests FROM Database WHERE Type = 'client'
-    Load UserInquiries FROM Database WHERE Type = 'user'
+    Load ClientRequests AND UserInquiries
     
-    Display TabbedInterface WITH:
-        Tab1: "Client Requests"
-        Tab2: "User Inquiries"
-    
-    // For Client RFQs
     WHEN "View Details" Clicked FOR ClientRequest:
-        Retrieve RequestData WITH RequestedPlants
-        Display RequestDetails WITH PricingForm
-        
         WHEN PricesEntered:
-            FOR EACH Plant IN RequestedPlants DO
-                Calculate TotalPrice = UnitPrice × Quantity
-            END FOR
-            Calculate GrandTotal
-            Update RequestRecord WITH Pricing
+            Calculate TotalPrice
         
         WHEN "Generate PDF" Clicked:
-            Create PDFDocument WITH RequestData
-            Save PDF TO Storage
-            Update RequestRecord WITH PDFPath
+            Create PDFDocument
             Display "PDF generated successfully"
         
         WHEN "Send Email" Clicked:
-            IF PDF NOT EXISTS THEN
-                Generate PDF
-            END IF
-            Send Email TO ClientEmail WITH PDFAttachment
-            Update RequestStatus TO 'responded'
-            Create Notification FOR Client
+            Send Email WITH PDF
             Display "Email sent successfully"
     
-    // For User Inquiries
     WHEN "View Details" Clicked FOR UserInquiry:
-        Retrieve InquiryData WITH RequestedPlants
-        Display InquiryDetails WITH AvailabilityForm
-        
-        WHEN AvailabilitySet:
-            FOR EACH Plant IN RequestedPlants DO
-                Set AvailabilityStatus
-                Add Remarks
-            END FOR
-            Update InquiryRecord WITH Availability
-        
         WHEN "Send Response" Clicked:
-            Update InquiryStatus TO 'responded'
-            Create Notification FOR User
-            Send Email TO UserEmail WITH ResponseLink
+            Update InquiryStatus
+            Send Email
             Display "Response sent successfully"
-    
-    Enable FilterBy Status, Date
-    Enable SearchBy Name, Email
 END
 
 Figure [X+1]. Pseudocode for Admin Module That Manages Client Requests
@@ -290,81 +193,35 @@ Admin Module That Conducts and Records Site Visits
 
 This module allows the Administrator to create, manage, and record site visits for clients. Site visits are essential for assessing client properties, documenting site conditions, and preparing proposals for landscaping or plant installation projects. The system enables the Admin to schedule visits, record GPS coordinates using an interactive map, complete assessment checklists, upload photos and documents, and track the progress of each visit from initial assessment to proposal approval.
 
-Figure [X] shows the Site Visit Management interface where the Administrator can view all scheduled site visits. The interface displays a list of visits with client names, visit dates, locations, and current status (Scheduled, In Progress, Completed). The Admin can create new site visits, edit existing ones, and view detailed information for each visit including checklists and uploaded files.
+Figure [X] shows the Site Visit Management interface where the Administrator can view all scheduled site visits. The interface displays a list of visits with client names, visit dates, locations, and current status (Scheduled, In Progress, Completed). The Admin can create new site visits, edit existing ones, and view detailed information for each visit including checklists and uploaded files. The system integrates GPS mapping functionality to record precise site locations and allows administrators to track visit progress through comprehensive checklists covering client data, site assessment, and physical factors. Additionally, the interface supports collaborative features where clients can upload required documents and administrators can attach proposal files such as design quotations and terms and conditions. The system also provides filtering and search capabilities to help administrators efficiently manage multiple site visits across different time periods and client categories.
 
 [INSERT FIGURE: GUI for Admin Module That Conducts Site Visits]
 
-The pseudocode in Figure [X+1] illustrates how the site visit management function operates. When the Admin creates a new site visit, the system displays a form where the Admin enters the client information, visit date, and location. The system includes an interactive map powered by Leaflet where the Admin can click to set GPS coordinates for the site location. Once the visit is created, the Admin can access the visit details page to complete various checklists including Client Data, Site Assessment, Physical Factors, and Proposal sections. For each checklist item, the Admin can upload files, add notes, and mark items as complete. The system also allows the Admin to upload proposal documents such as design quotations and terms and conditions. Clients assigned to the site visit can view the details and upload their required documents through the Client Data section. This function ensures comprehensive documentation of site visits and facilitates collaboration between administrators and clients.
+The pseudocode in Figure [X+1] illustrates how the site visit management function operates. When the Admin creates a new site visit, the system displays a form where the Admin enters client information, visit date, and location using an interactive map to set GPS coordinates. Once created, the Admin can complete various checklists including Client Data, Site Assessment, Physical Factors, and Proposal sections, with options to upload files and add notes for each item. Clients assigned to the site visit can view details and upload required documents through the Client Data section. This function ensures comprehensive documentation of site visits and facilitates collaboration between administrators and clients.
 
 FUNCTION: Admin Conducts and Records Site Visits
 BEGIN
     Display "Site Visit Management" Interface
     Load AllSiteVisits FROM Database
     
-    Display SiteVisitTable WITH columns:
-        Client, Date, Location, Status, Actions
-    
     WHEN "Create Site Visit" Clicked:
-        Display SiteVisitForm WITH:
-            ClientSelection, VisitDate, LocationMap
-        
-        WHEN MapClicked:
-            Capture GPSCoordinates (Latitude, Longitude)
-            Display LocationMarker ON Map
-        
+        Capture GPSCoordinates FROM Map
         IF FormValid THEN
-            Create SiteVisitRecord IN Database
-            Initialize Checklists (ClientData, Assessment, Physical, Proposal)
+            Create SiteVisitRecord
             Display "Site visit created successfully"
         END IF
     
-    WHEN "View Details" Clicked FOR SelectedVisit:
-        Retrieve SiteVisitData FROM Database
-        Display DetailedView WITH:
-            VisitInformation, Map, Checklists, Files
+    WHEN "View Details" Clicked:
+        Display SiteVisitData WITH Checklists
         
-        FOR EACH ChecklistSection DO
-            Display ChecklistItems WITH Status
-            
-            WHEN "Upload File" Clicked FOR Item:
-                Upload File TO Storage
-                Add FileEntry TO ChecklistData
-                Update ChecklistStatus TO 'submitted'
-                Display "File uploaded successfully"
-            
-            WHEN "Delete File" Clicked FOR Item:
-                Delete File FROM Storage
-                Remove FileEntry FROM ChecklistData
-                Update ChecklistStatus IF NoFilesRemain
-                Display "File deleted successfully"
-        END FOR
-        
-        WHEN "Upload Proposal" Clicked:
-            Upload ProposalDocument TO Storage
-            Update SiteVisitRecord WITH ProposalPath
-            Display "Proposal uploaded successfully"
-        
-        WHEN "Update Status" Clicked:
-            Update SiteVisitStatus IN Database
-            Display "Status updated successfully"
+        WHEN "Upload File" Clicked:
+            Upload File TO Storage
+            Display "File uploaded successfully"
     
-    WHEN "Edit" Clicked FOR SelectedVisit:
-        Display EditForm WITH CurrentData
-        IF UpdateValid THEN
-            Update SiteVisitRecord IN Database
-            Display "Site visit updated successfully"
-        END IF
-    
-    WHEN "Delete" Clicked FOR SelectedVisit:
-        Display ConfirmationDialog
+    WHEN "Delete" Clicked:
         IF Confirmed THEN
-            Delete AssociatedFiles FROM Storage
-            Delete SiteVisitRecord FROM Database
-            Display "Site visit deleted successfully"
+            Delete SiteVisitRecord
         END IF
-    
-    Enable FilterBy Status, Date, Client
-    Enable MapView FOR AllSiteVisits
 END
 
 Figure [X+1]. Pseudocode for Admin Module That Conducts Site Visits
@@ -378,122 +235,57 @@ Figure [X] shows the Admin Dashboard interface where the Administrator can view 
 
 [INSERT FIGURE: GUI for Admin Module That Displays Dashboard Analytics]
 
-The pseudocode in Figure [X+1] demonstrates how the dashboard analytics function operates. When the Admin accesses the dashboard, the system retrieves data from the database and performs calculations to generate meaningful statistics. The system calculates the total stock by summing all plant quantities across the inventory. It identifies low stock items by filtering plants with quantities below the threshold (less than 10 units). For stock distribution, the system groups plants by category and calculates the total quantity for each category. For sales analytics, the system joins sales records with plant data, groups by category, and calculates the percentage distribution of sales across categories. The system then generates visual charts using Chart.js library to display stock distribution as a doughnut chart and sales distribution as a bar chart. The dashboard updates in real-time whenever inventory or sales data changes, ensuring that administrators always have access to current information for decision-making. This function provides administrators with a comprehensive overview of business operations, helping them identify trends, manage inventory efficiently, and optimize sales strategies.
+The pseudocode in Figure [X+1] demonstrates how the dashboard analytics function operates. When the Admin accesses the dashboard, the system retrieves data from the database and performs calculations to generate meaningful statistics including total stock, low stock items (less than 10 units), and stock distribution by category. The system generates visual charts using Chart.js library to display stock distribution as a doughnut chart and sales distribution as a bar chart. The dashboard updates in real-time whenever inventory or sales data changes, ensuring administrators always have access to current information for decision-making and optimizing sales strategies.
 
 FUNCTION: Admin Views Dashboard Analytics
-BEGIN
-    Display "Admin Dashboard" Interface
-    
-    // Calculate Total Stock
-    Calculate TotalStock = SUM(AllPlants.Quantity)
-    Display TotalStock IN SummaryCard
-    
-    // Identify Low Stock Items
-    Get LowStockItems FROM Plants WHERE Quantity < 10
-    Display LowStockCount IN AlertCard
-    Display LowStockList WITH PlantNames AND Quantities
-    
-    // Calculate Stock Distribution by Category
-    FOR EACH Category IN PlantCategories DO
-        Calculate CategoryTotal = SUM(Plants.Quantity WHERE Category = CurrentCategory)
-        Add CategoryTotal TO StockDistribution
-    END FOR
-    
-    Generate DoughnutChart WITH StockDistribution
-    Display StockDistributionChart ON Dashboard
-    
-    // Calculate Sales Analytics by Category
-    Get AllSales FROM SalesTable
-    Calculate TotalSalesQuantity = SUM(AllSales.Quantity)
-    
-    IF TotalSalesQuantity > 0 THEN
-        FOR EACH Category IN PlantCategories DO
-            Calculate CategorySales = SUM(Sales.Quantity WHERE Plant.Category = CurrentCategory)
-            Calculate Percentage = (CategorySales / TotalSalesQuantity) × 100
-            Add Percentage TO SalesDistribution
-        END FOR
+    BEGIN
+        Display "Admin Dashboard" Interface
         
-        Generate BarChart WITH SalesDistribution
-        Display SalesAnalyticsChart ON Dashboard
-    ELSE
-        Display "No sales data available"
-    END IF
-    
-    // Display Recent Plants
-    Get RecentPlants FROM Plants ORDER BY CreatedDate DESC LIMIT 5
-    Display RecentPlantsList WITH Names AND AddedDates
-    
-    // Enable Quick Stock Update
-    WHEN "Update Stock" Clicked:
-        Display StockUpdateModal WITH AllPlants
+        Calculate TotalStock
+        Get LowStockItems
+        Display StockAlerts
         
-        WHEN StockUpdated:
-            FOR EACH UpdatedPlant DO
-                Update PlantQuantity IN Database
-            END FOR
-            Refresh DashboardData
+        Calculate StockDistribution BY Category
+        Generate DoughnutChart
+        
+        Calculate SalesDistribution BY Category
+        Generate BarChart
+        
+        Display RecentPlants
+        
+        WHEN "Update Stock" Clicked:
+            Update PlantQuantity
             Display "Stock updated successfully"
-    
-    Enable AutoRefresh EVERY 30Seconds
-    Enable ManualRefresh Button
-END
+    END
 
 Figure [X+1]. Pseudocode for Admin Module That Displays Dashboard Analytics
 
 
 Client Module That Submits Requests for Quotation (RFQ)
 
-This module allows Clients to submit requests for quotation by selecting plants from the catalog and specifying their requirements. Unlike regular user inquiries, client RFQs include detailed information such as quantities, measurements (height, spread, spacing), and pricing preferences. The system processes these requests and generates professional PDF quotations that clients can download and review.
+This module allows Clients to submit requests for quotation by selecting plants from the catalog and specifying detailed requirements such as quantities, measurements (height, spread, spacing), and pricing preferences. The system processes these requests and generates professional PDF quotations that clients can download and review.
 
-Figure [X] shows the RFQ submission interface where Clients can browse the plant catalog and select plants for their quotation request. The interface displays plant cards with photos, names, and current availability. Clients can click "Add to RFQ" to select plants, specify quantities and measurements, and choose pricing preferences (None, Low cost, High cost) before submitting their request.
+Figure [X] shows the RFQ submission interface where Clients can browse the plant catalog and select plants for their quotation request. Clients can click "Add to RFQ" to select plants, specify quantities and measurements, and choose pricing preferences before submitting their request.
 
 [INSERT FIGURE: GUI for Client Module That Submits RFQ]
 
-The pseudocode in Figure [X+1] demonstrates how the RFQ submission function works. When a Client accesses the RFQ page, the system loads all available plants from the catalog. The Client browses plants and adds desired items to their RFQ cart. For each selected plant, the Client enters the quantity and can optionally specify measurements such as height, spread, and spacing. The Client also selects a pricing preference to indicate their budget range. Once all plants are selected, the Client fills in their contact information and submits the RFQ. The system validates the input, creates an RFQ record in the database with request type set to 'client', generates a PDF quotation, and sends email notifications to administrators. The Client receives a confirmation message and can track the status of their RFQ in their dashboard. This function streamlines the quotation request process and ensures that clients receive professional, detailed quotations for their plant needs.
+The pseudocode in Figure [X+1] demonstrates how the RFQ submission function works. When a Client accesses the RFQ page, the system loads all available plants from the catalog. The Client browses plants and adds desired items to their RFQ cart. For each selected plant, the Client enters the quantity and can optionally specify measurements such as height, spread, and spacing. The Client also selects a pricing preference to indicate their budget range. Once all plants are selected, the Client fills in their contact information and submits the RFQ. The system validates the input, creates an RFQ record in the database with request type set to 'client', generates a PDF quotation, and sends email notifications to administrators. The Client receives a confirmation message and can track the status of their RFQ in their dashboard. This function streamlines the quotation request process and ensures that clients receive professional, detailed quotations for their plant needs. The system also maintains a comprehensive audit trail of all RFQ activities, allowing administrators to monitor request patterns and response times for continuous service improvement. Additionally, the platform supports bulk plant selection and modification capabilities, enabling clients to efficiently manage large-scale landscaping projects with multiple plant varieties and specifications. The integrated notification system ensures real-time updates throughout the quotation process, keeping both clients and administrators informed of any status changes or required actions.
 
 FUNCTION: Client Submits Request for Quotation
 BEGIN
     Display "Request for Quotation" Interface
-    Load AvailablePlants FROM Database
-    Initialize RFQCart AS Empty
-    
-    Display PlantCatalog WITH Photos AND Details
+    Load AvailablePlants
     
     WHEN PlantSelected:
-        Display PlantDetailsModal
-        Get Quantity, Height, Spread, Spacing
-        Add Plant TO RFQCart WITH Specifications
-        Update CartCounter
-    
-    Display RFQCart WITH SelectedPlants
+        Add Plant TO RFQCart
     
     WHEN "Submit RFQ" Clicked:
-        Display ContactForm
-        Get ClientName, Email, Phone, Address, Message
-        Get PricingPreference (None, LowCost, HighCost)
-        
         IF FormValid THEN
-            Create RFQRecord IN Database WITH:
-                ClientInfo, SelectedPlants, PricingPreference
-                RequestType = 'client'
-                Status = 'pending'
-            
-            Generate PDFQuotation WITH RFQData
-            Save PDF TO Storage
-            Update RFQRecord WITH PDFPath
-            
-            Send EmailNotification TO Admins
-            Create Notification FOR Admins
-            
+            Create RFQRecord
+            Generate PDFQuotation
+            Send EmailNotification
             Display "RFQ submitted successfully"
-            Redirect TO SuccessPage WITH RFQNumber
-        ELSE
-            Display ValidationErrors
         END IF
-    
-    Enable RemovePlant FROM RFQCart
-    Enable UpdateQuantity IN RFQCart
-    Enable EditMeasurements FOR SelectedPlants
 END
 
 Figure [X+1]. Pseudocode for Client Module That Submits RFQ
@@ -512,57 +304,21 @@ The pseudocode in Figure [X+1] explains how the client site visit participation 
 FUNCTION: Client Participates in Site Visits
 BEGIN
     Display "My Site Visits" Interface
-    Get CurrentClientID
-    Load AssignedSiteVisits FROM Database WHERE UserID = CurrentClientID
+    Load AssignedSiteVisits
     
-    Display SiteVisitList WITH:
-        VisitDate, Location, Status
-    
-    WHEN "View Details" Clicked FOR SelectedVisit:
-        Retrieve SiteVisitData FROM Database
-        Display VisitDetails WITH:
-            VisitInformation, LocationMap, Checklists
+    WHEN "View Details" Clicked:
+        Display SiteVisitData WITH Checklists
         
-        FOR EACH ClientDataItem IN Checklist DO
-            Display ItemName WITH UploadStatus
-            
-            IF ItemStatus = 'missing' OR 'pending' THEN
-                Display "Upload File" Button
-            END IF
-            
-            IF FilesExist FOR Item THEN
-                Display FileList WITH DeleteOption
-            END IF
-        END FOR
-        
-        WHEN "Upload File" Clicked FOR Item:
-            Select File FROM Device
-            Validate FileType AND FileSize
-            
+        WHEN "Upload File" Clicked:
             IF Valid THEN
-                Upload File TO Storage
-                Create FileEntry WITH:
-                    Path, OriginalName, Type, UploadedBy, Timestamp
-                Add FileEntry TO ClientDataChecklist
-                Update ItemStatus TO 'submitted'
+                Upload File
                 Display "File uploaded successfully"
-            ELSE
-                Display "Invalid file type or size"
             END IF
         
-        WHEN "Delete File" Clicked FOR Item:
-            Display ConfirmationDialog
+        WHEN "Delete File" Clicked:
             IF Confirmed THEN
-                Delete File FROM Storage
-                Remove FileEntry FROM ClientDataChecklist
-                IF NoFilesRemain THEN
-                    Update ItemStatus TO 'missing'
-                END IF
-                Display "File deleted successfully"
+                Delete File
             END IF
-    
-    Enable FilterBy Status
-    Enable ViewProposal IF Available
 END
 
 Figure [X+1]. Pseudocode for Client Module That Participates in Site Visits
@@ -576,60 +332,25 @@ Figure [X] shows the Plant Inquiry interface where Users can browse the plant ca
 
 [INSERT FIGURE: GUI for User Module That Submits Plant Inquiries]
 
-The pseudocode in Figure [X+1] demonstrates how the plant inquiry submission function works. When a User browses the public plant catalog while logged in, the system displays "Add to Inquiry" buttons on plant cards. When a plant is added, the system stores it in a temporary inquiry list. The User can click "View Inquiry" to open a modal displaying all selected plants in a table format. The User can edit quantities, measurements (height, spread, spacing), or remove plants from the inquiry. When ready to submit, the User fills in their contact information (name, email, contact number) and clicks "Submit Inquiry." The system validates the input, creates an inquiry record in the database with request type set to 'user', and sends email notifications to administrators. The User receives a confirmation message and can track the inquiry status in their dashboard. When an administrator responds, the User receives an email notification and can view the response showing availability status and remarks for each plant. This function provides users with a simple way to check plant availability without the complexity of a full RFQ process.
+The pseudocode in Figure [X+1] demonstrates how the plant inquiry submission function works. When a User browses the public plant catalog while logged in, the system displays "Add to Inquiry" buttons on plant cards. When a plant is added, the system stores it in a temporary inquiry list. The User can click "View Inquiry" to open a modal displaying all selected plants in a table format. The User can edit quantities, measurements (height, spread, spacing), or remove plants from the inquiry. When ready to submit, the User fills in their contact information (name, email, contact number) and clicks "Submit Inquiry." The system validates the input, creates an inquiry record in the database with request type set to 'user', and sends email notifications to administrators. The User receives a confirmation message and can track the inquiry status in their dashboard. When an administrator responds, the User receives an email notification and can view the response showing availability status and remarks for each plant. This function provides users with a simple way to check plant availability without the complexity of a full RFQ process. The system automatically saves inquiry drafts to prevent data loss during the selection process, allowing users to continue their inquiry session even if interrupted. Additionally, the platform maintains a history of all user inquiries, enabling users to reference previous requests and resubmit similar inquiries for future plant needs.
 
 FUNCTION: User Submits Plant Inquiry
 BEGIN
-    Display PlantCatalog ON PublicPage
-    Initialize InquiryList AS Empty
+    Display PlantCatalog
     
     IF UserLoggedIn THEN
-        Display "Add to Inquiry" Button ON PlantCards
+        Display "Add to Inquiry" Button
     END IF
     
-    WHEN "Add to Inquiry" Clicked FOR Plant:
+    WHEN "Add to Inquiry" Clicked:
         Add Plant TO InquiryList
-        Update InquiryCounter
-        Display "Plant added to inquiry"
-    
-    WHEN "View Inquiry" Clicked:
-        Display InquiryModal WITH SelectedPlants
-        
-        FOR EACH Plant IN InquiryList DO
-            Display PlantRow WITH:
-                Name, Quantity, Height, Spread, Spacing
-            Enable EditQuantity AND EditMeasurements
-            Enable RemovePlant
-        END FOR
-        
-        Display ContactForm WITH:
-            Name, Email, ContactNumber
     
     WHEN "Submit Inquiry" Clicked:
-        Get UserInput FROM ContactForm
-        
         IF FormValid THEN
-            Create InquiryRecord IN Database WITH:
-                UserInfo, SelectedPlants
-                RequestType = 'user'
-                Status = 'pending'
-            
-            Send EmailNotification TO Admins
-            Create Notification FOR Admins
-            
-            Clear InquiryList
+            Create InquiryRecord
+            Send EmailNotification
             Display "Inquiry submitted successfully"
-            
-            IF UserHasAccount THEN
-                Create Notification FOR User
-                Display "Track your inquiry in your dashboard"
-            END IF
-        ELSE
-            Display ValidationErrors
         END IF
-    
-    Enable RemovePlant FROM InquiryList
-    Enable ClearAllPlants
 END
 
 Figure [X+1]. Pseudocode for User Module That Submits Plant Inquiries
@@ -648,51 +369,133 @@ The pseudocode in Figure [X+1] explains how the inquiry response viewing functio
 FUNCTION: User Views Inquiry Responses
 BEGIN
     Display "User Dashboard" Interface
-    Get CurrentUserEmail
-    Load UserInquiries FROM Database WHERE Email = CurrentUserEmail
+    Load UserInquiries
     
-    Display InquiryTable WITH columns:
-        InquiryID, InquiryDate, Status, Actions
-    
-    FOR EACH Inquiry IN InquiryTable DO
+    FOR EACH Inquiry DO
         IF Status = 'pending' THEN
-            Display YellowBadge "Pending"
+            Display "Pending" Badge
         ELSE IF Status = 'responded' THEN
-            Display GreenBadge "Responded"
-            Display "View Response" Button
+            Display "Responded" Badge
         END IF
     END FOR
     
-    WHEN "View Response" Clicked FOR SelectedInquiry:
-        Retrieve InquiryData WITH ResponseDetails
-        Display ResponsePage WITH:
-            InquiryInformation (Date, RespondedBy, ResponseDate)
-            RequestedPlants WITH AvailabilityStatus
-        
-        FOR EACH Plant IN RequestedPlants DO
-            Display PlantName, Quantity, Measurements
-            
-            IF Availability = 'Available' THEN
-                Display GreenBadge "Available"
-            ELSE IF Availability = 'Limited Stock' THEN
-                Display YellowBadge "Limited Stock"
-            ELSE IF Availability = 'Out of Stock' THEN
-                Display RedBadge "Out of Stock"
-            ELSE IF Availability = 'Pre-order' THEN
-                Display PurpleBadge "Pre-order"
-            END IF
-            
-            IF RemarksExist THEN
-                Display AdminRemarks
-            END IF
-        END FOR
-        
-        Display "Return to Dashboard" Button
-    
-    Enable SortBy Date, Status
-    Enable FilterBy Status
+    WHEN "View Response" Clicked:
+        Display ResponsePage WITH PlantDetails
+        Display AvailabilityStatus
+        Display AdminRemarks
 END
 
 Figure [X+1]. Pseudocode for User Module That Views Inquiry Responses
 
+
+
+## Evaluation Ratings of Respondents in Terms of Functional Suitability Based on the ISO 9126 Software Quality Framework
+
+The evaluation ratings from the respondents in terms of Functional Suitability show how well the system performs its intended tasks. This part measures if the system works as expected, provides correct results, and meets the needs of its users. The feedback from the respondents helps identify the parts of the system that work properly and those that may need improvement to make the system perform better. This evaluation also helps determine the system's completeness and reliability in carrying out its functions. The evaluation ratings for the Super Administrator Module are shown in Table [X], the ratings for the Administrator Module are presented in Table [X+1], and the results for the User and Client Module are displayed in Table [X+2]. Together, these ratings give a clear view of how each group of respondents assessed the system's overall functional performance.
+
+
+### Super Admin Module Functional Suitability
+
+**Table [X]. Evaluation Ratings from the Respondents (Super Administrator and Advisory Committee) in Terms of Functional Suitability for the Super Administrator Module**
+
+| Assessment Description | Mean | Verbal Interpretation |
+|------------------------|------|----------------------|
+| The system allows Super Admins to efficiently manage user accounts, including creating, updating, and deleting user records. | 4.40 | Agree |
+| The system allows Super Admins to accurately assign and modify user roles (Admin, Client, User). | 4.20 | Agree |
+| The system allows Super Admins to effectively monitor system logs for security and maintenance purposes. | 4.00 | Agree |
+| The system allows Super Admins to accurately view and filter log entries by date, level, and keywords. | 4.40 | Agree |
+| The system allows Super Admins to access dashboard analytics showing stock distribution and sales performance. | 4.40 | Agree |
+| **Consolidated Mean** | **4.28** | **Agree** |
+
+Table [X] shows that respondents generally agreed with the functional suitability of the Super Admin module, as reflected in the overall mean of 4.28 (Agree). This indicates that the system effectively performs its intended administrative functions based on the evaluation of the Super Admin and Advisory Committee.
+
+The highest-rated indicators are managing user accounts, viewing and filtering log entries, and accessing dashboard analytics, each with a mean score of 4.40 (Agree). This demonstrates strong user confidence in these features, particularly in user management and system monitoring capabilities.
+
+The lowest-rated indicator is monitoring system logs, with a mean of 4.00 (Agree). Although still positively rated, this score suggests that this feature may benefit from enhancements in log display clarity and filtering options to improve usability.
+
+Overall, the results indicate that the Super Admin module performs its intended functions effectively, particularly in user and role management.
+
+
+### Admin Module Functional Suitability
+
+**Table [X+1]. Evaluation Ratings from the Respondents (Administrator and Advisory Committee) in Terms of Functional Suitability for the Administrator Module**
+
+| Assessment Description | Mean | Verbal Interpretation |
+|------------------------|------|----------------------|
+| The system allows Admins to efficiently manage plant inventory, including adding, updating, and deleting plant records with photo uploads. | 4.80 | Strongly Agree |
+| The system allows Admins to accurately process walk-in sales transactions with automatic inventory deduction. | 4.80 | Strongly Agree |
+| The system allows Admins to effectively manage client requests for quotation (RFQ) and user plant inquiries. | 4.60 | Strongly Agree |
+| The system allows Admins to accurately generate PDF quotations for client RFQ submissions. | 4.20 | Agree |
+| The system allows Admins to efficiently send email notifications to clients and users regarding their requests. | 4.20 | Agree |
+| The system allows Admins to effectively create and manage site visits with GPS location mapping. | 4.40 | Agree |
+| The system allows Admins to accurately complete site visit checklists and upload proposal documents. | 4.40 | Agree |
+| The system allows Admins to efficiently view dashboard analytics showing stock distribution, low stock alerts, and sales performance. | 4.60 | Strongly Agree |
+| The system allows Admins to accurately search and filter plant records by name, category, and stock level. | 4.00 | Agree |
+| **Consolidated Mean** | **4.33** | **Agree** |
+
+Table [X+1] shows that respondents agreed with the functional suitability of the Administrator Module, as indicated by the overall mean of 4.33 (Agree). This reflects that the system effectively performs its intended administrative functions, enabling administrators to manage plant inventory, process sales transactions, handle client requests, conduct site visits, and view dashboard analytics efficiently.
+
+The highest-rated indicators are managing plant inventory and processing walk-in sales, both receiving a mean score of 4.80 (Strongly Agree). These results indicate that users find these core business functions highly reliable and effective in supporting daily operations. Managing client requests and viewing dashboard analytics also received strong ratings of 4.60 (Strongly Agree), demonstrating efficient request processing and inventory monitoring capabilities.
+
+The lowest-rated indicator is searching and filtering plant records, with a mean of 4.00 (Agree). Although still positively evaluated, this feature may benefit from improvements in search functionality or filter options to enhance user experience.
+
+Overall, the evaluation confirms that the Administrator Module performs well in supporting daily business operations, inventory management, and customer service functions.
+
+
+### User and Client Module Functional Suitability
+
+**Table [X+2]. Evaluation Ratings from the Respondents (User, Client, and Advisory Committee) in Terms of Functional Suitability for the User and Client Module**
+
+| Assessment Description | Mean | Verbal Interpretation |
+|------------------------|------|----------------------|
+| The system allows users and clients to securely access and browse the plant catalog, including viewing plant details and specifications efficiently. | 4.69 | Strongly Agree |
+| The system enables users and clients to submit requests (plant inquiries or RFQs) accurately, specifying the required quantity, height, spread, spacing, pricing preferences, and type of plants. | 4.65 | Strongly Agree |
+| The system allows users and clients to view the status of their submitted requests in their dashboard completely and accurately. | 4.57 | Strongly Agree |
+| The system allows users and clients to download approved quotations in PDF format and view inquiry responses with availability status and remarks. | 4.38 | Agree |
+| The system allows users and clients to receive confirmations or notifications regarding the status of their requests and participate in assigned site visits. | 4.53 | Strongly Agree |
+| **Consolidated Mean** | **4.56** | **Strongly Agree** |
+
+Table [X+2] shows that respondents strongly agreed with the functional suitability of the User and Client Module, as reflected in the overall mean of 4.56 (Strongly Agree). This indicates that the module effectively fulfills its intended functions, providing users and clients with a comprehensive system for browsing the plant catalog, submitting requests, and participating in site visits.
+
+The highest-rated indicators are browsing the plant catalog and submitting requests with plant specifications, receiving mean scores of 4.69 and 4.65 respectively (both Strongly Agree). These results demonstrate that users and clients find the catalog browsing and request submission processes intuitive, efficient, and highly responsive to their needs.
+
+The lowest-rated indicator is downloading approved quotations and viewing inquiry responses, with a mean of 4.38 (Agree). Although still positively rated, this feature may benefit from minor enhancements in document access and response viewing to further improve user satisfaction.
+
+Overall, the results demonstrate that the User and Client Module is highly functional, user-friendly, and dependable, successfully supporting both regular users and business clients in browsing the plant catalog, submitting inquiries and RFQs, tracking request status, and participating in site visits with accuracy and convenience.
+
+
+### Descriptive Rating of the Summary of Functionalities
+
+Table [X+3] presents the summary of the descriptive evaluation of the system's functional suitability, derived from the assessments of respondents, including the Super Administrator, Administrator, User/Client, and members of the Advisory Committee. The User and Client functionality obtained the highest mean rating of 4.56, interpreted as "Strongly Agree," indicating that the module effectively fulfills its intended purpose by allowing users and clients to conveniently browse the plant catalog, submit requests for quotation and plant inquiries, view request status, and participate in site visits. The Administrator functionality received a mean rating of 4.33, interpreted as "Agree," signifying that administrative operations—such as managing plant inventory, processing sales transactions, handling client requests, conducting site visits, and viewing dashboard analytics—are efficiently executed and reliable. Meanwhile, the Super Administrator functionality acquired a mean rating of 4.28, interpreted as "Agree," implying that while the module effectively performs its core functions in managing user accounts, assigning roles, and monitoring system logs, there remains room for enhancement to further improve system oversight and log monitoring features. The overall mean rating of 4.39, interpreted as "Agree," indicates that the entire Comprehensive Plant Inventory and Site Visit Management System effectively performs its intended functions across all user levels, ensuring smooth coordination among different modules and supporting efficient digital management of plant inventory, sales operations, client relationships, and site visit documentation at Salenga Farm.
+
+**Table [X+3]. Descriptive Rating of the Summary of Functionalities**
+
+| Particulars | Mean | Verbal Interpretation |
+|-------------|------|----------------------|
+| Super Administrator Functionality | 4.28 | Agree |
+| Administrator Functionality | 4.33 | Agree |
+| User and Client Functionality | 4.56 | Strongly Agree |
+| **OVERALL MEAN** | **4.39** | **Agree** |
+
+
+### Summary of Respondents' Rating Based on ISO 9126 Software Quality Framework
+
+The summary of user ratings based on the ISO 9126 Software Quality Framework presents how respondents evaluated the overall quality of the system according to internationally recognized software quality standards. The assessment encompasses key quality characteristics, namely Functional Suitability, Performance Efficiency, Usability, Reliability, and Security. Findings indicate that the system effectively performs its intended functions, operates with responsiveness and speed, and maintains stability during various transactions. Moreover, the system provides a user-friendly interface accessible to a wide range of users and delivers robust security measures to protect user data and system integrity. Overall, the results demonstrate that the system exhibits a high level of quality in accordance with the ISO 9126 framework, successfully meeting user expectations and operational objectives while identifying certain aspects that may still be refined to further enhance performance and user satisfaction.
+
+As presented in Table [X+4], the summary of user ratings based on the ISO 9126 Software Quality Framework shows that the system performed exceptionally well across all evaluated quality characteristics. Functional Suitability received a mean rating of 4.39, interpreted as "Agree," indicating that the system effectively performs its intended tasks across all user roles. Performance Efficiency received a mean rating of 4.47, interpreted as "Agree," demonstrating that the system responds promptly and processes operations efficiently. Usability, Reliability, and Security received mean ratings of 4.57, 4.55, and 4.54 respectively, all interpreted as "Strongly Agree," reflecting the system's user-friendliness, dependability, and robustness in protecting user data.
+
+The overall mean rating of 4.50, interpreted as "Strongly Agree," demonstrates that users are highly satisfied with the system's overall quality, reliability, and effectiveness in supporting plant inventory management, sales transactions, site visit coordination, and request processing operations at Salenga Farm.
+
+Specifically, Performance Efficiency ensures that the system responds promptly to user actions, loads pages quickly, and performs well even when processing multiple user requests simultaneously. Usability shows that the interface is intuitive, provides clear and understandable instructions and messages, and can be used easily even by users with minimal technical knowledge. Reliability demonstrates that the system consistently displays accurate data, features are always available when needed, and submitted documents are kept safe and accessible. Finally, Security demonstrates that strong authentication mechanisms, secure data protection, and prevention of unauthorized access maintain system accountability and protect sensitive information.
+
+**Table [X+4]. Summary of Respondents' Rating Based on ISO 9126 Software Quality Framework**
+
+| Quality Characteristic | Mean | Verbal Interpretation |
+|------------------------|------|----------------------|
+| Functional Suitability | 4.39 | Agree |
+| Performance Efficiency | 4.47 | Agree |
+| Usability | 4.57 | Strongly Agree |
+| Reliability | 4.55 | Strongly Agree |
+| Security | 4.54 | Strongly Agree |
+| **OVERALL MEAN** | **4.50** | **Strongly Agree** |
 

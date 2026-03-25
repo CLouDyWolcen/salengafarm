@@ -455,18 +455,14 @@
                                                 </button>
                                             </form>
                                             
-                                            <form action="<?php echo e(route('requests.send-response', $request->id)); ?>" method="POST" style="flex: 1; margin: 0;" 
-                                                  onsubmit="return confirm('This will mark the inquiry as responded and notify the user. Continue?');">
-                                                <?php echo csrf_field(); ?>
-                                                <button type="submit" class="action-btn action-btn-primary" id="sendResponseBtn">
-                                                    <i class="fas fa-paper-plane"></i>
-                                                    <?php if($request->request_type == 'user'): ?>
-                                                        Send Response to User
-                                                    <?php else: ?>
-                                                        Send Response to Client
-                                                    <?php endif; ?>
-                                                </button>
-                                            </form>
+                                            <button type="button" class="action-btn action-btn-primary" id="sendResponseBtn" data-bs-toggle="modal" data-bs-target="#sendResponseModal">
+                                                <i class="fas fa-paper-plane"></i>
+                                                <?php if($request->request_type == 'user'): ?>
+                                                    Send Response to User
+                                                <?php else: ?>
+                                                    Send Response to Client
+                                                <?php endif; ?>
+                                            </button>
                                         </div>
                                     <?php elseif($request->status == 'sent'): ?>
                                         <div class="action-buttons">
@@ -482,18 +478,14 @@
                                                 </button>
                                             </form>
                                             
-                                            <form action="<?php echo e(route('requests.send-response', $request->id)); ?>" method="POST" style="flex: 1; margin: 0;" 
-                                                  onsubmit="return confirm('This will mark the inquiry as responded and notify the user. Continue?');">
-                                                <?php echo csrf_field(); ?>
-                                                <button type="submit" class="action-btn action-btn-primary" id="sendResponseBtn">
-                                                    <i class="fas fa-paper-plane"></i>
-                                                    <?php if($request->request_type == 'user'): ?>
-                                                        Send Response to User
-                                                    <?php else: ?>
-                                                        Send Response to Client
-                                                    <?php endif; ?>
-                                                </button>
-                                            </form>
+                                            <button type="button" class="action-btn action-btn-primary" id="sendResponseBtn2" data-bs-toggle="modal" data-bs-target="#sendResponseModal">
+                                                <i class="fas fa-paper-plane"></i>
+                                                <?php if($request->request_type == 'user'): ?>
+                                                    Send Response to User
+                                                <?php else: ?>
+                                                    Send Response to Client
+                                                <?php endif; ?>
+                                            </button>
                                         </div>
                                     <?php elseif($request->status == 'responded'): ?>
                                         <div class="response-alert">
@@ -772,6 +764,31 @@
         </div>
     </div>
 
+    <!-- Send Response Confirmation Modal -->
+    <div class="modal fade" id="sendResponseModal" tabindex="-1" aria-labelledby="sendResponseModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="sendResponseModalLabel">Confirm Send Response</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="mb-3">This will mark the <?php if($request->request_type == 'user'): ?>inquiry <?php else: ?> request <?php endif; ?> as responded and notify the <?php if($request->request_type == 'user'): ?>user <?php else: ?> client <?php endif; ?>.</p>
+                    <p class="mb-0"><strong>Continue?</strong></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <form action="<?php echo e(route('requests.send-response', $request->id)); ?>" method="POST" style="display: inline;">
+                        <?php echo csrf_field(); ?>
+                        <button type="submit" class="btn btn-primary" id="confirmSendResponseBtn">
+                            Send Response
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -1004,6 +1021,31 @@
                         });
                     }
                 });
+            });
+            
+            // Send Response confirmation modal - add loading state
+            $('#confirmSendResponseBtn').on('click', function(e) {
+                const btn = $(this);
+                const form = btn.closest('form');
+                
+                // Prevent double submission
+                if (btn.prop('disabled')) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Sending...');
+                
+                // Set a timeout to re-enable button if submission takes too long
+                setTimeout(function() {
+                    if (btn.prop('disabled')) {
+                        btn.prop('disabled', false).html('Send Response');
+                        alert('Request timed out. Please try again.');
+                    }
+                }, 30000); // 30 second timeout
+                
+                // ACTUALLY SUBMIT THE FORM
+                form.submit();
             });
         });
     </script>

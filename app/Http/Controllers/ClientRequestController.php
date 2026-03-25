@@ -768,7 +768,6 @@ class ClientRequestController extends Controller
     public function sendResponse($id)
     {
         try {
-            // Find the request
             $request = PlantRequest::findOrFail($id);
             
             // Validate that items have availability set
@@ -791,14 +790,6 @@ class ClientRequestController extends Controller
             $request->responded_by = auth()->id();
             $request->save();
             
-            // Send email notification to user
-            try {
-                $this->sendResponseEmail($request);
-            } catch (\Exception $e) {
-                Log::error('Failed to send response email: ' . $e->getMessage());
-                // Continue even if email fails
-            }
-            
             // Create in-app notification for user
             $user = User::where('email', $request->email)->first();
             if ($user) {
@@ -807,12 +798,12 @@ class ClientRequestController extends Controller
                     'type' => 'inquiry_response',
                     'title' => 'Inquiry Response',
                     'message' => "Your inquiry #{$request->id} has been responded to. Click to view details.",
-                    'link' => route('user.inquiry.response', $request->id),
+                    'link' => '/user/inquiries/' . $request->id . '/response',
                     'is_read' => false
                 ]);
             }
             
-            return redirect()->back()->with('success', 'Response sent successfully to user.');
+            return redirect()->back()->with('success', 'Response sent successfully to user dashboard.');
             
         } catch (\Exception $e) {
             Log::error('Failed to send response: ' . $e->getMessage());
