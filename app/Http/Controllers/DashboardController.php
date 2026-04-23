@@ -21,30 +21,86 @@ class DashboardController extends Controller
         // Get recent plants (last 5 added)
         $recentPlants = Plant::orderBy('created_at', 'desc')->take(5)->get();
 
-        // Get stock distribution by category
-        $stockByCategory = Plant::selectRaw('category, sum(quantity) as total')
+        // Enhanced stock distribution by category with value
+        $stockByCategory = Plant::selectRaw('category, sum(quantity) as total_quantity, sum(quantity * price) as total_value')
             ->groupBy('category')
-            ->pluck('total', 'category')
+            ->get()
+            ->mapWithKeys(function ($item) {
+                return [$item->category => [
+                    'quantity' => $item->total_quantity,
+                    'value' => $item->total_value
+                ]];
+            })
             ->toArray();
             
-        // Get sales distribution by plant category instead of individual plants
-        $salesByPlant = [];
+        // Enhanced sales distribution with revenue data
+        $salesByCategory = [];
         $totalSalesQuantity = Sale::sum('quantity');
+        $totalSalesRevenue = DB::table('sales')
+            ->join('plants', 'sales.plant_id', '=', 'plants.id')
+            ->sum(DB::raw('sales.quantity * plants.price'));
         
         if ($totalSalesQuantity > 0) {
-            $salesByPlant = DB::table('sales')
+            $salesByCategory = DB::table('sales')
                 ->join('plants', 'sales.plant_id', '=', 'plants.id')
                 ->select(
                     'plants.category',
                     DB::raw('SUM(sales.quantity) as total_quantity'),
-                    DB::raw('(SUM(sales.quantity) / ' . $totalSalesQuantity . ' * 100) as percentage')
+                    DB::raw('SUM(sales.quantity * plants.price) as total_revenue'),
+                    DB::raw('(SUM(sales.quantity) / ' . $totalSalesQuantity . ' * 100) as quantity_percentage'),
+                    DB::raw('(SUM(sales.quantity * plants.price) / ' . $totalSalesRevenue . ' * 100) as revenue_percentage')
                 )
                 ->groupBy('plants.category')
-                ->orderBy('total_quantity', 'desc')
+                ->orderBy('total_revenue', 'desc')
                 ->get()
-                ->pluck('percentage', 'category')
+                ->mapWithKeys(function ($item) {
+                    return [$item->category => [
+                        'quantity' => $item->total_quantity,
+                        'revenue' => $item->total_revenue,
+                        'quantity_percentage' => $item->quantity_percentage,
+                        'revenue_percentage' => $item->revenue_percentage
+                    ]];
+                })
                 ->toArray();
         }
+
+        // Sales trends over last 30 days
+        $salesTrends = DB::table('sales')
+            ->join('plants', 'sales.plant_id', '=', 'plants.id')
+            ->select(
+                DB::raw('DATE(sales.created_at) as sale_date'),
+                DB::raw('SUM(sales.quantity) as daily_quantity'),
+                DB::raw('SUM(sales.quantity * plants.price) as daily_revenue')
+            )
+            ->where('sales.created_at', '>=', now()->subDays(30))
+            ->groupBy(DB::raw('DATE(sales.created_at)'))
+            ->orderBy('sale_date')
+            ->get()
+            ->toArray();
+
+        // Inventory turnover analysis
+        $inventoryTurnover = [];
+        foreach ($stockByCategory as $category => $data) {
+            $categoryRevenue = $salesByCategory[$category]['revenue'] ?? 0;
+            $categoryValue = $data['value'];
+            $turnoverRate = $categoryValue > 0 ? ($categoryRevenue / $categoryValue) : 0;
+            $inventoryTurnover[$category] = round($turnoverRate, 2);
+        }
+
+        // Top performing plants
+        $topPlants = DB::table('sales')
+            ->join('plants', 'sales.plant_id', '=', 'plants.id')
+            ->select(
+                'plants.name',
+                'plants.category',
+                DB::raw('SUM(sales.quantity) as total_sold'),
+                DB::raw('SUM(sales.quantity * plants.price) as total_revenue')
+            )
+            ->groupBy('plants.id', 'plants.name', 'plants.category')
+            ->orderBy('total_revenue', 'desc')
+            ->take(5)
+            ->get()
+            ->toArray();
 
         // Get all plants for the update stock modal
         $plants = Plant::all();
@@ -54,7 +110,10 @@ class DashboardController extends Controller
             'lowStockItems',
             'recentPlants',
             'stockByCategory',
-            'salesByPlant',
+            'salesByCategory',
+            'salesTrends',
+            'inventoryTurnover',
+            'topPlants',
             'plants'
         ));
     }
@@ -71,6 +130,65 @@ class DashboardController extends Controller
         }
 
         return response()->json(['message' => 'Stock updated successfully']);
+    }
+
+    public function getAnalyticsData(Request $request)
+    {
+        $period = $request->get('period', '30'); // Default 30 days
+        $type = $request->get('type', 'quantity'); // quantity or revenue
+        
+        // Sales trends for the specified period
+        $salesTrends = DB::table('sales')
+            ->join('plants', 'sales.plant_id', '=', 'plants.id')
+            ->select(
+                DB::raw('DATE(sales.created_at) as sale_date'),
+                DB::raw('SUM(sales.quantity) as daily_quantity'),
+                DB::raw('SUM(sales.quantity * plants.price) as daily_revenue')
+            )
+            ->where('sales.created_at', '>=', now()->subDays($period))
+            ->groupBy(DB::raw('DATE(sales.created_at)'))
+            ->orderBy('sale_date')
+            ->get();
+
+        // Enhanced sales by category for the period
+        $totalSalesQuantity = Sale::where('created_at', '>=', now()->subDays($period))->sum('quantity');
+        $totalSalesRevenue = DB::table('sales')
+            ->join('plants', 'sales.plant_id', '=', 'plants.id')
+            ->where('sales.created_at', '>=', now()->subDays($period))
+            ->sum(DB::raw('sales.quantity * plants.price'));
+
+        $salesByCategory = [];
+        if ($totalSalesQuantity > 0) {
+            $salesByCategory = DB::table('sales')
+                ->join('plants', 'sales.plant_id', '=', 'plants.id')
+                ->select(
+                    'plants.category',
+                    DB::raw('SUM(sales.quantity) as total_quantity'),
+                    DB::raw('SUM(sales.quantity * plants.price) as total_revenue'),
+                    DB::raw('(SUM(sales.quantity) / ' . $totalSalesQuantity . ' * 100) as quantity_percentage'),
+                    DB::raw('(SUM(sales.quantity * plants.price) / ' . $totalSalesRevenue . ' * 100) as revenue_percentage')
+                )
+                ->where('sales.created_at', '>=', now()->subDays($period))
+                ->groupBy('plants.category')
+                ->orderBy('total_revenue', 'desc')
+                ->get()
+                ->mapWithKeys(function ($item) {
+                    return [$item->category => [
+                        'quantity' => $item->total_quantity,
+                        'revenue' => $item->total_revenue,
+                        'quantity_percentage' => $item->quantity_percentage,
+                        'revenue_percentage' => $item->revenue_percentage
+                    ]];
+                })
+                ->toArray();
+        }
+
+        return response()->json([
+            'salesTrends' => $salesTrends,
+            'salesByCategory' => $salesByCategory,
+            'period' => $period,
+            'type' => $type
+        ]);
     }
 
     public function clientRequests()

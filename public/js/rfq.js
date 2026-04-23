@@ -381,8 +381,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             // Show the RFQ form modal
-            const rfqModal = new bootstrap.Modal(document.getElementById('rfqFormModal'));
-            rfqModal.show();
+            showRfqModal();
             
             // DON'T exit selection mode yet - wait until form is submitted
             // The selectedPlants array needs to stay populated for submission
@@ -412,34 +411,34 @@ document.addEventListener('DOMContentLoaded', function() {
             row.dataset.plantIndex = index; // Store the original index
             
             row.innerHTML = `
-                <td style="text-align: center;">${index + 1}</td>
-                <td style="text-align: center;">
-                    <input type="number" min="1" value="1" class="form-control form-control-sm" 
-                        onchange="updateTotalPrice(this)" style="width: 100%; box-sizing: border-box;">
-                </td>
-                <td>${plant.name}</td>
-                <td>${plant.code || ''}</td>
-                <td style="text-align: center;">
-                    <input type="number" class="form-control form-control-sm height-field" style="width: 100%; box-sizing: border-box;">
-                </td>
-                <td style="text-align: center;">
-                    <input type="number" class="form-control form-control-sm spread-field" style="width: 100%; box-sizing: border-box;">
-                </td>
-                <td style="text-align: center;">
-                    <input type="number" class="form-control form-control-sm spacing-field" style="width: 100%; box-sizing: border-box;">
-                </td>
+                <td>${index + 1}</td>
                 <td>
-                    <textarea class="form-control form-control-sm remarks-field" placeholder="Add remarks" style="width: 100%; box-sizing: border-box; resize: vertical;"></textarea>
-                </td>
-                <td style="text-align: center;">
-                    <input type="number" class="form-control form-control-sm unit-price" value="" min="0" step="0.01" style="width: 100%; box-sizing: border-box;"
+                    <input type="number" min="1" value="1" class="rfq-input" 
                         onchange="updateTotalPrice(this)">
                 </td>
-                <td style="text-align: center;">
-                    <input type="number" class="form-control form-control-sm total-price-input" value="" min="0" step="0.01" style="width: 100%; box-sizing: border-box;">
+                <td style="text-align: left;">${plant.name}</td>
+                <td style="text-align: left;">${plant.code || ''}</td>
+                <td>
+                    <input type="number" class="rfq-input height-field">
                 </td>
-                <td style="text-align: center;">
-                    <input type="text" class="form-control form-control-sm availability-field" value="" style="width: 100%; box-sizing: border-box;">
+                <td>
+                    <input type="number" class="rfq-input spread-field">
+                </td>
+                <td>
+                    <input type="number" class="rfq-input spacing-field">
+                </td>
+                <td>
+                    <textarea class="rfq-textarea remarks-field" placeholder="Add remarks"></textarea>
+                </td>
+                <td>
+                    <input type="number" class="rfq-input unit-price" value="" min="0" step="0.01"
+                        onchange="updateTotalPrice(this)">
+                </td>
+                <td>
+                    <input type="number" class="rfq-input total-price-input" value="" min="0" step="0.01">
+                </td>
+                <td>
+                    <input type="text" class="rfq-input availability-field" value="">
                 </td>
             `;
             
@@ -451,7 +450,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         
         // Reset scroll position of the table
-        const tableWrapper = document.querySelector('#rfqFormModal .section:has(.table-bordered)');
+        const tableWrapper = document.querySelector('#rfqFormModal .rfq-table-wrapper');
         if (tableWrapper) {
             setTimeout(() => {
                 tableWrapper.scrollTop = 0;
@@ -645,10 +644,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             // Close the RFQ form modal
-            const rfqModal = bootstrap.Modal.getInstance(document.getElementById('rfqFormModal'));
-            if (rfqModal) {
-                rfqModal.hide();
-            }
+            closeRfqModal();
             
             // NOW exit selection mode and clear the array
             cancelSelectionMode();
@@ -845,3 +841,38 @@ document.addEventListener('DOMContentLoaded', function() {
         return plantData;
     }
 }); 
+
+    // Custom modal functions for RFQ
+    window.showRfqModal = function() {
+        const modal = document.getElementById('rfqFormModal');
+        if (modal) {
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+    };
+
+    window.closeRfqModal = function() {
+        const modal = document.getElementById('rfqFormModal');
+        if (modal) {
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+    };
+
+    // Close modal when clicking outside
+    document.addEventListener('click', function(event) {
+        const modal = document.getElementById('rfqFormModal');
+        if (modal && event.target === modal) {
+            closeRfqModal();
+        }
+    });
+
+    // Close modal with Escape key
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            const modal = document.getElementById('rfqFormModal');
+            if (modal && modal.style.display === 'block') {
+                closeRfqModal();
+            }
+        }
+    });

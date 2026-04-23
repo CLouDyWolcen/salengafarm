@@ -193,7 +193,7 @@
                 </ul>
                 
                 <p><strong>How to Become a Client:</strong></p>
-                <p>Simply reply to this email expressing your interest in becoming a client, or contact us at <strong><?php echo e(env('MAIL_FROM_ADDRESS')); ?></strong>. We will guide you through a simple verification process to set up your client account and provide you with detailed pricing information.</p>
+                <p>Simply reply to this email expressing your interest in becoming a client, or contact us at <strong><?php echo e(config('mail.from.address')); ?></strong>. We will guide you through a simple verification process to set up your client account and provide you with detailed pricing information.</p>
             </div>
 
             <h3>Next Steps</h3>
@@ -222,8 +222,8 @@
     <div class="footer">
         <p>
             <strong>Salenga Farm</strong><br>
-            📧 <?php echo e(env('MAIL_FROM_ADDRESS')); ?><br>
-            🌐 <?php echo e(env('APP_URL')); ?><br>
+            📧 <?php echo e(config('mail.from.address')); ?><br>
+            🌐 <?php echo e(config('app.url')); ?><br>
             <br>
             <em>This email was sent regarding your plant request #<?php echo e($request->id); ?></em>
         </p>

@@ -469,10 +469,19 @@
         $('.email-btn').on('click', function(e) {
             e.preventDefault();
             
+            console.log('Email button clicked');
+            
             const form = $(this).closest('.email-form');
             const recipientName = form.data('recipient-name');
             const recipientEmail = form.data('recipient-email');
             const recipientType = form.data('recipient-type');
+            
+            console.log('Form data:', {
+                recipientName,
+                recipientEmail,
+                recipientType,
+                action: form.attr('action')
+            });
             
             // Show loading modal
             $('#emailRecipient').text(`${recipientName} (${recipientEmail})`);
@@ -484,6 +493,8 @@
             // Create FormData for AJAX request
             const formData = new FormData(form[0]);
             
+            console.log('Sending AJAX request to:', form.attr('action'));
+            
             // Send AJAX request
             currentEmailRequest = $.ajax({
                 url: form.attr('action'),
@@ -492,9 +503,13 @@
                 processData: false,
                 contentType: false,
                 headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json'
                 },
                 success: function(response) {
+                    console.log('AJAX Success:', response);
+                    
                     // Complete progress
                     $('#emailProgress').css('width', '100%').removeClass('progress-bar-animated');
                     
@@ -506,6 +521,8 @@
                         if (window.PushNotifications) {
                             const message = `<i class="fas fa-check-circle me-2"></i>Email sent successfully to ${recipientName} (${recipientEmail})!`;
                             window.PushNotifications.show('success', message, true);
+                        } else {
+                            console.error('PushNotifications not available');
                         }
                         
                         // Refresh page after short delay to update status
@@ -514,7 +531,9 @@
                         }, 2000);
                     }, 500);
                 },
-                error: function(xhr, status) {
+                error: function(xhr, status, error) {
+                    console.log('AJAX Error:', {xhr, status, error, responseText: xhr.responseText});
+                    
                     // Hide modal
                     $('#emailLoadingModal').modal('hide');
                     

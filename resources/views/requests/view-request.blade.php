@@ -477,11 +477,11 @@
                                             </form>
                                             
                                             <button type="button" class="action-btn action-btn-primary" id="sendResponseBtn2" data-bs-toggle="modal" data-bs-target="#sendResponseModal">
-                                                <i class="fas fa-paper-plane"></i>
+                                                <i class="fas fa-redo"></i>
                                                 @if($request->request_type == 'user')
-                                                    Send Response to User
+                                                    Resend Response to User
                                                 @else
-                                                    Send Response to Client
+                                                    Resend Response to Client
                                                 @endif
                                             </button>
                                         </div>
@@ -490,6 +490,31 @@
                                             <i class="fas fa-check-circle"></i>
                                             Response sent on {{ $request->response_sent_at ? \Carbon\Carbon::parse($request->response_sent_at)->format('M d, Y') : 'N/A' }}
                                         </div>
+                                        
+                                        @if(auth()->user()->role !== 'super_admin')
+                                        <div class="action-buttons mt-3">
+                                            <form action="{{ route('requests.send-email', $request->id) }}" method="POST" style="flex: 1; margin: 0;">
+                                                @csrf
+                                                <button type="submit" class="action-btn action-btn-warning" id="resendEmailBtn3">
+                                                    <i class="fas fa-redo"></i>
+                                                    @if($request->request_type == 'user')
+                                                        Resend Email to User
+                                                    @else
+                                                        Resend Email to Client
+                                                    @endif
+                                                </button>
+                                            </form>
+                                            
+                                            <button type="button" class="action-btn action-btn-primary" id="sendResponseBtn3" data-bs-toggle="modal" data-bs-target="#sendResponseModal">
+                                                <i class="fas fa-redo"></i>
+                                                @if($request->request_type == 'user')
+                                                    Resend Response to User
+                                                @else
+                                                    Resend Response to Client
+                                                @endif
+                                            </button>
+                                        </div>
+                                        @endif
                                     @endif
                                 @endif
                             </div>
@@ -799,7 +824,7 @@
     <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="{{ asset('js/push-notifications.js') }}?v={{ time() }}"></script>
+    <script src="{{ asset('js/push-notifications-global.js') }}?v={{ time() }}"></script>
     <!-- Add your JavaScript for print functionality and other interactions here -->
     <script>
         // Handle push notification auto-dismiss and close button
@@ -872,13 +897,13 @@
             let currentEmailRequest = null;
             
             // Handle email sending with loading modal
-            $('#sendEmailBtn, #resendEmailBtn').on('click', function(e) {
+            $('#sendEmailBtn, #resendEmailBtn, #resendEmailBtn3').on('click', function(e) {
                 e.preventDefault();
                 
                 const form = $(this).closest('form');
                 const recipientEmail = '{{ $request->email }}';
                 const recipientName = '{{ $request->name }}';
-                const isResend = $(this).attr('id') === 'resendEmailBtn';
+                const isResend = $(this).attr('id') === 'resendEmailBtn' || $(this).attr('id') === 'resendEmailBtn3';
                 
                 // Show loading modal
                 $('#emailRecipient').text(`${recipientName} (${recipientEmail})`);

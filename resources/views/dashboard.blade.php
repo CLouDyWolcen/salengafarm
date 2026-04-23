@@ -209,8 +209,71 @@
             </div>
             <!-- Main Content Row - Better organized with consistent heights -->
             <div class="main-content-row">
-                <!-- Left Column - Low Stock Alerts -->
+                <!-- Left Column - Analytics Summary and Low Stock Alerts -->
                 <div class="col-md-3">
+                    <!-- Analytics Summary -->
+                    <div class="card analytics-summary-card">
+                        <div class="card-header">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="card-title mb-0 fs-6">
+                                    <i class="fas fa-chart-line me-2 text-success"></i>Analytics Summary
+                                </h5>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <div class="text-center">
+                                        <div class="h6 mb-1 text-success">
+                                            @php
+                                                $totalRevenue = count($salesByCategory) > 0 ? array_sum(array_column($salesByCategory, 'revenue')) : 0;
+                                            @endphp
+                                            ₱{{ number_format($totalRevenue, 0) }}
+                                        </div>
+                                        <small class="text-muted">Total Revenue</small>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="text-center">
+                                        <div class="h6 mb-1 text-info">
+                                            @php
+                                                $totalQuantity = count($salesByCategory) > 0 ? array_sum(array_column($salesByCategory, 'quantity')) : 0;
+                                            @endphp
+                                            {{ $totalQuantity }}
+                                        </div>
+                                        <small class="text-muted">Plants Sold</small>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="text-center">
+                                        <div class="h6 mb-1 text-warning">
+                                            @php
+                                                if (count($salesByCategory) > 0) {
+                                                    $topCategory = collect($salesByCategory)->sortByDesc('revenue')->keys()->first();
+                                                    echo $topCategory ? ucfirst($topCategory) : 'N/A';
+                                                } else {
+                                                    echo 'N/A';
+                                                }
+                                            @endphp
+                                        </div>
+                                        <small class="text-muted">Top Category</small>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="text-center">
+                                        <div class="h6 mb-1 text-primary">
+                                            @php
+                                                $avgTurnover = count($inventoryTurnover) > 0 ? array_sum($inventoryTurnover) / count($inventoryTurnover) : 0;
+                                                echo number_format($avgTurnover, 1) . 'x';
+                                            @endphp
+                                        </div>
+                                        <small class="text-muted">Avg Turnover</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
                     <!-- Low Stock Alerts -->
                     <div class="card low-stock-card">
                         <div class="card-header">
@@ -258,20 +321,64 @@
                                             <i class="fas fa-chart-bar me-1 text-success"></i> Sales by Category
                                         </button>
                                     </li>
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link" id="trends-tab" data-bs-toggle="tab" data-bs-target="#trends-chart" type="button" role="tab" aria-controls="trends-chart" aria-selected="false">
+                                            <i class="fas fa-chart-line me-1 text-info"></i> Sales Trends
+                                        </button>
+                                    </li>
                                 </ul>
                             </div>
                         </div>
                         <div class="card-body tab-content">
                             <div class="tab-pane fade show active" id="stock-chart" role="tabpanel" aria-labelledby="stock-tab">
-                                <div class="d-flex align-items-center justify-content-center h-100">
+                                <div class="d-flex align-items-center justify-content-center" style="height: 300px;">
                             <canvas id="stockDistributionChart"></canvas>
                                 </div>
                             </div>
                             <div class="tab-pane fade" id="sales-chart" role="tabpanel" aria-labelledby="sales-tab">
-                                <div class="d-flex align-items-center justify-content-center h-100">
+                                <!-- Analytics Controls -->
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <select class="form-select form-select-sm" id="salesPeriod">
+                                            <option value="7">Last 7 days</option>
+                                            <option value="30" selected>Last 30 days</option>
+                                            <option value="90">Last 90 days</option>
+                                            <option value="365">Last year</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <select class="form-select form-select-sm" id="salesType">
+                                            <option value="quantity">By Quantity</option>
+                                            <option value="revenue">By Revenue</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-center justify-content-center" style="height: 300px;">
                                         <canvas id="salesDistributionChart"></canvas>
                                         </div>
                                 </div>
+                            <div class="tab-pane fade" id="trends-chart" role="tabpanel" aria-labelledby="trends-tab">
+                                <!-- Trends Controls -->
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <select class="form-select form-select-sm" id="trendsPeriod">
+                                            <option value="7">Last 7 days</option>
+                                            <option value="30" selected>Last 30 days</option>
+                                            <option value="90">Last 90 days</option>
+                                            <option value="365">Last year</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <select class="form-select form-select-sm" id="trendsMetric">
+                                            <option value="quantity">Daily Quantity</option>
+                                            <option value="revenue">Daily Revenue</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-center justify-content-center" style="height: 300px;">
+                                    <canvas id="salesTrendsChart"></canvas>
+                                </div>
+                            </div>
                             </div>
                         </div>
                     </div>
@@ -304,6 +411,7 @@
                             </div>
                         </div>
                     </div>
+                    
                     <!-- Recent Plants -->
                     <div class="card recent-plants-card">
                         <div class="card-header">
@@ -654,14 +762,15 @@
             // Initialize stock chart using the function from dashboard.js
             initStockChart('stockDistributionChart', {
                 labels: {!! json_encode(array_keys($stockByCategory)) !!},
-                values: {!! json_encode(array_values($stockByCategory)) !!}
+                values: {!! json_encode(array_column($stockByCategory, 'quantity')) !!}
             });
             
             // Initialize sales distribution chart if data exists
-            @if(count($salesByPlant) > 0)
+            @if(count($salesByCategory) > 0)
             initSalesChart('salesDistributionChart', {
-                labels: {!! json_encode(array_keys($salesByPlant)) !!},
-                values: {!! json_encode(array_values($salesByPlant)) !!}
+                labels: {!! json_encode(array_keys($salesByCategory)) !!},
+                values: {!! json_encode(array_column($salesByCategory, 'quantity_percentage')) !!},
+                type: 'quantity'
             });
             @endif
 

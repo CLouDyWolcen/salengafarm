@@ -44,6 +44,14 @@ class ClientRequestController extends Controller
     {
         $request = PlantRequest::findOrFail($id);
         
+        // Add debugging
+        Log::info('SendEmail method called', [
+            'request_id' => $id,
+            'is_ajax' => request()->ajax(),
+            'expects_json' => request()->expectsJson(),
+            'headers' => request()->headers->all()
+        ]);
+        
         // Determine which tab to return to based on request_type
         $activeTab = ($request->request_type === 'user') ? 'user-requests' : 'client-requests';
         
@@ -58,22 +66,16 @@ class ClientRequestController extends Controller
             $recipientType = ($request->request_type == 'user') ? 'User' : 'Client';
             $subject = "Plant Request #{$request->id} - Quotation from Salenga Farm";
             
-            // Attempt to send email using Brevo API
+            // Attempt to send email using Laravel Mail (Gmail SMTP)
             $emailSent = false;
             $errorMessage = '';
             
             try {
-                Log::info('Attempting to send email via Brevo API', [
+                Log::info('Attempting to send email via Gmail SMTP', [
                     'request_id' => $request->id,
                     'recipient' => $request->email,
                     'type' => $recipientType
                 ]);
-                
-                $brevoService = new BrevoEmailService();
-                $emailView = view('emails.plant-request', [
-                    'request' => $request,
-                    'recipientType' => $recipientType
-                ])->render();
                 
                 // Attach PDF only for client requests (not user requests)
                 $attachmentPath = null;
@@ -81,25 +83,24 @@ class ClientRequestController extends Controller
                     $attachmentPath = $request->pdf_path;
                 }
                 
-                $result = $brevoService->sendEmail(
-                    $request->email,
-                    $subject,
-                    $emailView,
-                    null,
-                    null,
-                    $attachmentPath
-                );
+                // Send email using Laravel Mail
+                Mail::send('emails.plant-request', [
+                    'request' => $request,
+                    'recipientType' => $recipientType
+                ], function ($message) use ($request, $subject, $attachmentPath) {
+                    $message->to($request->email)
+                            ->subject($subject);
+                    
+                    // Attach PDF for client requests
+                    if ($attachmentPath && Storage::exists($attachmentPath)) {
+                        $message->attach(Storage::path($attachmentPath));
+                    }
+                });
                 
-                $emailSent = $result['success'];
-                if (!$emailSent) {
-                    $errorMessage = $result['error'] ?? 'Unknown error';
-                }
-                
-                Log::info('Brevo API email result', [
+                $emailSent = true;
+                Log::info('Gmail SMTP email sent successfully', [
                     'request_id' => $request->id,
                     'recipient' => $request->email,
-                    'success' => $emailSent,
-                    'messageId' => $result['messageId'] ?? null,
                     'has_pdf' => !empty($attachmentPath)
                 ]);
                 
@@ -107,7 +108,7 @@ class ClientRequestController extends Controller
                 $emailSent = false;
                 $errorMessage = $mailException->getMessage();
                 
-                Log::error('Brevo API email failed', [
+                Log::error('Gmail SMTP email sending failed', [
                     'error' => $mailException->getMessage(),
                     'trace' => $mailException->getTraceAsString(),
                     'request_id' => $request->id,
@@ -118,7 +119,7 @@ class ClientRequestController extends Controller
             // Provide appropriate feedback based on email sending result
             if ($emailSent) {
                 // Only update status if email was actually sent
-                $request->status = 'responded';
+                $request->status = 'sent';
                 $request->save();
                 
                 // Create notification for the user/client if they have an account
@@ -134,6 +135,17 @@ class ClientRequestController extends Controller
                     ]);
                 }
                 
+                // Check if this is an AJAX request
+                if (request()->expectsJson() || request()->ajax()) {
+                    Log::info('Returning JSON response for successful email');
+                    return response()->json([
+                        'success' => true,
+                        'message' => "Email sent successfully to {$recipientType} ({$request->email})!",
+                        'activeTab' => $activeTab
+                    ]);
+                }
+                
+                Log::info('Returning redirect response for successful email');
                 return redirect()->route('requests.index')->with('success', "Email sent successfully to {$recipientType} ({$request->email})!")->with('activeTab', $activeTab);
             } else {
                 // Email failed, provide detailed error message
@@ -146,7 +158,20 @@ class ClientRequestController extends Controller
                     $errorDetails = ' Please verify your email configuration and credentials.';
                 }
                 
-                return redirect()->route('requests.index')->with('error', "Failed to send email to {$recipientType} ({$request->email}).{$errorDetails}")->with('activeTab', $activeTab);
+                $errorMessage = "Failed to send email to {$recipientType} ({$request->email}).{$errorDetails}";
+                
+                // Check if this is an AJAX request
+                if (request()->expectsJson() || request()->ajax()) {
+                    Log::info('Returning JSON error response');
+                    return response()->json([
+                        'success' => false,
+                        'message' => $errorMessage,
+                        'activeTab' => $activeTab
+                    ], 422);
+                }
+                
+                Log::info('Returning redirect error response');
+                return redirect()->route('requests.index')->with('error', $errorMessage)->with('activeTab', $activeTab);
             }
             
         } catch (\Exception $e) {
@@ -155,7 +180,18 @@ class ClientRequestController extends Controller
                 'trace' => $e->getTraceAsString()
             ]);
             
-            return redirect()->route('requests.index')->with('error', 'Failed to process email request. Please try again.')->with('activeTab', $activeTab);
+            $errorMessage = 'Failed to process email request. Please try again.';
+            
+            // Check if this is an AJAX request
+            if (request()->expectsJson() || request()->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $errorMessage,
+                    'activeTab' => $activeTab
+                ], 500);
+            }
+            
+            return redirect()->route('requests.index')->with('error', $errorMessage)->with('activeTab', $activeTab);
         }
     }
 
@@ -460,6 +496,35 @@ class ClientRequestController extends Controller
         try {
             $request = PlantRequest::findOrFail($id);
             
+            // Authorization: Allow if user is admin/manager/super_admin OR if it's their own request
+            $user = auth()->user();
+            $isAdminOrManager = in_array($user->role, ['admin', 'manager', 'super_admin']);
+            
+            // More flexible email matching (case insensitive)
+            $userEmail = strtolower(trim($user->email));
+            $requestEmail = strtolower(trim($request->email));
+            $isOwnRequest = $userEmail === $requestEmail;
+            
+            Log::info('Delete request authorization check', [
+                'user_id' => $user->id,
+                'user_email' => $userEmail,
+                'user_role' => $user->role,
+                'request_id' => $request->id,
+                'request_email' => $requestEmail,
+                'is_admin_or_manager' => $isAdminOrManager,
+                'is_own_request' => $isOwnRequest
+            ]);
+            
+            if (!$isAdminOrManager && !$isOwnRequest) {
+                Log::warning('Unauthorized delete attempt', [
+                    'user_id' => $user->id,
+                    'user_email' => $userEmail,
+                    'request_id' => $request->id,
+                    'request_email' => $requestEmail
+                ]);
+                abort(403, 'Unauthorized to delete this request.');
+            }
+            
             // Determine which tab to return to based on request_type
             $activeTab = ($request->request_type === 'user') ? 'user-requests' : 'client-requests';
             
@@ -470,7 +535,17 @@ class ClientRequestController extends Controller
             
             $request->delete();
             
-            return redirect()->route('requests.index')->with('success', 'Request deleted successfully.')->with('activeTab', $activeTab);
+            Log::info('Request deleted successfully', [
+                'request_id' => $request->id,
+                'deleted_by' => $user->id
+            ]);
+            
+            // Redirect based on user role
+            if ($isAdminOrManager) {
+                return redirect()->route('requests.index')->with('success', 'Request deleted successfully.')->with('activeTab', $activeTab);
+            } else {
+                return redirect()->route('dashboard.user')->with('success', 'Inquiry deleted successfully.');
+            }
         } catch (\Exception $e) {
             Log::error('Failed to delete request: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Failed to delete request. Please try again.');
@@ -789,6 +864,29 @@ class ClientRequestController extends Controller
             $request->response_sent_at = now();
             $request->responded_by = auth()->id();
             $request->save();
+            
+            // Send email notification to user
+            try {
+                $subject = "Response to Your Plant Inquiry #{$request->id} - Salenga Farm";
+                
+                Mail::send('emails.inquiry-response', [
+                    'request' => $request,
+                    'viewLink' => url('/dashboard/user')
+                ], function ($message) use ($request, $subject) {
+                    $message->to($request->email)
+                            ->subject($subject);
+                });
+                
+                Log::info('Response email sent successfully', [
+                    'request_id' => $request->id,
+                    'recipient' => $request->email
+                ]);
+            } catch (\Exception $e) {
+                Log::error('Failed to send response email', [
+                    'request_id' => $request->id,
+                    'error' => $e->getMessage()
+                ]);
+            }
             
             // Create in-app notification for user
             $user = User::where('email', $request->email)->first();

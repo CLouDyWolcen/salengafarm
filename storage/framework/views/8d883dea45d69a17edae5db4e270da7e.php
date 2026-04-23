@@ -135,41 +135,334 @@
         }
     </script>
     <style >
-        /* RFQ Form Table Styles */
-        #rfqFormModal .modal-dialog {
-            max-width: 90%;
-            margin: 1.75rem auto;
+        /* Custom RFQ Modal Styles - Optimized for Screen Space */
+        .custom-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 9999;
+            overflow-y: auto;
+            padding: 10px;
+            box-sizing: border-box;
         }
 
-        #rfqFormModal .modal-content {
-            max-height: 90vh;
+        .custom-modal-container {
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            min-height: calc(100vh - 20px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 0;
+        }
+
+        .custom-modal-content {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-height: 95vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .custom-modal-header {
+            background-color: #198754;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px 8px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .custom-modal-title {
+            margin: 0;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        .custom-close-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.3rem;
+            cursor: pointer;
+            padding: 0;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+
+        .custom-close-btn:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .custom-modal-body {
+            padding: 15px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .custom-modal-footer {
+            padding: 10px 15px;
+            border-top: 1px solid #dee2e6;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        /* RFQ Form Specific Styles - More Compact Layout */
+        .rfq-header {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .rfq-header h2 {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin: 0 0 3px 0;
+            color: #333;
+        }
+
+        .rfq-header h3 {
+            font-size: 1rem;
+            font-weight: normal;
+            margin: 0;
+            color: #666;
+        }
+
+        .rfq-info-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .rfq-card {
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            margin-bottom: 15px;
+        }
+
+        .rfq-card-header {
+            background-color: #f8f9fa;
+            padding: 8px 12px;
+            border-bottom: 1px solid #dee2e6;
+            border-radius: 6px 6px 0 0;
+        }
+
+        .rfq-card-header h5 {
+            margin: 0;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .rfq-card-body {
+            padding: 12px;
+        }
+
+        .rfq-info-table {
+            width: 100%;
+        }
+
+        .rfq-info-row {
+            display: flex;
+            margin-bottom: 8px;
+        }
+
+        .rfq-info-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .rfq-info-label {
+            font-weight: bold;
+            min-width: 65px;
+            margin-right: 12px;
+            color: #333;
+            font-size: 0.85rem;
+        }
+
+        .rfq-info-value {
+            flex: 1;
+            color: #555;
+            line-height: 1.3;
+            font-size: 0.85rem;
+        }
+
+        .rfq-details-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .rfq-detail-item {
+            margin-bottom: 10px;
+        }
+
+        .rfq-detail-label {
+            font-weight: bold;
+            margin-bottom: 4px;
+            color: #333;
+            font-size: 0.85rem;
+        }
+
+        .rfq-detail-value {
+            color: #555;
+            line-height: 1.3;
+            font-size: 0.85rem;
+        }
+
+        .rfq-table-container {
+            padding: 0 !important;
+        }
+
+        .rfq-table-wrapper {
+            overflow-x: auto;
+            border: 1px solid #dee2e6;
+            max-height: 250px;
             overflow-y: auto;
         }
 
-        #rfqFormModal .table {
+        .rfq-table {
             width: 100%;
-            margin-bottom: 1rem;
-            color: #212529;
             border-collapse: collapse;
+            margin: 0;
+            font-size: 0.8rem;
         }
 
-        #rfqFormModal .table-bordered {
-            border: 1px solid #dee2e6;
-        }
-
-        #rfqFormModal .table th,
-        #rfqFormModal .table td {
-            padding: 0.5rem;
-            vertical-align: middle;
-            border: 1px solid #dee2e6;
-        }
-
-        #rfqFormModal .table thead th {
-            vertical-align: middle;
+        .rfq-table th {
             background-color: #f8f9fa;
-            font-weight: 500;
+            padding: 8px 6px;
             text-align: center;
-            border-bottom: 2px solid #dee2e6;
+            font-weight: 600;
+            border: 1px solid #dee2e6;
+            color: #333;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .rfq-table td {
+            padding: 8px 6px;
+            border: 1px solid #dee2e6;
+            vertical-align: middle;
+            text-align: center;
+        }
+
+        .rfq-table input,
+        .rfq-table textarea {
+            width: 100%;
+            padding: 4px 6px;
+            border: 1px solid #ced4da;
+            border-radius: 3px;
+            font-size: 0.8rem;
+            box-sizing: border-box;
+        }
+
+        .rfq-table textarea {
+            min-height: 40px;
+            resize: vertical;
+        }
+
+        .rfq-table input:focus,
+        .rfq-table textarea:focus {
+            outline: none;
+            border-color: #198754;
+            box-shadow: 0 0 0 2px rgba(25, 135, 84, 0.25);
+        }
+
+        .rfq-terms-list {
+            padding-left: 18px;
+            margin: 0;
+        }
+
+        .rfq-terms-list li {
+            margin-bottom: 8px;
+            line-height: 1.4;
+            color: #555;
+            font-size: 0.85rem;
+        }
+
+        .rfq-terms-list li:last-child {
+            margin-bottom: 0;
+        }
+
+        .rfq-btn {
+            padding: 6px 14px;
+            border: none;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .rfq-btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .rfq-btn-secondary:hover {
+            background-color: #5a6268;
+        }
+
+        .rfq-btn-primary {
+            background-color: #198754;
+            color: white;
+        }
+
+        .rfq-btn-primary:hover {
+            background-color: #157347;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .custom-modal-container {
+                padding: 5px 0;
+            }
+
+            .custom-modal-header,
+            .custom-modal-body,
+            .custom-modal-footer {
+                padding-left: 12px;
+                padding-right: 12px;
+            }
+
+            .rfq-info-section {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .rfq-details-grid {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+
+            .rfq-table th,
+            .rfq-table td {
+                padding: 6px 4px;
+                font-size: 0.75rem;
+            }
+
+            .rfq-table-wrapper {
+                max-height: 200px;
+            }
+        }
+            font-size: 0.85rem;
         }
 
         #rfqFormModal .table-responsive {
@@ -180,16 +473,25 @@
         }
 
         #rfqFormModal .form-control-sm {
-            height: calc(1.5em + 0.5rem + 2px);
-            padding: 0.25rem 0.5rem;
-            font-size: 0.875rem;
-            line-height: 1.5;
-            border-radius: 0.2rem;
+            height: calc(1.8em + 0.75rem + 2px);
+            padding: 0.375rem 0.5rem;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            border-radius: 0.25rem;
             width: 100%;
         }
 
-        #rfqFormModal .section {
-            margin-bottom: 1.5rem;
+        #rfqFormModal .table-no-border td {
+            border: none;
+            padding: 0.5rem 0.75rem;
+        }
+
+        #rfqFormModal .row.mb-4 {
+            margin-bottom: 1rem !important;
+        }
+
+        #rfqFormModal .row.mb-3 {
+            margin-bottom: 0.75rem !important;
         }
 
         /* Extra styles for the modal form inputs */
@@ -579,7 +881,14 @@
                             <div class="notification-dropdown" id="homeNotificationDropdown">
                                 <div class="notification-header">
                                     <h6><i class="fas fa-bell me-2"></i>Notifications</h6>
-                                    <a href="#" class="mark-all-read">Mark all read</a>
+                                    <div class="d-flex gap-2">
+                                        <a href="#" class="mark-all-read" title="Mark all as read">
+                                            <i class="fas fa-check-double"></i>
+                                        </a>
+                                        <a href="#" class="delete-all-notifications" title="Delete all">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </div>
                                 </div>
                                 <div class="notification-list">
                                     <div class="no-notifications">
@@ -1366,114 +1675,113 @@
         </div>
     </div>
 
-    <!-- RFQ Form Modal -->
-    <div class="modal fade" id="rfqFormModal" tabindex="-1" aria-labelledby="rfqFormModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-xl">
-            <div class="modal-content">
-                <div class="modal-header bg-success text-white">
-                    <h5 class="modal-title" id="rfqFormModalLabel">
+    <!-- Custom RFQ Form Modal -->
+    <div class="custom-modal-overlay" id="rfqFormModal" style="display: none;">
+        <div class="custom-modal-container">
+            <div class="custom-modal-content">
+                <div class="custom-modal-header">
+                    <h5 class="custom-modal-title">
                         <i class="fas fa-file-invoice me-2"></i>Request for Quotation (RFQ)
                     </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="custom-close-btn" onclick="closeRfqModal()" aria-label="Close">
+                        <i class="fas fa-times"></i>
+                    </button>
                 </div>
-                <div class="modal-body p-3">
+                <div class="custom-modal-body">
                     <div id="rfqFormContainer" class="rfq-form-container">
                         <!-- RFQ Form Content -->
-                        <div class="text-center mb-4">
+                        <div class="rfq-header">
                             <h2>SALENGA FARM</h2>
                             <h3>REQUEST FOR QUOTATION (RFQ)</h3>
                         </div>
 
-                        <div class="row mb-4">
+                        <div class="rfq-info-section">
                         <!-- Vendor Information Section -->
-                            <div class="col-md-6">
-                                <div class="card">
-                                    <div class="card-header bg-light">
-                                        <h5 class="mb-0">VENDOR INFORMATION</h5>
+                            <div class="rfq-info-left">
+                                <div class="rfq-card">
+                                    <div class="rfq-card-header">
+                                        <h5>VENDOR INFORMATION</h5>
                                     </div>
-                                    <div class="card-body">
-                            <table class="table table-no-border">
-                                <tr>
-                                    <td class="fw-bold" style="width:100px;">Company:</td>
-                                    <td>
+                                    <div class="rfq-card-body">
+                            <div class="rfq-info-table">
+                                <div class="rfq-info-row">
+                                    <div class="rfq-info-label">Company:</div>
+                                    <div class="rfq-info-value">
                                         ESTHER LIBRES SALENGA ESTHER'S<br>
                                         FLOWER GARDEN AND LANDSCAPING
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="fw-bold">Address:</td>
-                                    <td>
+                                    </div>
+                                </div>
+                                <div class="rfq-info-row">
+                                    <div class="rfq-info-label">Address:</div>
+                                    <div class="rfq-info-value">
                                         INFRONT OF FATIMA VILLAGE SITIO<br>
                                         MCL.DAVAO CITY.PH
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="fw-bold">TIN:</td>
-                                    <td>47496058600000</td>
-                                </tr>
-                                <tr>
-                                    <td class="fw-bold">E-mail:</td>
-                                    <td>salengafarm@example.com</td>
-                                </tr>
-                            </table>
+                                    </div>
+                                </div>
+                                <div class="rfq-info-row">
+                                    <div class="rfq-info-label">TIN:</div>
+                                    <div class="rfq-info-value">47496058600000</div>
+                                </div>
+                                <div class="rfq-info-row">
+                                    <div class="rfq-info-label">E-mail:</div>
+                                    <div class="rfq-info-value">salengafarm@example.com</div>
+                                </div>
+                            </div>
                                     </div>
                                 </div>
                         </div>
 
                         <!-- RFQ Details Section -->
-                                <div class="col-md-6">
-                                <div class="card">
-                                    <div class="card-header bg-light">
-                                        <h5 class="mb-0">REQUEST DETAILS</h5>
+                                <div class="rfq-info-right">
+                                <div class="rfq-card">
+                                    <div class="rfq-card-header">
+                                        <h5>REQUEST DETAILS</h5>
                                 </div>
-                                    <div class="card-body">
-                                        <div class="row mb-3">
-                                <div class="col-md-6">
-                                                <p class="mb-1"><strong>RFQ Date:</strong></p>
-                                                <p id="rfqDate" class="mb-3"></p>
+                                    <div class="rfq-card-body">
+                                        <div class="rfq-details-grid">
+                                <div class="rfq-detail-item">
+                                                <div class="rfq-detail-label">RFQ Date:</div>
+                                                <div id="rfqDate" class="rfq-detail-value"></div>
                                 </div>
-                                            <div class="col-md-6">
-                                                <p class="mb-1"><strong>RFQ Due Date:</strong></p>
-                                                <p id="rfqDueDate" class="mb-3"></p>
+                                            <div class="rfq-detail-item">
+                                                <div class="rfq-detail-label">RFQ Due Date:</div>
+                                                <div id="rfqDueDate" class="rfq-detail-value"></div>
                             </div>
-                        </div>
-
-                            <div class="row">
-                                <div class="col-md-6">
-                                                <p class="mb-1"><strong>Buyer Name:</strong></p>
-                                                <p id="buyerName" class="mb-0"></p>
+                                <div class="rfq-detail-item">
+                                                <div class="rfq-detail-label">Buyer Name:</div>
+                                                <div id="buyerName" class="rfq-detail-value"></div>
                                 </div>
-                                <div class="col-md-6">
-                                                <p class="mb-1"><strong>Buyer Email:</strong></p>
-                                                <p id="buyerEmail" class="mb-0"></p>
+                                <div class="rfq-detail-item">
+                                                <div class="rfq-detail-label">Buyer Email:</div>
+                                                <div id="buyerEmail" class="rfq-detail-value"></div>
                                             </div>
-                                        </div>
+                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Items Table -->
-                        <div class="card mb-3">
-                            <div class="card-header bg-light">
-                                <h5 class="mb-0">REQUESTED PLANTS</h5>
+                        <div class="rfq-card">
+                            <div class="rfq-card-header">
+                                <h5>REQUESTED PLANTS</h5>
                             </div>
-                            <div class="card-body p-0">
-                                <div class="table-responsive">
-                                    <table class="table table-bordered mb-0">
-                                        <thead class="table-light">
+                            <div class="rfq-card-body rfq-table-container">
+                                <div class="rfq-table-wrapper">
+                                    <table class="rfq-table">
+                                        <thead>
                                     <tr>
-                                                <th class="text-center" style="width: 40px;">#</th>
-                                                <th class="text-center" style="width: 60px;">Qty</th>
+                                                <th style="width: 40px;">#</th>
+                                                <th style="width: 60px;">Qty</th>
                                                 <th style="min-width: 150px;">Plant Name</th>
                                                 <th style="width: 80px;">Code</th>
-                                                <th class="text-center" style="width: 70px;">H(mm)</th>
-                                                <th class="text-center" style="width: 70px;">S(mm)</th>
-                                                <th class="text-center" style="width: 70px;">Sp(mm)</th>
+                                                <th style="width: 70px;">H(mm)</th>
+                                                <th style="width: 70px;">S(mm)</th>
+                                                <th style="width: 70px;">Sp(mm)</th>
                                                 <th style="width: 120px;">Remarks</th>
-                                                <th class="text-center" style="width: 90px;">Unit ₱</th>
-                                                <th class="text-center" style="width: 90px;">Total ₱</th>
-                                                <th class="text-center" style="width: 80px;">Avail.</th>
+                                                <th style="width: 90px;">Unit ₱</th>
+                                                <th style="width: 90px;">Total ₱</th>
+                                                <th style="width: 80px;">Avail.</th>
                                     </tr>
                                 </thead>
                                 <tbody id="rfqItemsTable">
@@ -1485,22 +1793,22 @@
                         </div>
 
                         <!-- Vendor Instructions -->
-                        <div class="card mb-3">
-                            <div class="card-header bg-light">
-                                <h5 class="mb-0">VENDOR INSTRUCTIONS</h5>
+                        <div class="rfq-card">
+                            <div class="rfq-card-header">
+                                <h5>VENDOR INSTRUCTIONS</h5>
                             </div>
-                            <div class="card-body">
-                                <p class="mb-0">Specify brand/made and availability or quotation will not be honored. Vendor's proposal in response to this RFQ do not need to submit such documentation as part of this RFQ.</p>
+                            <div class="rfq-card-body">
+                                <p>Specify brand/made and availability or quotation will not be honored. Vendor's proposal in response to this RFQ do not need to submit such documentation as part of this RFQ.</p>
                             </div>
                         </div>
 
                         <!-- Terms and Conditions -->
-                        <div class="card">
-                            <div class="card-header bg-light">
-                                <h5 class="mb-0">TERMS AND CONDITIONS</h5>
+                        <div class="rfq-card">
+                            <div class="rfq-card-header">
+                                <h5>TERMS AND CONDITIONS</h5>
                             </div>
-                            <div class="card-body">
-                                <ol class="mb-0">
+                            <div class="rfq-card-body">
+                                <ol class="rfq-terms-list">
                                 <li>Please provide your best quotation for the items listed above.</li>
                                 <li>Quotation should include pricing, availability, and delivery timeline.</li>
                                 <li>All prices should be valid for at least 30 days from the date of quotation.</li>
@@ -1510,9 +1818,9 @@
                         </div>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-success" id="submitRequest">
+                <div class="custom-modal-footer">
+                    <button type="button" class="rfq-btn rfq-btn-secondary" onclick="closeRfqModal()">Close</button>
+                    <button type="button" class="rfq-btn rfq-btn-primary" id="submitRequest">
                         <i class="fas fa-paper-plane me-1"></i>Send Request
                     </button>
                 </div>
@@ -2245,8 +2553,7 @@ console.log('Loading modal form submission handler');
                             LoadingManager.hide();
 
                             // Show RFQ form modal
-                            const rfqModal = new bootstrap.Modal(document.getElementById('rfqFormModal'));
-                            rfqModal.show();
+                            showRfqModal();
 
                             // Get today's date and date 2 weeks from now
                             const today = new Date();
@@ -2411,8 +2718,7 @@ console.log('Loading modal form submission handler');
                         .then(data => {
                                     if (data.message) {
                                         // Close the RFQ modal
-                            const rfqModal = bootstrap.Modal.getInstance(document.getElementById('rfqFormModal'));
-                                rfqModal.hide();
+                            closeRfqModal();
 
                                         // Show success message popup
                                         Swal.fire({

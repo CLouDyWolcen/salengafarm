@@ -3,6 +3,11 @@
  * For Salenga Farm Plant Inventory System
  */
 
+// Global chart instances
+let stockChart = null;
+let salesChart = null;
+let trendsChart = null;
+
 document.addEventListener('DOMContentLoaded', function() {
     // Setup sidebar toggle for mobile
     setupSidebarToggle();
@@ -21,6 +26,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Make list items in low stock alerts and recent plants consistent
     equalizeListItems();
+    
+    // Setup analytics controls
+    setupAnalyticsControls();
     
     // Listen for window resize to maintain proper sizing
     window.addEventListener('resize', handleResize);
@@ -222,23 +230,44 @@ function handleResize() {
 function initStockChart(chartId, data) {
     const ctx = document.getElementById(chartId).getContext('2d');
     
-    // Use natural color scheme
-    const chartColors = [
-        '#2a9d4e',  // Primary green
-        '#6cbf84',  // Light green
-        '#5cb270',  // Leaf accent
-        '#8b6f47',  // Earthy brown
-        '#d7c9b7',  // Light brown
-        '#f6e58d',  // Soft yellow
-        '#f8f5f0'   // Soft cream
+    // Updated color scheme based on user specifications
+    const categoryColors = {
+        'shrub': '#2E7D32',      // Dark Green
+        'tree': '#1B5E20',       // Deep Green
+        'grass': '#81C784',      // Light Green
+        'veggies': '#FB8C00',    // Orange
+        'fruits': '#E53935',     // Red
+        'herbs': '#66BB6A',      // Mint Green
+        'palm': '#C0CA33',       // Yellow-Green
+        'bamboo': '#6D8B74',     // Muted Green
+        'fertilizer': '#6D4C41', // Brown
+        'flowers': '#ff5722',    // Deep Orange-Red (fallback)
+        'seeds': '#37474f',      // Dark Grey (fallback)
+        'tools': '#00bcd4'       // Cyan (fallback)
+    };
+    
+    // Map colors to actual categories in the data
+    const chartColors = data.labels.map(label => {
+        const lowerLabel = label.toLowerCase();
+        return categoryColors[lowerLabel] || '#2E7D32'; // Default to dark green if category not found
+    });
+    
+    // Fallback colors if we need more than defined categories
+    const fallbackColors = [
+        '#4CAF50',  // Material Green
+        '#FF9800',  // Material Orange
+        '#9C27B0',  // Material Purple
+        '#2196F3',  // Material Blue
+        '#FFC107',  // Material Amber
+        '#795548'   // Material Brown
     ];
     
-    // Ensure we have enough colors for all categories
+    // Add fallback colors if needed
     while (chartColors.length < data.labels.length) {
-        chartColors.push(...chartColors);
+        chartColors.push(fallbackColors[chartColors.length % fallbackColors.length]);
     }
     
-    return new Chart(ctx, {
+    stockChart = new Chart(ctx, {
         type: 'doughnut',
         data: {
             labels: data.labels,
@@ -296,6 +325,8 @@ function initStockChart(chartId, data) {
             }
         }
     });
+    
+    return stockChart;
 }
 
 /**
@@ -333,7 +364,7 @@ function showAlert(message, type = 'success', duration = 3000) {
  * Initializes and configures the sales distribution chart
  * 
  * @param {string} chartId - The ID of the canvas element for the chart
- * @param {Object} data - Chart data including labels and values
+ * @param {Object} data - Chart data including labels, values, and type
  */
 function initSalesChart(chartId, data) {
     const ctx = document.getElementById(chartId).getContext('2d');
@@ -343,31 +374,52 @@ function initSalesChart(chartId, data) {
         label.charAt(0).toUpperCase() + label.slice(1)
     );
     
-    // Use different color scheme for sales chart
-    const chartColors = [
-        '#4caf50',  // Green
-        '#2196f3',  // Blue
-        '#ff9800',  // Orange
-        '#f44336',  // Red
-        '#9c27b0',  // Purple
-        '#673ab7',  // Deep Purple
-        '#3f51b5',  // Indigo
-        '#00bcd4',  // Cyan
-        '#009688',  // Teal
-        '#ffeb3b'   // Yellow
+    // Use the SAME color scheme as Stock Distribution for consistency
+    const categoryColors = {
+        'shrub': '#2E7D32',      // Dark Green
+        'tree': '#1B5E20',       // Deep Green
+        'grass': '#81C784',      // Light Green
+        'veggies': '#FB8C00',    // Orange
+        'fruits': '#E53935',     // Red
+        'herbs': '#66BB6A',      // Mint Green
+        'palm': '#C0CA33',       // Yellow-Green
+        'bamboo': '#6D8B74',     // Muted Green
+        'fertilizer': '#6D4C41', // Brown
+        'flowers': '#ff5722',    // Deep Orange-Red (fallback)
+        'seeds': '#37474f',      // Dark Grey (fallback)
+        'tools': '#00bcd4'       // Cyan (fallback)
+    };
+    
+    // Map colors to actual categories in the data (same as stock chart)
+    const chartColors = data.labels.map(label => {
+        const lowerLabel = label.toLowerCase();
+        return categoryColors[lowerLabel] || '#2E7D32'; // Default to dark green if category not found
+    });
+    
+    // Fallback colors if we need more than defined categories
+    const fallbackColors = [
+        '#4CAF50',  // Material Green
+        '#FF9800',  // Material Orange
+        '#9C27B0',  // Material Purple
+        '#2196F3',  // Material Blue
+        '#FFC107',  // Material Amber
+        '#795548'   // Material Brown
     ];
     
-    // Ensure we have enough colors for all categories
+    // Add fallback colors if needed
     while (chartColors.length < data.labels.length) {
-        chartColors.push(...chartColors);
+        chartColors.push(fallbackColors[chartColors.length % fallbackColors.length]);
     }
     
-    return new Chart(ctx, {
+    const isRevenue = data.type === 'revenue';
+    const labelSuffix = isRevenue ? 'Revenue' : 'Quantity';
+    
+    salesChart = new Chart(ctx, {
         type: 'bar',
         data: {
             labels: formattedLabels,
             datasets: [{
-                label: 'Sales Percentage by Category',
+                label: `Sales Percentage by Category (${labelSuffix})`,
                 data: data.values,
                 backgroundColor: chartColors.slice(0, data.labels.length),
                 borderColor: '#ffffff',
@@ -393,7 +445,8 @@ function initSalesChart(chartId, data) {
                     boxPadding: 5,
                     callbacks: {
                         label: function(context) {
-                            return `${parseFloat(context.raw).toFixed(1)}% of total sales`;
+                            const suffix = isRevenue ? 'of total revenue' : 'of total sales';
+                            return `${parseFloat(context.raw).toFixed(1)}% ${suffix}`;
                         }
                     }
                 }
@@ -404,7 +457,7 @@ function initSalesChart(chartId, data) {
                     max: 100,
                     title: {
                         display: true,
-                        text: 'Percentage of Total Sales',
+                        text: `Percentage of Total ${labelSuffix}`,
                         color: '#666',
                         font: {
                             size: 12,
@@ -431,4 +484,251 @@ function initSalesChart(chartId, data) {
             }
         }
     });
+    
+    return salesChart;
 } 
+
+/**
+ * Setup analytics controls for interactive charts
+ */
+function setupAnalyticsControls() {
+    // Sales chart controls
+    const salesPeriod = document.getElementById('salesPeriod');
+    const salesType = document.getElementById('salesType');
+    
+    if (salesPeriod && salesType) {
+        salesPeriod.addEventListener('change', updateSalesChart);
+        salesType.addEventListener('change', updateSalesChart);
+    }
+    
+    // Trends chart controls
+    const trendsPeriod = document.getElementById('trendsPeriod');
+    const trendsMetric = document.getElementById('trendsMetric');
+    
+    if (trendsPeriod && trendsMetric) {
+        trendsPeriod.addEventListener('change', updateTrendsChart);
+        trendsMetric.addEventListener('change', updateTrendsChart);
+    }
+    
+    // Tab change events to initialize charts when needed
+    const salesTab = document.getElementById('sales-tab');
+    const trendsTab = document.getElementById('trends-tab');
+    
+    if (salesTab) {
+        salesTab.addEventListener('shown.bs.tab', function() {
+            if (!salesChart) {
+                updateSalesChart();
+            }
+        });
+    }
+    
+    if (trendsTab) {
+        trendsTab.addEventListener('shown.bs.tab', function() {
+            if (!trendsChart) {
+                updateTrendsChart();
+            }
+        });
+    }
+}
+
+/**
+ * Update sales chart based on selected period and type
+ */
+function updateSalesChart() {
+    const period = document.getElementById('salesPeriod')?.value || '30';
+    const type = document.getElementById('salesType')?.value || 'quantity';
+    
+    // Show loading state
+    const canvas = document.getElementById('salesDistributionChart');
+    if (canvas) {
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#666';
+        ctx.font = '14px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText('Loading...', canvas.width / 2, canvas.height / 2);
+    }
+    
+    // Fetch analytics data
+    fetch(`/dashboard/analytics?period=${period}&type=${type}`)
+        .then(response => response.json())
+        .then(data => {
+            if (salesChart) {
+                salesChart.destroy();
+            }
+            
+            const labels = Object.keys(data.salesByCategory);
+            const values = Object.values(data.salesByCategory).map(item => 
+                type === 'quantity' ? item.quantity_percentage : item.revenue_percentage
+            );
+            
+            salesChart = initSalesChart('salesDistributionChart', {
+                labels: labels,
+                values: values,
+                type: type
+            });
+        })
+        .catch(error => {
+            console.error('Error fetching sales data:', error);
+            showAlert('Failed to load sales data', 'danger');
+        });
+}
+
+/**
+ * Update trends chart based on selected period and metric
+ */
+function updateTrendsChart() {
+    const period = document.getElementById('trendsPeriod')?.value || '30';
+    const metric = document.getElementById('trendsMetric')?.value || 'quantity';
+    
+    // Show loading state
+    const canvas = document.getElementById('salesTrendsChart');
+    if (canvas) {
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#666';
+        ctx.font = '14px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText('Loading...', canvas.width / 2, canvas.height / 2);
+    }
+    
+    // Fetch analytics data
+    fetch(`/dashboard/analytics?period=${period}&type=${metric}`)
+        .then(response => response.json())
+        .then(data => {
+            if (trendsChart) {
+                trendsChart.destroy();
+            }
+            
+            const labels = data.salesTrends.map(item => {
+                const date = new Date(item.sale_date);
+                return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            });
+            
+            const values = data.salesTrends.map(item => 
+                metric === 'quantity' ? item.daily_quantity : item.daily_revenue
+            );
+            
+            trendsChart = initTrendsChart('salesTrendsChart', {
+                labels: labels,
+                values: values,
+                metric: metric
+            });
+        })
+        .catch(error => {
+            console.error('Error fetching trends data:', error);
+            showAlert('Failed to load trends data', 'danger');
+        });
+}
+
+/**
+ * Initializes and configures the sales trends chart
+ * 
+ * @param {string} chartId - The ID of the canvas element for the chart
+ * @param {Object} data - Chart data including labels, values, and metric type
+ */
+function initTrendsChart(chartId, data) {
+    const ctx = document.getElementById(chartId).getContext('2d');
+    
+    const isRevenue = data.metric === 'revenue';
+    const color = isRevenue ? '#28a745' : '#007bff';
+    
+    return new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: data.labels,
+            datasets: [{
+                label: isRevenue ? 'Daily Revenue (₱)' : 'Daily Quantity Sold',
+                data: data.values,
+                borderColor: color,
+                backgroundColor: color + '20',
+                borderWidth: 3,
+                fill: true,
+                tension: 0.4,
+                pointBackgroundColor: color,
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2,
+                pointRadius: 5,
+                pointHoverRadius: 8
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top',
+                    labels: {
+                        font: {
+                            family: "'Nunito', sans-serif",
+                            size: 12,
+                            weight: 'bold'
+                        }
+                    }
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                    titleColor: '#333',
+                    bodyColor: '#555',
+                    borderColor: '#ddd',
+                    borderWidth: 1,
+                    padding: 12,
+                    callbacks: {
+                        label: function(context) {
+                            const value = context.raw;
+                            if (isRevenue) {
+                                return `Revenue: ₱${parseFloat(value).toLocaleString()}`;
+                            } else {
+                                return `Quantity: ${value} plants`;
+                            }
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Date',
+                        color: '#666',
+                        font: {
+                            size: 12,
+                            weight: 'bold'
+                        }
+                    },
+                    grid: {
+                        color: '#f0f0f0'
+                    }
+                },
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: isRevenue ? 'Revenue (₱)' : 'Quantity',
+                        color: '#666',
+                        font: {
+                            size: 12,
+                            weight: 'bold'
+                        }
+                    },
+                    grid: {
+                        color: '#f0f0f0'
+                    },
+                    ticks: {
+                        callback: function(value) {
+                            if (isRevenue) {
+                                return '₱' + parseFloat(value).toLocaleString();
+                            }
+                            return value;
+                        }
+                    }
+                }
+            },
+            animation: {
+                duration: 1200,
+                easing: 'easeOutQuart'
+            }
+        }
+    });
+}

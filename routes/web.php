@@ -176,6 +176,9 @@ Route::middleware(['auth'])->group(function () {
     
     // Client request submission
     Route::post('/client-request/submit', [UserDashboardController::class, 'submitClientRequest'])->name('client-request.submit');
+    
+    // User can delete their own requests
+    Route::delete('/user/requests/{id}', [ClientRequestController::class, 'destroy'])->name('user.requests.destroy');
 
     // Notification routes (for all authenticated users)
     Route::prefix('notifications')->name('notifications.')->group(function () {
@@ -218,6 +221,9 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('plants', PlantController::class)->except(['create', 'edit', 'show']);
         Route::post('/plants/bulk-update', [PlantController::class, 'bulkUpdate'])->name('plants.bulk-update');
         Route::post('/update-stock', [DashboardController::class, 'updateStock'])->name('update-stock');
+        
+        // Analytics API endpoint
+        Route::get('/dashboard/analytics', [DashboardController::class, 'getAnalyticsData'])->name('dashboard.analytics');
 
         // Categories (persisted)
         Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');

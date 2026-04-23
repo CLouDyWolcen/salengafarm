@@ -479,11 +479,11 @@
                                             </form>
                                             
                                             <button type="button" class="action-btn action-btn-primary" id="sendResponseBtn2" data-bs-toggle="modal" data-bs-target="#sendResponseModal">
-                                                <i class="fas fa-paper-plane"></i>
+                                                <i class="fas fa-redo"></i>
                                                 <?php if($request->request_type == 'user'): ?>
-                                                    Send Response to User
+                                                    Resend Response to User
                                                 <?php else: ?>
-                                                    Send Response to Client
+                                                    Resend Response to Client
                                                 <?php endif; ?>
                                             </button>
                                         </div>
@@ -493,6 +493,31 @@
                                             Response sent on <?php echo e($request->response_sent_at ? \Carbon\Carbon::parse($request->response_sent_at)->format('M d, Y') : 'N/A'); ?>
 
                                         </div>
+                                        
+                                        <?php if(auth()->user()->role !== 'super_admin'): ?>
+                                        <div class="action-buttons mt-3">
+                                            <form action="<?php echo e(route('requests.send-email', $request->id)); ?>" method="POST" style="flex: 1; margin: 0;">
+                                                <?php echo csrf_field(); ?>
+                                                <button type="submit" class="action-btn action-btn-warning" id="resendEmailBtn3">
+                                                    <i class="fas fa-redo"></i>
+                                                    <?php if($request->request_type == 'user'): ?>
+                                                        Resend Email to User
+                                                    <?php else: ?>
+                                                        Resend Email to Client
+                                                    <?php endif; ?>
+                                                </button>
+                                            </form>
+                                            
+                                            <button type="button" class="action-btn action-btn-primary" id="sendResponseBtn3" data-bs-toggle="modal" data-bs-target="#sendResponseModal">
+                                                <i class="fas fa-redo"></i>
+                                                <?php if($request->request_type == 'user'): ?>
+                                                    Resend Response to User
+                                                <?php else: ?>
+                                                    Resend Response to Client
+                                                <?php endif; ?>
+                                            </button>
+                                        </div>
+                                        <?php endif; ?>
                                     <?php endif; ?>
                                 <?php endif; ?>
                             </div>
@@ -766,22 +791,36 @@
 
     <!-- Send Response Confirmation Modal -->
     <div class="modal fade" id="sendResponseModal" tabindex="-1" aria-labelledby="sendResponseModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="sendResponseModalLabel">Confirm Send Response</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="border: none; border-radius: 15px; overflow: hidden;">
+                <div class="modal-header" style="background: linear-gradient(135deg, #2d5016 0%, #3d6b1f 100%); color: white; border: none; padding: 20px 25px;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <i class="fas fa-paper-plane" style="font-size: 24px;"></i>
+                        <h5 class="modal-title" id="sendResponseModalLabel" style="margin: 0; font-weight: 600;">Confirm Send Response</h5>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
-                    <p class="mb-3">This will mark the <?php if($request->request_type == 'user'): ?>inquiry <?php else: ?> request <?php endif; ?> as responded and notify the <?php if($request->request_type == 'user'): ?>user <?php else: ?> client <?php endif; ?>.</p>
-                    <p class="mb-0"><strong>Continue?</strong></p>
+                <div class="modal-body" style="padding: 30px 25px;">
+                    <div style="text-align: center; margin-bottom: 20px;">
+                        <div style="width: 60px; height: 60px; background: #e8f5e9; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px;">
+                            <i class="fas fa-check-circle" style="font-size: 30px; color: #2d5016;"></i>
+                        </div>
+                    </div>
+                    <p style="text-align: center; font-size: 16px; color: #333; margin-bottom: 10px;">
+                        This will mark the <?php if($request->request_type == 'user'): ?>inquiry <?php else: ?> request <?php endif; ?> as <strong style="color: #2d5016;">responded</strong> and notify the <?php if($request->request_type == 'user'): ?>user <?php else: ?> client <?php endif; ?>.
+                    </p>
+                    <p style="text-align: center; font-size: 14px; color: #666; margin-bottom: 0;">
+                        The <?php if($request->request_type == 'user'): ?>user <?php else: ?> client <?php endif; ?> will receive a notification in their dashboard.
+                    </p>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <form action="<?php echo e(route('requests.send-response', $request->id)); ?>" method="POST" style="display: inline;">
+                <div class="modal-footer" style="border: none; padding: 15px 25px 25px; justify-content: center; gap: 10px;">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="padding: 10px 30px; border-radius: 8px;">
+                        <i class="fas fa-times me-1"></i>Cancel
+                    </button>
+                    <form action="<?php echo e(route('requests.send-response', $request->id)); ?>" method="POST" style="display: inline; margin: 0;">
                         <?php echo csrf_field(); ?>
-                        <button type="submit" class="btn btn-primary" id="confirmSendResponseBtn">
-                            Send Response
+                        <button type="submit" class="btn btn-success" id="confirmSendResponseBtn" style="padding: 10px 30px; border-radius: 8px; background: linear-gradient(135deg, #2d5016 0%, #3d6b1f 100%); border: none;">
+                            <i class="fas fa-paper-plane me-1"></i>Send Response
                         </button>
                     </form>
                 </div>
@@ -792,7 +831,7 @@
     <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="<?php echo e(asset('js/push-notifications.js')); ?>?v=<?php echo e(time()); ?>"></script>
+    <script src="<?php echo e(asset('js/push-notifications-global.js')); ?>?v=<?php echo e(time()); ?>"></script>
     <!-- Add your JavaScript for print functionality and other interactions here -->
     <script>
         // Handle push notification auto-dismiss and close button
@@ -865,13 +904,13 @@
             let currentEmailRequest = null;
             
             // Handle email sending with loading modal
-            $('#sendEmailBtn, #resendEmailBtn').on('click', function(e) {
+            $('#sendEmailBtn, #resendEmailBtn, #resendEmailBtn3').on('click', function(e) {
                 e.preventDefault();
                 
                 const form = $(this).closest('form');
                 const recipientEmail = '<?php echo e($request->email); ?>';
                 const recipientName = '<?php echo e($request->name); ?>';
-                const isResend = $(this).attr('id') === 'resendEmailBtn';
+                const isResend = $(this).attr('id') === 'resendEmailBtn' || $(this).attr('id') === 'resendEmailBtn3';
                 
                 // Show loading modal
                 $('#emailRecipient').text(`${recipientName} (${recipientEmail})`);

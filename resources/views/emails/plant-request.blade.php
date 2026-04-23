@@ -191,7 +191,7 @@
                 </ul>
                 
                 <p><strong>How to Become a Client:</strong></p>
-                <p>Simply reply to this email expressing your interest in becoming a client, or contact us at <strong>{{ env('MAIL_FROM_ADDRESS') }}</strong>. We will guide you through a simple verification process to set up your client account and provide you with detailed pricing information.</p>
+                <p>Simply reply to this email expressing your interest in becoming a client, or contact us at <strong>{{ config('mail.from.address') }}</strong>. We will guide you through a simple verification process to set up your client account and provide you with detailed pricing information.</p>
             </div>
 
             <h3>Next Steps</h3>
@@ -220,8 +220,8 @@
     <div class="footer">
         <p>
             <strong>Salenga Farm</strong><br>
-            📧 {{ env('MAIL_FROM_ADDRESS') }}<br>
-            🌐 {{ env('APP_URL') }}<br>
+            📧 {{ config('mail.from.address') }}<br>
+            🌐 {{ config('app.url') }}<br>
             <br>
             <em>This email was sent regarding your plant request #{{ $request->id }}</em>
         </p>

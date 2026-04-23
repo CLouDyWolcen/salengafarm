@@ -5,6 +5,48 @@
 <?php $__env->startPush('styles'); ?>
 <link href="<?php echo e(asset('css/loading.css')); ?>" rel="stylesheet">
 <style>
+    /* Ensure main content area allows full height */
+    .container-fluid {
+        height: auto !important;
+        min-height: auto !important;
+        overflow: visible !important;
+    }
+    
+    .row {
+        height: auto !important;
+        overflow: visible !important;
+    }
+    
+    .col-12, .col-lg-8, .col-lg-4 {
+        height: auto !important;
+        overflow: visible !important;
+    }
+    
+    /* Override dashboard.css height restrictions for user dashboard */
+    body .container-fluid {
+        max-height: none !important;
+        height: auto !important;
+    }
+    
+    body .main-content {
+        height: auto !important;
+        min-height: auto !important;
+        max-height: none !important;
+        overflow: visible !important;
+    }
+    
+    body .card {
+        height: auto !important;
+        max-height: none !important;
+        min-height: auto !important;
+    }
+    
+    body .card-body {
+        height: auto !important;
+        max-height: none !important;
+        overflow: visible !important;
+    }
+    
     .btn-sm {
         padding: 0.375rem 0.75rem;
         font-size: 0.875rem;
@@ -13,38 +55,267 @@
         font-size: 0.875rem;
     }
     
-    /* Fixed height for recent requests table - max 8 rows */
-    .recent-requests-wrapper {
-        max-height: 480px; /* Approximately 8 rows at ~60px per row */
-        overflow-y: auto;
-        overflow-x: hidden;
+    /* Custom table styling - completely independent from Bootstrap */
+    .custom-inquiries-table {
+        width: 100% !important;
+        border-collapse: collapse !important;
+        background: white !important;
+        margin: 0 !important;
+        border: none !important;
+        font-family: inherit !important;
+        font-size: 14px !important;
+        line-height: 1.5 !important;
     }
     
-    /* Sticky table header */
-    .recent-requests-wrapper thead {
-        position: sticky;
-        top: 0;
-        z-index: 10;
-        background-color: #f8f9fa;
+    .custom-inquiries-table * {
+        box-sizing: border-box !important;
     }
     
-    /* Custom scrollbar styling */
-    .recent-requests-wrapper::-webkit-scrollbar {
-        width: 8px;
+    .custom-inquiries-table thead {
+        background: #f8f9fa !important;
+        border-bottom: 2px solid #dee2e6 !important;
     }
     
-    .recent-requests-wrapper::-webkit-scrollbar-track {
-        background: #f1f1f1;
-        border-radius: 4px;
+    .custom-inquiries-table th {
+        padding: 12px 16px !important;
+        text-align: left !important;
+        font-weight: 600 !important;
+        color: #495057 !important;
+        border-bottom: 1px solid #dee2e6 !important;
+        border-top: none !important;
+        border-left: none !important;
+        border-right: none !important;
+        background: #f8f9fa !important;
+        vertical-align: middle !important;
     }
     
-    .recent-requests-wrapper::-webkit-scrollbar-thumb {
-        background: #198754;
-        border-radius: 4px;
+    .custom-inquiries-table td {
+        padding: 12px 16px !important;
+        border-bottom: 1px solid #f1f3f4 !important;
+        border-top: none !important;
+        border-left: none !important;
+        border-right: none !important;
+        vertical-align: middle !important;
+        background: white !important;
     }
     
-    .recent-requests-wrapper::-webkit-scrollbar-thumb:hover {
-        background: #146c43;
+    .custom-inquiries-table tbody tr:hover td {
+        background-color: #f8f9fa !important;
+    }
+    
+    .custom-inquiries-table tbody tr:last-child td {
+        border-bottom: none !important;
+    }
+    
+    /* Ensure table container doesn't have height restrictions */
+    .inquiries-table-container {
+        background: white !important;
+        border-radius: 8px !important;
+        overflow: visible !important;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+        height: auto !important;
+        max-height: none !important;
+    }
+    
+    /* Override any Bootstrap table classes that might interfere */
+    .custom-inquiries-table.table,
+    .custom-inquiries-table.table-striped,
+    .custom-inquiries-table.table-bordered,
+    .custom-inquiries-table.table-hover {
+        margin-bottom: 0 !important;
+        border: none !important;
+    }
+    
+    /* Custom action buttons - uniform size and better alignment */
+    .action-btn {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        padding: 6px 12px !important;
+        margin: 2px !important;
+        border: none !important;
+        border-radius: 4px !important;
+        font-size: 12px !important;
+        font-weight: 500 !important;
+        text-decoration: none !important;
+        cursor: pointer !important;
+        transition: all 0.2s ease !important;
+        min-width: 80px !important;
+        height: 32px !important;
+        white-space: nowrap !important;
+        line-height: 1 !important;
+        vertical-align: middle !important;
+    }
+    
+    .action-btn i {
+        margin-right: 4px !important;
+        font-size: 11px !important;
+        line-height: 1 !important;
+    }
+    
+    .action-btn-primary {
+        background-color: #007bff !important;
+        color: white !important;
+    }
+    
+    .action-btn-primary:hover {
+        background-color: #0056b3 !important;
+        color: white !important;
+        text-decoration: none !important;
+    }
+    
+    .action-btn-success {
+        background-color: #28a745 !important;
+        color: white !important;
+    }
+    
+    .action-btn-success:hover {
+        background-color: #1e7e34 !important;
+        color: white !important;
+        text-decoration: none !important;
+    }
+    
+    .action-btn-danger {
+        background-color: #dc3545 !important;
+        color: white !important;
+    }
+    
+    .action-btn-danger:hover {
+        background-color: #c82333 !important;
+        color: white !important;
+    }
+    
+    .actions-container {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 4px !important;
+        align-items: center !important;
+        justify-content: flex-start !important;
+    }
+    
+    /* Status badges - consistent styling */
+    .status-badge {
+        padding: 4px 8px !important;
+        border-radius: 12px !important;
+        font-size: 11px !important;
+        font-weight: 500 !important;
+        text-transform: uppercase !important;
+        display: inline-block !important;
+        line-height: 1.2 !important;
+        white-space: nowrap !important;
+    }
+    
+    .status-badge.success {
+        background-color: #d4edda !important;
+        color: #155724 !important;
+        border: 1px solid #c3e6cb !important;
+    }
+    
+    .status-badge.warning {
+        background-color: #fff3cd !important;
+        color: #856404 !important;
+        border: 1px solid #ffeaa7 !important;
+    }
+    
+    .status-badge.secondary {
+        background-color: #e2e3e5 !important;
+        color: #383d41 !important;
+        border: 1px solid #d6d8db !important;
+    }
+    
+    /* Table container - ensure proper display */
+    .inquiries-table-container {
+        background: white !important;
+        border-radius: 8px !important;
+        overflow: hidden !important;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+        height: auto !important;
+        max-height: none !important;
+        width: 100% !important;
+        margin-bottom: 20px !important;
+    }
+    
+    /* Table wrapper for scrolling */
+    .table-scroll-wrapper {
+        max-height: 420px !important; /* Approximately 7 rows (60px each) */
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+        border-radius: 0 0 8px 8px !important;
+    }
+    
+    /* Custom scrollbar for table */
+    .table-scroll-wrapper::-webkit-scrollbar {
+        width: 6px !important;
+    }
+    
+    .table-scroll-wrapper::-webkit-scrollbar-track {
+        background: #f1f1f1 !important;
+        border-radius: 3px !important;
+    }
+    
+    .table-scroll-wrapper::-webkit-scrollbar-thumb {
+        background: #c1c1c1 !important;
+        border-radius: 3px !important;
+    }
+    
+    .table-scroll-wrapper::-webkit-scrollbar-thumb:hover {
+        background: #a8a8a8 !important;
+    }
+    
+    /* Ensure table header stays visible */
+    .custom-inquiries-table thead {
+        position: sticky !important;
+        top: 0 !important;
+        z-index: 10 !important;
+        background: #f8f9fa !important;
+        border-bottom: 2px solid #dee2e6 !important;
+    }
+    
+    /* Ensure each row has consistent height for scrolling calculation */
+    .custom-inquiries-table tbody tr {
+        height: 60px !important;
+        min-height: 60px !important;
+    }
+    
+    .inquiries-table-header {
+        background: #f8f9fa !important;
+        padding: 16px 20px !important;
+        border-bottom: 1px solid #dee2e6 !important;
+        border-radius: 8px 8px 0 0 !important;
+    }
+    
+    .inquiries-table-header h6 {
+        margin: 0 !important;
+        font-weight: 600 !important;
+        color: #495057 !important;
+        font-size: 16px !important;
+    }
+    
+    /* Ensure the table wrapper doesn't restrict height */
+    .table-responsive {
+        overflow-x: auto !important;
+        overflow-y: visible !important;
+        height: auto !important;
+        max-height: none !important;
+    }
+    
+    /* Remove any Bootstrap table responsive restrictions */
+    .table-responsive .custom-inquiries-table {
+        margin-bottom: 0 !important;
+        width: 100% !important;
+        min-width: 100% !important;
+    }
+    
+    .no-inquiries {
+        text-align: center;
+        padding: 40px 20px;
+        color: #6c757d;
+    }
+    
+    .no-inquiries i {
+        font-size: 48px;
+        margin-bottom: 16px;
+        opacity: 0.5;
     }
 </style>
 <?php $__env->stopPush(); ?>
@@ -57,68 +328,71 @@
 
     <div class="row g-3">
         <div class="col-12 col-lg-8">
-            <div class="card shadow-sm">
-                <div class="card-header bg-white d-flex align-items-center justify-content-between">
-                    <h6 class="mb-0">Recent Inquiries</h6>
+            <div class="inquiries-table-container">
+                <div class="inquiries-table-header">
+                    <h6>Recent Inquiries</h6>
                 </div>
-                <div class="card-body p-0">
-                    <div class="recent-requests-wrapper">
-                        <table class="table table-hover mb-0 align-middle">
-                            <thead class="table-light">
-                                <tr>
-                                    <th style="width: 60px;">ID</th>
-                                    <th>Inquiry Date</th>
-                                    <th>Status</th>
-                                    <th style="width: 150px;">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php $__empty_1 = true; $__currentLoopData = $requests; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $r): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
-                                <tr>
-                                    <td>#<?php echo e($r->id); ?></td>
-                                    <td><?php echo e(optional($r->created_at)->format('M d, Y') ?? '—'); ?></td>
-                                    <td>
-                                        <?php
-                                            $status = strtolower($r->status ?? 'pending');
-                                            // Change 'sent' to 'received' for display
-                                            $displayStatus = $status === 'sent' ? 'received' : $status;
-                                            $badgeClass = $status === 'responded' ? 'success' : ($status === 'pending' ? 'warning' : 'secondary');
-                                        ?>
-                                        <span class="badge bg-<?php echo e($badgeClass); ?>">
-                                            <?php echo e(ucfirst($displayStatus)); ?>
+                
+                <?php if($requests->count() > 0): ?>
+                <div class="table-scroll-wrapper">
+                    <table class="custom-inquiries-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 80px;">ID</th>
+                                <th style="width: 140px;">Inquiry Date</th>
+                                <th style="width: 120px;">Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php $__currentLoopData = $requests; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $r): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <tr>
+                                <td><strong>#<?php echo e($r->id); ?></strong></td>
+                                <td><?php echo e(optional($r->created_at)->format('M d, Y') ?? '—'); ?></td>
+                                <td>
+                                    <?php
+                                        $status = strtolower($r->status ?? 'pending');
+                                        $displayStatus = $status === 'sent' ? 'received' : $status;
+                                        $badgeClass = $status === 'responded' ? 'success' : ($status === 'pending' ? 'warning' : 'secondary');
+                                    ?>
+                                    <span class="status-badge <?php echo e($badgeClass); ?>">
+                                        <?php echo e(ucfirst($displayStatus)); ?>
 
-                                        </span>
-                                    </td>
-                                    <td>
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="actions-container">
                                         <?php if($status === 'responded'): ?>
-                                            <div class="d-flex gap-2">
-                                                <a href="<?php echo e(route('user.inquiry.response', $r->id)); ?>" 
-                                                   class="btn btn-sm btn-primary">
-                                                    <i class="fas fa-eye me-1"></i>View Response
+                                            <a href="<?php echo e(route('user.inquiry.response', $r->id)); ?>" class="action-btn action-btn-primary">
+                                                <i class="fas fa-eye"></i>View Response
+                                            </a>
+                                            <?php if($r->request_type === 'client' && $r->pdf_path): ?>
+                                                <a href="<?php echo e(route('requests.download-pdf', $r->id)); ?>" class="action-btn action-btn-success">
+                                                    <i class="fas fa-download"></i>Download RFQ
                                                 </a>
-                                                <?php if($r->request_type === 'client' && $r->pdf_path): ?>
-                                                    <a href="<?php echo e(route('requests.download-pdf', $r->id)); ?>" 
-                                                       class="btn btn-sm btn-success">
-                                                        <i class="fas fa-download me-1"></i>Download RFQ
-                                                    </a>
-                                                <?php endif; ?>
-                                            </div>
-                                        <?php else: ?>
-                                            <span class="text-muted">—</span>
+                                            <?php endif; ?>
                                         <?php endif; ?>
-                                    </td>
-                                </tr>
-                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
-                                <tr>
-                                    <td colspan="4" class="text-center text-muted py-4">
-                                        No inquiries yet. Go to <a href="<?php echo e(route('public.plants')); ?>">Home</a> to place an inquiry.
-                                    </td>
-                                </tr>
-                                <?php endif; ?>
-                            </tbody>
-                        </table>
-                    </div>
+                                        <form id="delete-inquiry-form-<?php echo e($r->id); ?>" action="<?php echo e(route('user.requests.destroy', $r->id)); ?>" method="POST" style="display: none;">
+                                            <?php echo csrf_field(); ?>
+                                            <?php echo method_field('DELETE'); ?>
+                                        </form>
+                                        <button type="button" class="action-btn action-btn-danger" onclick="confirmDeleteInquiry(<?php echo e($r->id); ?>)">
+                                            <i class="fas fa-trash"></i>Delete
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                        </tbody>
+                    </table>
                 </div>
+                <?php else: ?>
+                <div class="no-inquiries">
+                    <i class="fas fa-seedling"></i>
+                    <p><strong>No inquiries yet</strong></p>
+                    <p>Go to <a href="<?php echo e(route('public.plants')); ?>">Home</a> to place an inquiry.</p>
+                </div>
+                <?php endif; ?>
             </div>
         </div>
         <div class="col-12 col-lg-4">
@@ -472,8 +746,56 @@
 }
 </style>
 
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteInquiryModal" tabindex="-1" aria-labelledby="deleteInquiryModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="deleteInquiryModalLabel">Confirm Delete</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center mb-3">
+                    <i class="fas fa-exclamation-triangle text-danger delete-icon"></i>
+                </div>
+                <p class="text-center fs-5">Are you sure you want to delete this inquiry?</p>
+                <p class="text-center text-muted">This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer bg-light">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-1"></i> No, Cancel
+                </button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteInquiry">
+                    <i class="fas fa-trash me-1"></i> Yes, Delete
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Delete Modal Icon */
+.delete-icon {
+    font-size: 2rem;
+}
+</style>
+
 <script src="<?php echo e(asset('js/loading.js')); ?>"></script>
 <script>
+let inquiryIdToDelete = null;
+
+function confirmDeleteInquiry(inquiryId) {
+    inquiryIdToDelete = inquiryId;
+    var deleteModal = new bootstrap.Modal(document.getElementById('deleteInquiryModal'));
+    deleteModal.show();
+}
+
+document.getElementById('confirmDeleteInquiry').addEventListener('click', function() {
+    if (inquiryIdToDelete) {
+        document.getElementById('delete-inquiry-form-' + inquiryIdToDelete).submit();
+    }
+});
+
 // Check if there's a success message and show modal
 <?php if(session('success')): ?>
     document.addEventListener('DOMContentLoaded', function() {

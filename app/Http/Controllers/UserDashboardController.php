@@ -24,7 +24,7 @@ class UserDashboardController extends Controller
                 $q->where('email', $user->email);
             })
             ->orderByDesc('created_at')
-            ->limit(10)
+            ->limit(15)
             ->get();
 
         return view('dashboard.user', [

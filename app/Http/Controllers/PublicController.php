@@ -14,7 +14,11 @@ class PublicController extends Controller
     {
         $plants = DisplayPlant::all();
         $inventoryPlants = Plant::orderBy('name', 'asc')->get();
-        $additionalCategories = \App\Models\Category::all();
+        
+        // Filter out base categories that are already shown in the main category grid
+        $baseCategoryNames = ['shrub', 'herbs', 'palm', 'tree', 'grass', 'bamboo', 'fertilizer'];
+        $additionalCategories = \App\Models\Category::whereNotIn('name', $baseCategoryNames)->get();
+        
         return view('public.plants', compact('plants', 'inventoryPlants', 'additionalCategories'));
     }
 

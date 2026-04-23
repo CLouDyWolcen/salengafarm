@@ -1300,3 +1300,209 @@ h4, .h4 { font-size: 1.1rem; }
         font-size: 16px !important;
     }
 }
+
+
+/* Additional Mobile Responsive Improvements for Inventory */
+
+/* Fix for landscape orientation on mobile */
+@media (max-width: 768px) and (orientation: landscape) {
+    .main-nav {
+        height: 50px !important;
+    }
+    
+    .brand-text {
+        font-size: 16px !important;
+    }
+    
+    .nav-logo {
+        width: 28px !important;
+        height: 28px !important;
+    }
+    
+    .table th, .table td {
+        padding: 0.3rem 0.25rem !important;
+        font-size: 0.75rem !important;
+    }
+}
+
+/* Improve touch targets on mobile */
+@media (max-width: 576px) {
+    .category-icon-item {
+        min-height: 60px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 0.5rem 0.25rem;
+    }
+    
+    /* Make action buttons more touch-friendly */
+    .table .btn-link {
+        min-width: 40px;
+        min-height: 40px;
+        display: inline-flex !important;
+        align-items: center;
+        justify-content: center;
+    }
+}
+
+/* Fix modal overflow on small screens */
+@media (max-width: 576px) {
+    .modal-body {
+        max-height: calc(100vh - 200px);
+        overflow-y: auto;
+    }
+    
+    .modal-body .form-group {
+        margin-bottom: 0.75rem;
+    }
+    
+    .modal-body .form-label {
+        font-size: 0.85rem;
+        margin-bottom: 0.25rem;
+    }
+    
+    .modal-body .form-control,
+    .modal-body .form-select {
+        font-size: 0.9rem;
+        padding: 0.5rem;
+    }
+}
+
+/* Improve category filter scrolling on mobile */
+@media (max-width: 576px) {
+    .category-icons {
+        overflow-x: visible !important;
+        overflow-y: visible !important;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    /* Add padding to prevent cut-off */
+    .category-icons::after {
+        content: '';
+        display: block;
+        width: 1px;
+        height: 1px;
+    }
+}
+
+/* Fix for iOS Safari input zoom */
+@media (max-width: 768px) {
+    input[type="text"],
+    input[type="number"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="search"],
+    select,
+    textarea {
+        font-size: 16px !important;
+    }
+}
+
+/* Improve table scrolling on mobile */
+@media (max-width: 576px) {
+    .table-responsive {
+        border: 1px solid #dee2e6;
+        border-radius: 0.375rem;
+    }
+    
+    .table {
+        margin-bottom: 0;
+    }
+    
+    /* Add scroll indicator */
+    .table-responsive::after {
+        content: '← Scroll →';
+        position: sticky;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: rgba(0, 0, 0, 0.05);
+        text-align: center;
+        padding: 0.25rem;
+        font-size: 0.7rem;
+        color: #6c757d;
+        display: block;
+    }
+    
+    .table-responsive::-webkit-scrollbar {
+        height: 6px;
+    }
+}
+
+/* Fix for very small screens */
+@media (max-width: 400px) {
+    h2.mb-4.fs-4 {
+        font-size: 0.9rem !important;
+        padding-top: 0.5rem !important;
+    }
+    
+    .search-bar {
+        padding: 0.5rem !important;
+    }
+    
+    .search-bar label {
+        font-size: 0.75rem !important;
+    }
+    
+    #searchInput {
+        font-size: 0.85rem !important;
+        padding: 0.4rem !important;
+    }
+    
+    #addBtn {
+        font-size: 0.75rem !important;
+        padding: 0.4rem 0.6rem !important;
+    }
+}
+
+/* Landscape mode for tablets */
+@media (min-width: 768px) and (max-width: 1024px) and (orientation: landscape) {
+    .category-icons {
+        gap: 0.75rem !important;
+    }
+    
+    .category-icon-item {
+        max-width: 90px;
+        min-width: 80px;
+    }
+    
+    .table th, .table td {
+        padding: 0.5rem !important;
+        font-size: 0.85rem !important;
+    }
+}
+
+/* Accessibility: Focus visible for keyboard navigation */
+@media (max-width: 768px) {
+    *:focus-visible {
+        outline: 3px solid #198754;
+        outline-offset: 2px;
+    }
+    
+    .btn:focus-visible {
+        box-shadow: 0 0 0 0.25rem rgba(25, 135, 84, 0.5);
+    }
+}
+
+/* Fix for Android Chrome address bar */
+@supports (-webkit-appearance: none) {
+    @media (max-width: 768px) {
+        .main-content {
+            min-height: calc(100vh - 60px);
+        }
+    }
+}
+
+/* Prevent horizontal scroll */
+@media (max-width: 768px) {
+    body, html {
+        overflow-x: hidden;
+        width: 100%;
+        position: relative;
+    }
+    
+    * {
+        max-width: 100%;
+    }
+}

@@ -12,7 +12,13 @@ class PlantController extends Controller
     public function index()
     {
         $plants = Plant::orderBy('name', 'asc')->get();
-        $categories = \App\Models\Category::all();
+        
+        // Define base categories that are hardcoded in the main category row
+        $baseCategories = ['shrub', 'herbs', 'palm', 'tree', 'grass', 'bamboo', 'fertilizer'];
+        
+        // Get only additional categories (exclude base categories from "Show More")
+        $categories = \App\Models\Category::whereNotIn('slug', $baseCategories)->get();
+        
         return view('plants.index', compact('plants', 'categories'));
     }
 
