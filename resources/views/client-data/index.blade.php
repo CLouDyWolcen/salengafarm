@@ -1,7 +1,11 @@
 @extends('layouts.public')
 
+@push('styles')
+<link href="{{ asset('css/client-data.css') }}?v={{ time() }}" rel="stylesheet">
+@endpush
+
 @section('content')
-    <div class="container-fluid py-3">
+    <div class="container-fluid py-3 client-data-page">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2>
                 <i class="fas fa-folder-open me-2 text-success"></i>
@@ -56,7 +60,7 @@
                                         @endif
                                     </td>
                                     <td>
-                                        <a href="{{ route('client-data.show', $visit) }}" class="btn btn-sm btn-primary">
+                                        <a href="{{ route('client-data.show', $visit) }}" class="btn btn-sm btn-success client-data-open-btn">
                                             <i class="fas fa-eye me-1"></i>Open
                                         </a>
                                     </td>

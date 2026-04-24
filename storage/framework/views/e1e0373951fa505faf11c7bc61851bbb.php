@@ -120,6 +120,96 @@
         flex: unset !important;
         min-width: unset !important;
     }
+    
+    /* Menu button animation styles */
+    .menu-btn {
+        font-size: 0.98rem;
+        font-weight: 500;
+        color: #fff !important;
+        background: transparent !important;
+        border: none !important;
+        outline: none !important;
+        box-shadow: none !important;
+        transition: all 0.3s ease;
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 40px;
+        text-decoration: none !important;
+    }
+    
+    .menu-btn:focus, .menu-btn:hover, .menu-btn:active {
+        color: #e0e0e0 !important;
+        background: transparent !important;
+        border: none !important;
+        outline: none !important;
+        box-shadow: none !important;
+    }
+    
+    /* Remove Bootstrap's btn-link default styles */
+    .menu-btn.btn-link {
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+    }
+    
+    .menu-btn.btn-link:hover,
+    .menu-btn.btn-link:focus,
+    .menu-btn.btn-link:active {
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        text-decoration: none !important;
+    }
+    
+    /* Remove Bootstrap dropdown toggle arrow */
+    .menu-btn.dropdown-toggle::after {
+        display: none !important;
+    }
+    
+    /* Icon and text container - positioned absolutely for smooth morphing */
+    .menu-btn .menu-icon,
+    .menu-btn .menu-text {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        transition: opacity 0.3s ease, transform 0.3s ease;
+        pointer-events: none;
+    }
+    
+    /* Show icon by default */
+    .menu-btn .menu-icon {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+    
+    /* Hide text by default - use visibility to prevent white dot */
+    .menu-btn .menu-text {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.5);
+        white-space: nowrap;
+        visibility: hidden;
+    }
+    
+    /* When menu is open: hide icon, show text with morph effect */
+    .menu-btn[aria-expanded="true"] .menu-icon {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.5);
+        visibility: hidden;
+    }
+    
+    .menu-btn[aria-expanded="true"] .menu-text {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+        visibility: visible;
+    }
+    
+    /* Adjust button width when expanded to fit text */
+    .menu-btn[aria-expanded="true"] {
+        min-width: 70px;
+    }
     </style>
 </head>
 <body class="bg-light <?php echo e((auth()->check() && auth()->user()->hasAdminAccess()) ? 'with-sidebar' : 'no-sidebar'); ?>">
@@ -241,10 +331,21 @@
                     <?php if(auth()->user()->hasAdminAccess()): ?>
                     <!-- Menu Dropdown for Admins -->
                     <div class="dropdown">
-                        <button class="btn btn-link dropdown-toggle text-white" type="button" id="menuDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="text-decoration: none;">
-                            <i class="fas fa-bars me-1"></i>Menu
+                        <button class="btn btn-link dropdown-toggle menu-btn px-3 py-1" type="button" id="menuDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="font-size: 0.98rem; font-weight: 500;">
+                            <i class="fas fa-bars menu-icon"></i>
+                            <span class="menu-text">Menu</span>
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="menuDropdown">
+                            <!-- Mobile-only nav links (Home, Plant Guide) -->
+                            <li class="d-md-none"><a class="dropdown-item" href="<?php echo e(route('public.plants')); ?>"><i class="fas fa-home me-2"></i>Home</a></li>
+                            <?php if(auth()->user()->role === 'super_admin'): ?>
+                                <li class="d-md-none"><a class="dropdown-item" href="<?php echo e(route('plant-care.index')); ?>"><i class="fas fa-leaf me-2"></i>Plant Guide</a></li>
+                            <?php else: ?>
+                                <li class="d-md-none"><a class="dropdown-item" href="<?php echo e(route('plant-care.admin')); ?>"><i class="fas fa-leaf me-2"></i>Plant Guide</a></li>
+                            <?php endif; ?>
+                            <li class="d-md-none"><hr class="dropdown-divider"></li>
+                            
+                            <!-- Desktop nav links (always visible) -->
                             <li><a class="dropdown-item" href="<?php echo e(route('dashboard')); ?>"><i class="fas fa-tachometer-alt me-2"></i>Dashboard</a></li>
                             <li><a class="dropdown-item" href="<?php echo e(route('plants.index')); ?>"><i class="fas fa-seedling me-2"></i>Inventory</a></li>
                             <li><a class="dropdown-item" href="<?php echo e(route('requests.index')); ?>"><i class="fas fa-envelope-open-text me-2"></i>Request</a></li>
@@ -252,6 +353,22 @@
                             <li><a class="dropdown-item" href="/site-visits"><i class="fas fa-map-marked-alt me-2"></i>Site Visits</a></li>
                             <?php if(auth()->user()->isSuperAdmin()): ?>
                             <li><a class="dropdown-item" href="<?php echo e(route('users.index')); ?>"><i class="fas fa-users-cog me-2"></i>Users</a></li>
+                            <?php endif; ?>
+                        </ul>
+                    </div>
+                    <?php else: ?>
+                    <!-- Regular users: Show Menu on mobile only with their nav links -->
+                    <div class="dropdown d-md-none">
+                        <button class="btn btn-link dropdown-toggle menu-btn px-3 py-1" type="button" id="menuDropdownMobile" data-bs-toggle="dropdown" aria-expanded="false" style="font-size: 0.98rem; font-weight: 500;">
+                            <i class="fas fa-bars menu-icon"></i>
+                            <span class="menu-text">Menu</span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="menuDropdownMobile">
+                            <li><a class="dropdown-item" href="<?php echo e(route('public.plants')); ?>"><i class="fas fa-home me-2"></i>Home</a></li>
+                            <li><a class="dropdown-item" href="<?php echo e(route('dashboard.user')); ?>"><i class="fas fa-gauge me-2"></i>Dashboard</a></li>
+                            <li><a class="dropdown-item" href="<?php echo e(route('plant-care.index')); ?>"><i class="fas fa-leaf me-2"></i>Plant Guide</a></li>
+                            <?php if(auth()->user()->isClient()): ?>
+                                <li><a class="dropdown-item" href="<?php echo e(route('client-data.index')); ?>"><i class="fas fa-folder-open me-2"></i>Client Data</a></li>
                             <?php endif; ?>
                         </ul>
                     </div>
@@ -304,6 +421,7 @@
 
     <?php if(auth()->check() && auth()->user()->hasAdminAccess()): ?>
     <!-- Admin layout with sidebar -->
+    <div id="sidebarOverlay"></div>
     <div class="dashboard-flex">
         <?php echo $__env->make('layouts.sidebar', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
         <div class="main-content">

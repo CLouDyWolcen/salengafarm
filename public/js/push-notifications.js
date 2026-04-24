@@ -131,7 +131,7 @@ class NotificationManager {
         // Add select all checkbox next to title
         titleElement.innerHTML = `
             <input type="checkbox" class="select-all-checkbox me-2" id="selectAllNotifications" />
-            <i class="fas fa-bell me-2"></i>Notifications
+            <i class="fas fa-bell me-2"></i><span class="notification-text">Notifications</span>
         `;
         
         // Hide normal buttons and show delete mode buttons with text
@@ -198,7 +198,7 @@ class NotificationManager {
         const actionsDiv = header.querySelector('.d-flex.gap-2');
         
         // Restore title without checkbox
-        titleElement.innerHTML = `<i class="fas fa-bell me-2"></i>Notifications`;
+        titleElement.innerHTML = `<i class="fas fa-bell me-2"></i><span class="notification-text">Notifications</span>`;
         
         actionsDiv.innerHTML = `
             <a href="#" class="mark-all-read" title="Mark all as read">

@@ -1,7 +1,7 @@
 @extends('layouts.public')
 
 @push('styles')
-<link href="{{ asset('css/client-data.css') }}?v={{ time() }}" rel="stylesheet">
+<link href="{{ asset('css/client-data.css') }}?v={{ rand(1000,9999) . time() }}" rel="stylesheet">
 <style>
     /* Compact header with inline visit info */
     .client-data-header {
@@ -44,16 +44,124 @@
     }
     
     .back-btn-header {
-        background: rgba(255,255,255,0.2);
-        border: 1px solid rgba(255,255,255,0.3);
-        color: white;
-        font-size: 0.85rem;
-        padding: 0.4rem 0.8rem;
+        background: rgba(255,255,255,0.2) !important;
+        border: 1px solid rgba(255,255,255,0.3) !important;
+        color: white !important;
+        font-size: 0.75rem !important;
+        padding: 0.3rem 0.6rem !important;
+        border-radius: 0.375rem !important;
+        white-space: nowrap !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        line-height: 1 !important;
     }
     
     .back-btn-header:hover {
-        background: rgba(255,255,255,0.3);
-        color: white;
+        background: rgba(255,255,255,0.3) !important;
+        color: white !important;
+    }
+    
+    .back-btn-header i {
+        font-size: 0.75rem !important;
+        margin-right: 0.25rem !important;
+    }
+    
+    /* Mobile responsive header */
+    @media (max-width: 768px) {
+        .client-data-header {
+            padding: 0.6rem;
+        }
+        
+        .client-data-header h2 {
+            font-size: 0.9rem !important;
+            margin: 0 0 0.4rem 0 !important;
+        }
+        
+        .header-top-row {
+            align-items: flex-start !important;
+        }
+        
+        .header-top-row .flex-grow-1 {
+            flex-grow: 1 !important;
+            max-width: calc(100% - 70px) !important;
+        }
+        
+        .visit-info-inline {
+            flex-direction: column;
+            gap: 0.4rem;
+            font-size: 0.7rem;
+            margin-top: 0.4rem;
+        }
+        
+        .visit-info-inline .info-item {
+            gap: 0.3rem;
+        }
+        
+        .visit-info-inline .badge {
+            font-size: 0.65rem;
+            padding: 0.2em 0.5em;
+        }
+        
+        .back-btn-header {
+            font-size: 0.6rem !important;
+            padding: 0.2rem 0.35rem !important;
+            border-radius: 0.25rem !important;
+            min-width: auto !important;
+            flex-shrink: 0 !important;
+            width: auto !important;
+            max-width: 60px !important;
+        }
+        
+        .back-btn-header i {
+            font-size: 0.6rem !important;
+            margin-right: 0.2rem !important;
+        }
+    }
+    
+    @media (max-width: 576px) {
+        .client-data-header {
+            padding: 0.5rem;
+        }
+        
+        .client-data-header h2 {
+            font-size: 0.85rem !important;
+            margin: 0 0 0.3rem 0 !important;
+        }
+        
+        .header-top-row .flex-grow-1 {
+            max-width: calc(100% - 55px) !important;
+        }
+        
+        .visit-info-inline {
+            gap: 0.3rem;
+            font-size: 0.65rem;
+            margin-top: 0.3rem;
+        }
+        
+        .visit-info-inline .info-item {
+            gap: 0.25rem;
+        }
+        
+        .visit-info-inline .info-item i {
+            font-size: 0.7rem;
+        }
+        
+        .visit-info-inline .badge {
+            font-size: 0.6rem;
+            padding: 0.15em 0.4em;
+        }
+        
+        .back-btn-header {
+            font-size: 0.55rem !important;
+            padding: 0.18rem 0.3rem !important;
+            max-width: 50px !important;
+        }
+        
+        .back-btn-header i {
+            font-size: 0.55rem !important;
+            margin-right: 0.15rem !important;
+        }
     }
 </style>
 @endpush
@@ -62,7 +170,7 @@
     <div class="container-fluid client-data-page" style="padding: 0.5rem;">
         <!-- Compact Header with Visit Info -->
         <div class="client-data-header">
-            <div class="d-flex justify-content-between align-items-start">
+            <div class="d-flex justify-content-between align-items-start header-top-row">
                 <div class="flex-grow-1">
                     <h2>
                         <i class="fas fa-folder-open me-2"></i>
@@ -196,7 +304,14 @@
                                                                data-file-index="{{ $index }}"
                                                                data-site-visit-id="{{ $siteVisit->id }}">
                                                         <div class="flex-grow-1">
-                                                            <a href="{{ asset('storage/' . $f['path']) }}" target="_blank">{{ $f['original_name'] }}</a>
+                                                            @php
+                                                                $fileName = $f['original_name'];
+                                                                $displayName = strlen($fileName) > 20 ? substr($fileName, 0, 17) . '...' : $fileName;
+                                                            @endphp
+                                                            <a href="{{ asset('storage/' . $f['path']) }}" 
+                                                               target="_blank" 
+                                                               class="file-link-mobile" 
+                                                               data-full-name="{{ $fileName }}">{{ $displayName }}</a>
                                                             <small class="text-muted" style="font-size: 0.7rem;">({{ $f['type'] }})</small>
                                                         </div>
                                                     </li>
@@ -208,16 +323,28 @@
                                         @if($canUpload)
                                             <form action="{{ route('site-visits.client-data.upload', ['siteVisit' => $siteVisit->id, 'itemKey' => $key]) }}" method="POST" enctype="multipart/form-data">
                                                 @csrf
-                                                <div class="input-group input-group-sm">
-                                                    <input type="file" name="file" class="form-control" required style="font-size: 0.7rem; padding: 0.2rem 0.3rem;">
-                                                    <button class="btn btn-success" type="submit" style="font-size: 0.7rem; padding: 0.2rem 0.4rem;"><i class="fas fa-upload me-1"></i>Upload</button>
+                                                <div class="d-flex flex-column gap-2">
+                                                    <div class="position-relative">
+                                                        <input type="file" name="file" id="file-{{ $key }}" class="d-none" required>
+                                                        <button type="button" class="btn btn-outline-secondary btn-sm w-100" onclick="document.getElementById('file-{{ $key }}').click()" style="font-size: 0.7rem; padding: 0.2rem 0.4rem;">
+                                                            <i class="fas fa-paperclip me-1"></i><span class="file-name-display">Select File</span>
+                                                        </button>
+                                                    </div>
+                                                    <button class="btn btn-success btn-sm w-100" type="submit" style="font-size: 0.7rem; padding: 0.2rem 0.4rem;"><i class="fas fa-upload me-1"></i>Upload</button>
                                                 </div>
                                                 @if($key === 'drone_map')
-                                                    <small class="text-muted" style="font-size: 0.65rem;">Allowed: pdf, jpg, jpeg, png, mp4, mov. Max 20MB.</small>
+                                                    <small class="text-muted d-block mt-1" style="font-size: 0.65rem;">Allowed: pdf, jpg, jpeg, png, mp4, mov. Max 20MB.</small>
                                                 @else
-                                                    <small class="text-muted" style="font-size: 0.65rem;">Allowed: pdf, jpg, jpeg, png. Max 20MB.</small>
+                                                    <small class="text-muted d-block mt-1" style="font-size: 0.65rem;">Allowed: pdf, jpg, jpeg, png. Max 20MB.</small>
                                                 @endif
                                             </form>
+                                            <script>
+                                                document.getElementById('file-{{ $key }}').addEventListener('change', function(e) {
+                                                    const fileName = e.target.files[0]?.name || 'Select File';
+                                                    const displayName = fileName.length > 20 ? fileName.substring(0, 17) + '...' : fileName;
+                                                    this.closest('form').querySelector('.file-name-display').textContent = displayName;
+                                                });
+                                            </script>
                                         @else
                                             @if(!$isOpen)
                                                 <span class="text-muted" style="font-size: 0.75rem;">Uploads not open yet.</span>
@@ -427,6 +554,79 @@
                 document.body.appendChild(form);
                 form.submit();
             }
+            
+            // Long-press to show full filename on mobile
+            let longPressTimer;
+            let tooltip;
+            
+            document.querySelectorAll('.file-link-mobile').forEach(link => {
+                // Touch start - begin long press timer
+                link.addEventListener('touchstart', function(e) {
+                    const fullName = this.getAttribute('data-full-name');
+                    const displayText = this.textContent;
+                    
+                    // Only show tooltip if filename is truncated
+                    if (displayText.includes('...')) {
+                        longPressTimer = setTimeout(() => {
+                            // Create tooltip
+                            tooltip = document.createElement('div');
+                            tooltip.className = 'filename-tooltip';
+                            tooltip.textContent = fullName;
+                            tooltip.style.cssText = `
+                                position: fixed;
+                                background: rgba(0, 0, 0, 0.9);
+                                color: white;
+                                padding: 8px 12px;
+                                border-radius: 6px;
+                                font-size: 0.75rem;
+                                z-index: 10000;
+                                max-width: 80vw;
+                                word-wrap: break-word;
+                                box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+                            `;
+                            
+                            // Position tooltip above the link
+                            const rect = this.getBoundingClientRect();
+                            tooltip.style.left = rect.left + 'px';
+                            tooltip.style.top = (rect.top - 40) + 'px';
+                            
+                            document.body.appendChild(tooltip);
+                            
+                            // Vibrate if supported (haptic feedback)
+                            if (navigator.vibrate) {
+                                navigator.vibrate(50);
+                            }
+                        }, 500); // 500ms long press
+                    }
+                });
+                
+                // Touch end - clear timer and remove tooltip
+                link.addEventListener('touchend', function(e) {
+                    clearTimeout(longPressTimer);
+                    if (tooltip) {
+                        tooltip.remove();
+                        tooltip = null;
+                    }
+                });
+                
+                // Touch cancel - clear timer and remove tooltip
+                link.addEventListener('touchcancel', function(e) {
+                    clearTimeout(longPressTimer);
+                    if (tooltip) {
+                        tooltip.remove();
+                        tooltip = null;
+                    }
+                });
+                
+                // Touch move - cancel long press if finger moves
+                link.addEventListener('touchmove', function(e) {
+                    clearTimeout(longPressTimer);
+                    if (tooltip) {
+                        tooltip.remove();
+                        tooltip = null;
+                    }
+                });
+            });
         });
     </script>
 @endsection

@@ -9,8 +9,10 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="{{ asset('css/sidebar.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/dashboard.css') }}" rel="stylesheet">
     <link href="{{ asset('css/push-notifications.css') }}?v={{ time() }}" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link href="{{ asset('css/responsive-fixes.css') }}" rel="stylesheet">
     <style>
         /* Add 15px padding to match other pages */
         .dashboard-flex .main-content {
@@ -34,6 +36,43 @@
         .notification-dropdown {
             z-index: 99999 !important;
         }
+        
+        /* FORCE map height on desktop - override any global styles */
+        #map {
+            height: 500px !important;
+            min-height: 500px !important;
+            width: 100% !important;
+        }
+        
+        /* Map section row must not have height constraints */
+        #map-section {
+            height: auto !important;
+        }
+        
+        /* Map section card must not have height constraints */
+        #map-section .card {
+            height: auto !important;
+            min-height: auto !important;
+        }
+        
+        /* Map container card-body must not constrain height */
+        #map-card-body {
+            padding: 0 !important;
+            height: auto !important;
+            min-height: 500px !important;
+        }
+        
+        /* Responsive map height - smaller on mobile ONLY */
+        @media (max-width: 768px) {
+            #map {
+                height: 300px !important;
+                min-height: 300px !important;
+            }
+            
+            #map-card-body {
+                min-height: 300px !important;
+            }
+        }
     </style>
 </head>
 <body class="bg-light">
@@ -48,21 +87,24 @@
             <div style="padding-top: 0;">
         <!-- Main Content Area -->
                 <div class="p-0">
-    <div class="row mb-4">
+    <div class="row mb-3">
         <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center">
-                <h2 class="mb-0" style="color: #2d5530; font-weight: 600;">Site Visits Management</h2>
-                @if(auth()->user()->role !== 'super_admin')
-                <a href="{{ route('site-visits.create') }}" class="btn btn-success">
-                    <i class="fas fa-plus me-2"></i>Add New Site Visit
-                </a>
-                @endif
-            </div>
+            <h2 class="mb-0" style="color: #2d5530; font-weight: 600;">Site Visits Management</h2>
+        </div>
+    </div>
+    
+    <div class="row mb-4">
+        <div class="col-12 d-flex justify-content-end">
+            @if(auth()->user()->role !== 'super_admin')
+            <a href="{{ route('site-visits.create') }}" class="btn btn-success">
+                <i class="fas fa-plus me-2"></i>Add New Site Visit
+            </a>
+            @endif
         </div>
     </div>
 
     <!-- Map Section -->
-    <div class="row mb-4">
+    <div class="row mb-4" id="map-section">
         <div class="col-12">
             <div class="card shadow-sm">
                 <div class="card-header bg-light d-flex justify-content-between align-items-center">
@@ -78,8 +120,8 @@
                         </button>
                     </div>
                 </div>
-                <div class="card-body p-0" style="position: relative;">
-                    <div id="map" style="height: 400px; width: 100%; display: flex; align-items: center; justify-content: center; background-color: #f8f9fa;">
+                <div id="map-card-body" class="card-body p-0" style="position: relative;">
+                    <div id="map" style="height: 500px; width: 100%; display: flex; align-items: center; justify-content: center; background-color: #f8f9fa;">
                         <div class="text-center text-muted">
                             <i class="fas fa-map-marked-alt" style="font-size: 3rem; margin-bottom: 1rem;"></i>
                             <h5>Google Maps Integration</h5>
@@ -520,6 +562,25 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
+
+// Sidebar toggle functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const sidebar = document.getElementById('sidebarMenu');
+    const overlay = document.getElementById('sidebarOverlay');
+    
+    if (sidebarToggle && sidebar && overlay) {
+        sidebarToggle.addEventListener('click', function() {
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        });
+        
+        overlay.addEventListener('click', function() {
+            sidebar.classList.remove('active');
+            overlay.classList.remove('active');
+        });
+    }
+});
 </script>
 </body>
 </html>

@@ -1,5 +1,9 @@
+<?php $__env->startPush('styles'); ?>
+<link href="<?php echo e(asset('css/client-data.css')); ?>?v=<?php echo e(time()); ?>" rel="stylesheet">
+<?php $__env->stopPush(); ?>
+
 <?php $__env->startSection('content'); ?>
-    <div class="container-fluid py-3">
+    <div class="container-fluid py-3 client-data-page">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2>
                 <i class="fas fa-folder-open me-2 text-success"></i>
@@ -54,7 +58,7 @@
                                         <?php endif; ?>
                                     </td>
                                     <td>
-                                        <a href="<?php echo e(route('client-data.show', $visit)); ?>" class="btn btn-sm btn-primary">
+                                        <a href="<?php echo e(route('client-data.show', $visit)); ?>" class="btn btn-sm btn-success client-data-open-btn">
                                             <i class="fas fa-eye me-1"></i>Open
                                         </a>
                                     </td>

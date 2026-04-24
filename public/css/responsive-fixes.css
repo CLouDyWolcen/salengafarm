@@ -7,23 +7,26 @@
    GLOBAL RESPONSIVE FIXES
    ======================================== */
 
-/* Prevent horizontal scrolling */
-html, body {
-    overflow-x: hidden !important;
-    width: 100% !important;
-    position: relative;
-}
+/* ONLY apply these fixes on mobile devices */
+@media (max-width: 768px) {
+    /* Prevent horizontal scrolling */
+    html, body {
+        overflow-x: hidden !important;
+        width: 100% !important;
+        position: relative;
+    }
 
-/* Ensure all containers respect viewport width */
-.container,
-.row {
-    max-width: 100% !important;
-    overflow-x: hidden !important;
-}
+    /* Ensure all containers respect viewport width */
+    .container,
+    .row {
+        max-width: 100% !important;
+        overflow-x: hidden !important;
+    }
 
-/* Don't hide overflow on container-fluid as it clips dropdowns */
-.container-fluid {
-    max-width: 100% !important;
+    /* Don't hide overflow on container-fluid as it clips dropdowns */
+    .container-fluid {
+        max-width: 100% !important;
+    }
 }
 
 /* Fix for iOS Safari viewport height */

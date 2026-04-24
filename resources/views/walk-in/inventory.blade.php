@@ -4,6 +4,96 @@
 
 @section('content')
 <style>
+    /* Mobile responsive - force cards side by side */
+    @media (max-width: 767px) {
+        /* Stat cards - 2x2 grid */
+        .row.g-2.mb-3 > .col-6 {
+            flex: 0 0 50% !important;
+            max-width: 50% !important;
+        }
+        
+        /* Recent Sales and Low Stock Alert - side by side */
+        .row.g-2 > .col-6 {
+            flex: 0 0 50% !important;
+            max-width: 50% !important;
+        }
+        
+        /* Make Back to Sales and Refresh Data buttons icon-only on mobile */
+        .btn-group .btn {
+            width: 45px !important;
+            height: 45px !important;
+            padding: 0 !important;
+            border-radius: 8px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+        }
+        
+        .btn-group .btn i {
+            margin: 0 !important;
+            font-size: 1.2rem !important;
+        }
+        
+        .btn-group .btn .btn-text {
+            display: none !important;
+        }
+        
+        /* CRITICAL: Override inventory.css that hides columns - show ALL columns */
+        .table th:nth-child(2),
+        .table td:nth-child(2),
+        .table th:nth-child(4),
+        .table td:nth-child(4),
+        .table th:nth-child(5),
+        .table td:nth-child(5) {
+            display: table-cell !important;
+        }
+        
+        /* Inventory table - make horizontally scrollable with all columns visible */
+        .table-responsive {
+            overflow-x: auto !important;
+            -webkit-overflow-scrolling: touch !important;
+            display: block !important;
+        }
+        
+        /* Force table to show all columns */
+        .table {
+            min-width: 700px !important;
+            display: table !important;
+            width: auto !important;
+            table-layout: auto !important;
+        }
+        
+        .table thead,
+        .table tbody {
+            display: table-row-group !important;
+        }
+        
+        .table tr {
+            display: table-row !important;
+        }
+        
+        .table th,
+        .table td {
+            display: table-cell !important;
+            white-space: nowrap !important;
+            padding: 0.5rem 0.3rem !important;
+            font-size: 0.75rem !important;
+        }
+        
+        /* Compact inputs on mobile */
+        .table input.form-control {
+            font-size: 0.7rem !important;
+            padding: 0.25rem 0.3rem !important;
+        }
+        
+        /* Compact buttons on mobile */
+        .table .btn {
+            font-size: 0.7rem !important;
+            padding: 0.25rem 0.5rem !important;
+            width: auto !important;
+        }
+    }
+    
     /* Fix spacing between Low Stock Alert header and first item */
     #low-stock-list .list-group-item {
         padding-top: 0.5rem !important;
@@ -47,6 +137,11 @@
 </style>
 
     <div class="container-fluid" style="min-height: 100vh; display: flex; flex-direction: column; padding: 1rem; background: linear-gradient(135deg, #f5f7fa 0%, #e8f5e9 100%);">
+        <!-- Sidebar Toggle Button for Mobile/Tablet -->
+        <button id="sidebarToggle" class="btn btn-success d-lg-none" type="button" aria-label="Open sidebar" style="position: fixed; top: 10px; right: 10px; z-index: 1000; width: 45px; height: 45px; border-radius: 8px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.2);">
+            <i class="fa fa-bars" style="font-size: 1.3rem;"></i>
+        </button>
+        
         <div class="row mb-4">
             <div class="col-12">
                 <div class="d-flex justify-content-between align-items-center">
@@ -56,16 +151,16 @@
                     <div class="btn-group">
                         @if(auth()->user()->role !== 'super_admin')
                         <a href="{{ route('walk-in.index') }}" class="btn btn-primary" style="background: linear-gradient(135deg, #66bb6a 0%, #4caf50 100%); border: none; box-shadow: 0 2px 4px rgba(76, 175, 80, 0.3);">
-                            <i class="fas fa-cash-register me-1"></i> Back to Sales
+                            <i class="fas fa-arrow-left"></i><span class="btn-text ms-1">Back to Sales</span>
                         </a>
                         @endif
                         @if(auth()->user()->role === 'super_admin')
                         <button id="records-btn" class="btn btn-success" style="background: linear-gradient(135deg, #66bb6a 0%, #4caf50 100%); border: none; box-shadow: 0 2px 4px rgba(76, 175, 80, 0.3);" data-bs-toggle="modal" data-bs-target="#salesRecordsModal">
-                            <i class="fas fa-list me-1"></i> Records
+                            <i class="fas fa-list"></i><span class="btn-text ms-1">Records</span>
                         </button>
                         @endif
                         <button id="refresh-btn" class="btn btn-success ms-2" style="background: linear-gradient(135deg, #81c784 0%, #66bb6a 100%); border: none; box-shadow: 0 2px 4px rgba(102, 187, 106, 0.3);">
-                            <i class="fas fa-sync-alt me-1"></i> Refresh Data
+                            <i class="fas fa-sync-alt"></i><span class="btn-text ms-1">Refresh Data</span>
                         </button>
                     </div>
                 </div>
@@ -74,7 +169,7 @@
 
         <!-- Summary Cards -->
         <div class="row g-2 mb-3">
-            <div class="col-md-3">
+            <div class="col-md-3 col-6">
                 <div class="card shadow-sm border-0" style="height: 70px; border-radius: 10px; background: linear-gradient(135deg, #ffffff 0%, #f1f8f4 100%);">
                     <div class="card-body d-flex align-items-center justify-content-center" style="padding: 0.6rem 0.8rem !important; height: 100%;">
                         <div class="d-flex align-items-center w-100">
@@ -92,7 +187,7 @@
                 </div>
             </div>
 
-            <div class="col-md-3">
+            <div class="col-md-3 col-6">
                 <div class="card shadow-sm border-0" style="height: 70px; border-radius: 10px; background: linear-gradient(135deg, #ffffff 0%, #fff8e1 100%);">
                     <div class="card-body d-flex align-items-center justify-content-center" style="padding: 0.6rem 0.8rem !important; height: 100%;">
                         <div class="d-flex align-items-center w-100">
@@ -110,7 +205,7 @@
                 </div>
             </div>
 
-            <div class="col-md-3">
+            <div class="col-md-3 col-6">
                 <div class="card shadow-sm border-0" style="height: 70px; border-radius: 10px; background: linear-gradient(135deg, #ffffff 0%, #e0f2f1 100%);">
                     <div class="card-body d-flex align-items-center justify-content-center" style="padding: 0.6rem 0.8rem !important; height: 100%;">
                         <div class="d-flex align-items-center w-100">
@@ -128,7 +223,7 @@
                 </div>
             </div>
 
-            <div class="col-md-3">
+            <div class="col-md-3 col-6">
                 <div class="card shadow-sm border-0" style="height: 70px; border-radius: 10px; background: linear-gradient(135deg, #ffffff 0%, #e3f2fd 100%);">
                     <div class="card-body d-flex align-items-center justify-content-center" style="padding: 0.6rem 0.8rem !important; height: 100%;">
                         <div class="d-flex align-items-center w-100">
@@ -226,53 +321,59 @@
                 </div>
             </div>
 
-            <div class="col-md-3" style="display: flex; flex-direction: column;">
-                <!-- Recent Sales Card -->
-                <div class="card sidebar-card mb-3" style="height: 280px; display: flex; flex-direction: column; border: none; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); border-radius: 12px;">
-                    <div class="card-header" style="background: linear-gradient(135deg, #4db6ac 0%, #26a69a 100%); color: white; border-radius: 12px 12px 0 0; border: none; padding: 0.5rem 0.75rem;">
-                        <h5 class="mb-0" style="font-weight: 600; font-family: 'Poppins', sans-serif; font-size: 0.9rem;"><i class="fas fa-receipt me-2"></i>Recent Sales</h5>
-                    </div>
-                    <div class="card-body" style="flex: 1; overflow-y: auto; padding: 0.75rem;">
-                        <div class="list-group list-group-flush" id="recent-sales-list">
-                            @forelse($recentSales as $sale)
-                                <div class="list-group-item" style="border-radius: 8px; margin-bottom: 0.5rem; border: 1px solid #e0e0e0; background-color: white;">
-                                    <div class="d-flex w-100 justify-content-between align-items-center">
-                                        <div style="flex: 1; min-width: 0;">
-                                            <h6 class="mb-1" style="font-size: 0.85rem; font-weight: 600; color: #2e7d32; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="{{ $sale->plant->name }}">{{ $sale->plant->name }}</h6>
-                                            <small class="text-muted" style="font-size: 0.75rem;">
-                                                {{ $sale->created_at->format('M d, Y h:i A') }}
-                                            </small>
+            <div class="col-md-3 col-12" style="display: flex; flex-direction: column;">
+                <div class="row g-2">
+                    <!-- Recent Sales Card -->
+                    <div class="col-md-12 col-6">
+                        <div class="card sidebar-card" style="height: 280px; display: flex; flex-direction: column; border: none; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); border-radius: 12px;">
+                            <div class="card-header" style="background: linear-gradient(135deg, #4db6ac 0%, #26a69a 100%); color: white; border-radius: 12px 12px 0 0; border: none; padding: 0.5rem 0.75rem;">
+                                <h5 class="mb-0" style="font-weight: 600; font-family: 'Poppins', sans-serif; font-size: 0.9rem;"><i class="fas fa-receipt me-2"></i>Recent Sales</h5>
+                            </div>
+                            <div class="card-body" style="flex: 1; overflow-y: auto; padding: 0.75rem;">
+                                <div class="list-group list-group-flush" id="recent-sales-list">
+                                    @forelse($recentSales as $sale)
+                                        <div class="list-group-item" style="border-radius: 8px; margin-bottom: 0.5rem; border: 1px solid #e0e0e0; background-color: white;">
+                                            <div class="d-flex w-100 justify-content-between align-items-center">
+                                                <div style="flex: 1; min-width: 0;">
+                                                    <h6 class="mb-1" style="font-size: 0.85rem; font-weight: 600; color: #2e7d32; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="{{ $sale->plant->name }}">{{ $sale->plant->name }}</h6>
+                                                    <small class="text-muted" style="font-size: 0.75rem;">
+                                                        {{ $sale->created_at->format('M d, Y h:i A') }}
+                                                    </small>
+                                                </div>
+                                                <span class="badge" style="background: linear-gradient(135deg, #66bb6a 0%, #4caf50 100%); color: white; font-size: 0.75rem; padding: 0.35rem 0.6rem;">{{ $sale->quantity }} sold</span>
+                                            </div>
                                         </div>
-                                        <span class="badge" style="background: linear-gradient(135deg, #66bb6a 0%, #4caf50 100%); color: white; font-size: 0.75rem; padding: 0.35rem 0.6rem;">{{ $sale->quantity }} sold</span>
-                                    </div>
+                                    @empty
+                                        <div class="text-center py-5">
+                                            <i class="fas fa-receipt fa-3x text-muted mb-3" style="opacity: 0.3;"></i>
+                                            <p class="text-muted mb-0" style="font-size: 0.9rem;">No recent sales</p>
+                                            <small class="text-muted" style="font-size: 0.8rem;">Sales will appear here</small>
+                                        </div>
+                                    @endforelse
                                 </div>
-                            @empty
-                                <div class="text-center py-5">
-                                    <i class="fas fa-receipt fa-3x text-muted mb-3" style="opacity: 0.3;"></i>
-                                    <p class="text-muted mb-0" style="font-size: 0.9rem;">No recent sales</p>
-                                    <small class="text-muted" style="font-size: 0.8rem;">Sales will appear here</small>
-                                </div>
-                            @endforelse
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Low Stock Card -->
-                <div class="card sidebar-card" style="flex: 1; display: flex; flex-direction: column; min-height: 0; border: none; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); border-radius: 12px;">
-                    <div class="card-header d-flex justify-content-between align-items-center" style="background: linear-gradient(135deg, #ffb74d 0%, #ffa726 100%); color: white; border-radius: 12px 12px 0 0; border: none; padding: 0.5rem 0.75rem;">
-                        <h5 class="mb-0" style="font-weight: 600; font-family: 'Poppins', sans-serif; font-size: 0.9rem;"><i class="fas fa-exclamation-triangle me-2"></i>Low Stock Alert</h5>
-                        <button id="show-all-low-stock" class="btn btn-sm" style="background-color: rgba(255, 255, 255, 0.2); color: white; border: 1px solid rgba(255, 255, 255, 0.3); padding: 0.25rem 0.5rem; font-size: 0.75rem;" data-bs-toggle="modal" data-bs-target="#lowStockModal">
-                            <i class="fas fa-list-ul me-1"></i> Show All
-                        </button>
-                    </div>
-                    <div class="card-body" style="flex: 1; overflow-y: auto; padding: 1rem; padding-top: 0.5rem !important;">
-                        <div class="list-group list-group-flush" id="low-stock-list">
-                            <!-- Low stock items will be populated here via AJAX -->
-                            <div class="list-group-item text-center py-4" style="background-color: transparent; border: none;">
-                                <div class="spinner-border" style="color: #ffa726;" role="status">
-                                    <span class="visually-hidden">Loading...</span>
+                    <!-- Low Stock Card -->
+                    <div class="col-md-12 col-6">
+                        <div class="card sidebar-card" style="height: 280px; display: flex; flex-direction: column; border: none; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); border-radius: 12px;">
+                            <div class="card-header d-flex justify-content-between align-items-center" style="background: linear-gradient(135deg, #ffb74d 0%, #ffa726 100%); color: white; border-radius: 12px 12px 0 0; border: none; padding: 0.5rem 0.75rem;">
+                                <h5 class="mb-0" style="font-weight: 600; font-family: 'Poppins', sans-serif; font-size: 0.9rem;"><i class="fas fa-exclamation-triangle me-2"></i>Low Stock Alert</h5>
+                                <button id="show-all-low-stock" class="btn btn-sm" style="background-color: rgba(255, 255, 255, 0.2); color: white; border: 1px solid rgba(255, 255, 255, 0.3); padding: 0.25rem 0.5rem; font-size: 0.75rem;" data-bs-toggle="modal" data-bs-target="#lowStockModal">
+                                    <i class="fas fa-list-ul me-1"></i> Show All
+                                </button>
+                            </div>
+                            <div class="card-body" style="flex: 1; overflow-y: auto; padding: 1rem; padding-top: 0.5rem !important;">
+                                <div class="list-group list-group-flush" id="low-stock-list">
+                                    <!-- Low stock items will be populated here via AJAX -->
+                                    <div class="list-group-item text-center py-4" style="background-color: transparent; border: none;">
+                                        <div class="spinner-border" style="color: #ffa726;" role="status">
+                                            <span class="visually-hidden">Loading...</span>
+                                        </div>
+                                        <p class="mt-2 text-muted">Loading low stock items...</p>
+                                    </div>
                                 </div>
-                                <p class="mt-2 text-muted">Loading low stock items...</p>
                             </div>
                         </div>
                     </div>

@@ -31,47 +31,47 @@
         <?php ($isClient = $user && method_exists($user, 'isClient') ? $user->isClient() : false); ?>
         <?php ($currentRoute = request()->path()); ?>
         <li class="nav-item">
-            <a href="/" class="nav-link sidebar-link <?php echo e($currentRoute == '/' ? 'active' : ''); ?>">
-                <i class="fas fa-house me-2 text-success"></i> Home
+            <a href="/" class="nav-link sidebar-link <?php echo e($currentRoute == '/' ? 'active' : ''); ?>" title="Home">
+                <i class="fas fa-house me-2 text-success"></i> <span>Home</span>
             </a>
         </li>
         <li class="nav-item">
-            <a href="/dashboard" class="nav-link sidebar-link <?php echo e(str_starts_with($currentRoute, 'dashboard') ? 'active' : ''); ?>">
-                <i class="fas fa-tachometer-alt me-2 text-success"></i> Dashboard
+            <a href="/dashboard" class="nav-link sidebar-link <?php echo e(str_starts_with($currentRoute, 'dashboard') ? 'active' : ''); ?>" title="Dashboard">
+                <i class="fas fa-tachometer-alt me-2 text-success"></i> <span>Dashboard</span>
             </a>
         </li>
         <?php if($isAdmin): ?>
             <li class="nav-item">
-                <a href="/plants" class="nav-link sidebar-link <?php echo e(str_starts_with($currentRoute, 'plants') ? 'active' : ''); ?>">
-                    <i class="fas fa-seedling me-2 text-success"></i> Inventory
+                <a href="/plants" class="nav-link sidebar-link <?php echo e(str_starts_with($currentRoute, 'plants') ? 'active' : ''); ?>" title="Inventory">
+                    <i class="fas fa-seedling me-2 text-success"></i> <span>Inventory</span>
                 </a>
             </li>
             <li class="nav-item">
-                <a href="<?php echo e(Auth::user()->role === 'super_admin' ? '/walk-in/inventory' : '/walk-in'); ?>" class="nav-link sidebar-link <?php echo e(str_starts_with($currentRoute, 'walk-in') ? 'active' : ''); ?>">
-                    <i class="fas fa-cash-register me-2 text-success"></i> Point-of-Sale
+                <a href="<?php echo e(Auth::user()->role === 'super_admin' ? '/walk-in/inventory' : '/walk-in'); ?>" class="nav-link sidebar-link <?php echo e(str_starts_with($currentRoute, 'walk-in') ? 'active' : ''); ?>" title="Point-of-Sale">
+                    <i class="fas fa-cash-register me-2 text-success"></i> <span>Point-of-Sale</span>
                 </a>
             </li>
             <li class="nav-item">
-                <a href="/requests" class="nav-link sidebar-link <?php echo e(str_starts_with($currentRoute, 'requests') ? 'active' : ''); ?>">
-                    <i class="fas fa-envelope-open-text me-2 text-success"></i> Requests
+                <a href="/requests" class="nav-link sidebar-link <?php echo e(str_starts_with($currentRoute, 'requests') ? 'active' : ''); ?>" title="Requests">
+                    <i class="fas fa-envelope-open-text me-2 text-success"></i> <span>Requests</span>
                 </a>
             </li>
             <li class="nav-item">
-                <a href="/site-visits" class="nav-link sidebar-link <?php echo e(str_starts_with($currentRoute, 'site-visits') ? 'active' : ''); ?>">
-                    <i class="fas fa-map-marked-alt me-2 text-success"></i> Site Visits
+                <a href="/site-visits" class="nav-link sidebar-link <?php echo e(str_starts_with($currentRoute, 'site-visits') ? 'active' : ''); ?>" title="Site Visits">
+                    <i class="fas fa-map-marked-alt me-2 text-success"></i> <span>Site Visits</span>
                 </a>
             </li>
             <?php if($user && $user->role === 'super_admin'): ?>
             <li class="nav-item">
-                <a href="/users" class="nav-link sidebar-link <?php echo e(str_starts_with($currentRoute, 'users') ? 'active' : ''); ?>">
-                    <i class="fas fa-users-cog me-2 text-success"></i> Users
+                <a href="/users" class="nav-link sidebar-link <?php echo e(str_starts_with($currentRoute, 'users') ? 'active' : ''); ?>" title="Users">
+                    <i class="fas fa-users-cog me-2 text-success"></i> <span>Users</span>
                 </a>
             </li>
             <?php endif; ?>
         <?php elseif($isClient): ?>
             <li class="nav-item">
-                <a href="<?php echo e(route('client-data.index')); ?>" class="nav-link sidebar-link <?php echo e(str_starts_with($currentRoute, 'client-data') ? 'active' : ''); ?>">
-                    <i class="fas fa-folder-open me-2 text-success"></i> Client Data
+                <a href="<?php echo e(route('client-data.index')); ?>" class="nav-link sidebar-link <?php echo e(str_starts_with($currentRoute, 'client-data') ? 'active' : ''); ?>" title="Client Data">
+                    <i class="fas fa-folder-open me-2 text-success"></i> <span>Client Data</span>
                 </a>
             </li>
         <?php endif; ?>
@@ -81,7 +81,7 @@
     <!-- Notification Bell for Admins (above profile) -->
     <?php if($isAdmin): ?>
     <div class="px-3 mb-3">
-        <a href="#" class="nav-link sidebar-link d-flex align-items-center notification-bell-trigger" id="sidebarNotificationBell" style="padding: 0.7rem 1.2rem;">
+        <a href="#" class="nav-link sidebar-link d-flex align-items-center notification-bell-trigger" id="sidebarNotificationBell" title="Notifications" style="padding: 0.7rem 1.2rem;">
             <i class="fas fa-bell me-2 text-success"></i>
             <span>Notifications</span>
             <span class="badge bg-danger ms-auto notification-badge" style="display: none;">0</span>
@@ -89,33 +89,10 @@
     </div>
     <?php endif; ?>
     
-    <!-- Notification Dropdown (positioned outside sidebar) -->
-    <?php if($isAdmin): ?>
-    <div class="notification-dropdown" id="sidebarNotificationDropdown" style="display: none; position: fixed; left: 240px; top: 50%; transform: translateY(-50%); width: 380px; z-index: 99999;">
-        <div class="notification-header">
-            <h6><i class="fas fa-bell me-2"></i>Notifications</h6>
-            <div class="d-flex gap-2">
-                <a href="#" class="mark-all-read" title="Mark all as read">
-                    <i class="fas fa-check-double"></i>
-                </a>
-                <a href="#" class="delete-all-notifications" title="Delete all">
-                    <i class="fas fa-trash"></i>
-                </a>
-            </div>
-        </div>
-        <div class="notification-list">
-            <div class="no-notifications">
-                <i class="fas fa-seedling"></i>
-                <p>Loading...</p>
-            </div>
-        </div>
-    </div>
-    <?php endif; ?>
-    
     <!-- Sidebar Footer: Profile Card and Logout -->
     <?php if(auth()->guard()->check()): ?>
     <div class="sidebar-footer">
-        <a href="/profile/edit" class="sidebar-profile-card-link">
+        <a href="/profile/edit" class="sidebar-profile-card-link" title="Profile">
             <div class="sidebar-profile-card">
                 <div class="sidebar-profile-avatar">
                     <?php if(Auth::user()->avatar): ?>
@@ -133,8 +110,8 @@
         </a>
         <form id="sidebar-logout-form" action="<?php echo e(route('logout')); ?>" method="POST" style="display:inline;">
             <?php echo csrf_field(); ?>
-            <button type="button" class="nav-link sidebar-link sidebar-logout-link" id="logout-btn">
-                <i class="fas fa-sign-out-alt"></i> Logout
+            <button type="button" class="nav-link sidebar-link sidebar-logout-link" id="logout-btn" title="Logout">
+                <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
             </button>
         </form>
     </div>
@@ -146,6 +123,29 @@
     </div>
     <?php endif; ?>
 </nav>
+
+<!-- Notification Dropdown (positioned outside sidebar) -->
+<?php if($isAdmin): ?>
+<div class="notification-dropdown" id="sidebarNotificationDropdown" style="display: none; position: fixed; left: 240px; top: 50%; transform: translateY(-50%); width: 380px; z-index: 99999;">
+    <div class="notification-header">
+        <h6><i class="fas fa-bell me-2"></i><span class="notification-text">Notifications</span></h6>
+        <div class="d-flex gap-2">
+            <a href="#" class="mark-all-read" title="Mark all as read">
+                <i class="fas fa-check-double"></i>
+            </a>
+            <a href="#" class="delete-all-notifications" title="Delete all">
+                <i class="fas fa-trash"></i>
+            </a>
+        </div>
+    </div>
+    <div class="notification-list">
+        <div class="no-notifications">
+            <i class="fas fa-seedling"></i>
+            <p>Loading...</p>
+        </div>
+    </div>
+</div>
+<?php endif; ?>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {

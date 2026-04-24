@@ -9,11 +9,18 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="{{ asset('css/sidebar.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/dashboard.css') }}" rel="stylesheet">
 </head>
 <body class="bg-light">
-    @include('layouts.sidebar')
-
-    <div class="container-fluid" style="margin-left: 220px; padding-top: 1rem;">
+    <div id="sidebarOverlay"></div>
+    <div class="dashboard-flex">
+        @include('layouts.sidebar')
+        <!-- Sidebar Toggle Button for Mobile -->
+        <button id="sidebarToggle" class="btn btn-success d-lg-none" type="button" aria-label="Open sidebar">
+            <i class="fa fa-bars" style="font-size: 1.3rem;"></i>
+        </button>
+        <div class="main-content">
+            <div class="container-fluid" style="padding-top: 1rem;">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2>
                 <i class="fas fa-user-check me-2 text-success"></i>
@@ -77,7 +84,29 @@
             </div>
         </div>
     </div>
+    </div>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Sidebar toggle functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const sidebar = document.getElementById('sidebarMenu');
+            const overlay = document.getElementById('sidebarOverlay');
+            
+            if (sidebarToggle && sidebar && overlay) {
+                sidebarToggle.addEventListener('click', function() {
+                    sidebar.classList.toggle('active');
+                    overlay.classList.toggle('active');
+                });
+                
+                overlay.addEventListener('click', function() {
+                    sidebar.classList.remove('active');
+                    overlay.classList.remove('active');
+                });
+            }
+        });
+    </script>
 </body>
 </html>

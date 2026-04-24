@@ -478,15 +478,84 @@ input[type="text"]#password:focus {
 
 @media (max-width: 640px) {
     .p-10 {
-        padding: 1.5rem;
+        padding: 2rem !important;
+    }
+    
+    /* Make the login card larger on mobile */
+    .max-w-md {
+        max-width: 95% !important;
+        width: 95% !important;
+        padding: 2rem !important;
     }
 
     h2 {
-        font-size: 1.1rem;
+        font-size: 1.75rem !important;
+        margin-bottom: 0.75rem !important;
     }
     
-    .form-input {
-        font-size: 0.875rem;
+    .text-sm {
+        font-size: 1.1rem !important;
+    }
+    
+    .form-label {
+        font-size: 1rem !important;
+        margin-bottom: 0.5rem !important;
+    }
+    
+    .form-input,
+    .clean-input,
+    input[type="password"],
+    input[type="text"]#password,
+    input[type="email"] {
+        font-size: 1.1rem !important;
+        height: 55px !important;
+        padding: 14px 14px 14px 50px !important;
+        border-radius: 10px !important;
+    }
+    
+    .clean-input-group .input-icon {
+        font-size: 1.3rem !important;
+        left: 18px !important;
+    }
+    
+    .password-toggle {
+        right: 14px !important;
+    }
+    
+    .password-toggle i {
+        font-size: 1.2rem !important;
+    }
+    
+    .sign-in-btn {
+        padding: 1rem 1rem !important;
+        font-size: 1.1rem !important;
+        height: 55px !important;
+        border-radius: 10px !important;
+    }
+    
+    .social-btn {
+        padding: 1rem 1rem !important;
+        font-size: 1.1rem !important;
+        height: 55px !important;
+        border-radius: 10px !important;
+    }
+    
+    .social-btn i {
+        font-size: 1.3rem !important;
+    }
+    
+    .divider-text {
+        font-size: 1.1rem !important;
+    }
+    
+    .form-group {
+        margin-bottom: 1.5rem !important;
+    }
+    
+    /* Links and text */
+    .text-center p,
+    .text-center a {
+        font-size: 1rem !important;
     }
 }
 

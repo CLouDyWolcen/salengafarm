@@ -366,7 +366,7 @@
     
     .cart-items-container {
         overflow-y: auto;
-        overflow-x: hidden; /* Hide horizontal scrollbar */
+        overflow-x: auto; /* Changed from hidden to auto for mobile scroll */
     }
     
     /* Set specific widths for columns to keep them compact */
@@ -630,16 +630,339 @@
         padding: 10px 0;
         background-color: #fff;
     }
+    
+    /* Mobile Responsive Styles */
+    @media (max-width: 768px) {
+        /* Sidebar toggle button */
+        #sidebarToggle {
+            display: flex !important;
+        }
+        
+        /* Make table horizontally scrollable */
+        .table-responsive {
+            overflow-x: auto !important;
+            -webkit-overflow-scrolling: touch !important;
+            display: block !important;
+        }
+        
+        /* Force table to maintain ALL 7 columns structure */
+        .plant-selection-table {
+            min-width: 700px !important;
+            display: table !important;
+            width: auto !important;
+            table-layout: auto !important;
+        }
+        
+        .plant-selection-table thead,
+        .plant-selection-table tbody {
+            display: table-row-group !important;
+        }
+        
+        .plant-selection-table tr {
+            display: table-row !important;
+        }
+        
+        /* Force ALL columns to display - Name, Code, Height, Spread, Spacing, Price, Actions */
+        .plant-selection-table th,
+        .plant-selection-table td {
+            display: table-cell !important;
+            padding: 0.4rem 0.3rem !important;
+            font-size: 0.75rem !important;
+            white-space: nowrap !important;
+            vertical-align: middle !important;
+        }
+        
+        /* Make header cells equal width for Height, Spread, Spacing */
+        .plant-selection-table th:nth-child(3),
+        .plant-selection-table th:nth-child(4),
+        .plant-selection-table th:nth-child(5) {
+            width: 75px !important;
+            min-width: 75px !important;
+            max-width: 75px !important;
+            padding: 0.4rem 0.2rem !important;
+        }
+        
+        /* Make data cells equal width for Height, Spread, Spacing */
+        .plant-selection-table td:nth-child(3),
+        .plant-selection-table td:nth-child(4),
+        .plant-selection-table td:nth-child(5) {
+            width: 75px !important;
+            min-width: 75px !important;
+            max-width: 75px !important;
+            padding: 0.4rem 0.2rem !important;
+        }
+        
+        /* Ensure all 7 columns are visible */
+        .plant-selection-table th:nth-child(1),
+        .plant-selection-table td:nth-child(1),
+        .plant-selection-table th:nth-child(2),
+        .plant-selection-table td:nth-child(2),
+        .plant-selection-table th:nth-child(3),
+        .plant-selection-table td:nth-child(3),
+        .plant-selection-table th:nth-child(4),
+        .plant-selection-table td:nth-child(4),
+        .plant-selection-table th:nth-child(5),
+        .plant-selection-table td:nth-child(5),
+        .plant-selection-table th:nth-child(6),
+        .plant-selection-table td:nth-child(6),
+        .plant-selection-table th:nth-child(7),
+        .plant-selection-table td:nth-child(7) {
+            display: table-cell !important;
+        }
+        
+        /* Smaller input fields - consistent sizing for all columns */
+        .editable-field,
+        .form-control-sm {
+            padding: 0.15rem 0.25rem !important;
+            font-size: 0.65rem !important;
+            min-width: 60px !important;
+            width: 70px !important;
+            margin: 0 !important;
+        }
+        
+        /* Ensure table cells have no extra padding */
+        .plant-selection-table td:nth-child(3),
+        .plant-selection-table td:nth-child(4),
+        .plant-selection-table td:nth-child(5) {
+            padding: 0.4rem 0.2rem !important;
+        }
+        
+        /* Compact Add button */
+        .add-to-cart-btn {
+            padding: 0.25rem 0.5rem !important;
+            font-size: 0.7rem !important;
+            white-space: nowrap !important;
+        }
+        
+        .add-to-cart-btn i {
+            font-size: 0.65rem !important;
+        }
+        
+        /* Keep Records and Inventory buttons horizontal on mobile */
+        .btn-group {
+            flex-direction: row !important;
+            width: auto !important;
+            gap: 0.5rem !important;
+        }
+        
+        .btn-group .btn {
+            width: auto !important;
+            margin: 0 !important;
+            flex: 1 !important;
+        }
+        
+        /* Compact header */
+        h1.mb-0 {
+            font-size: 1.3rem !important;
+        }
+        
+        /* Reduce card padding */
+        .card-header {
+            padding: 0.5rem 0.75rem !important;
+        }
+        
+        .card-header h5 {
+            font-size: 0.9rem !important;
+        }
+        
+        .card-body {
+            padding: 0.75rem !important;
+        }
+        
+        /* Adjust header layout for mobile */
+        .d-flex.justify-content-between {
+            flex-direction: column !important;
+            align-items: flex-start !important;
+            gap: 1rem !important;
+        }
+        
+        /* Current Sale Cart Table - Mobile fixes */
+        /* CRITICAL: Override all table CSS with highest specificity */
+        .cart-items-container .cart-table.table.table-sm.table-bordered {
+            width: 100% !important;
+            min-width: 100% !important;
+            max-width: 100% !important;
+            table-layout: fixed !important;
+            display: table !important;
+            margin: 0 !important;
+        }
+        
+        .cart-items-container .cart-table.table thead,
+        .cart-items-container .cart-table.table tbody {
+            display: table-row-group !important;
+        }
+        
+        .cart-items-container .cart-table.table tr {
+            display: table-row !important;
+            width: 100% !important;
+        }
+        
+        .cart-items-container .cart-table.table th,
+        .cart-items-container .cart-table.table td {
+            display: table-cell !important;
+        }
+        
+        /* Force equal column distribution */
+        .cart-items-container .cart-table.table th:nth-child(1), 
+        .cart-items-container .cart-table.table td:nth-child(1) { 
+            width: 30% !important;
+        }
+        
+        .cart-items-container .cart-table.table th:nth-child(2), 
+        .cart-items-container .cart-table.table td:nth-child(2) { 
+            width: 15% !important;
+        }
+        
+        .cart-items-container .cart-table.table th:nth-child(3), 
+        .cart-items-container .cart-table.table td:nth-child(3) { 
+            width: 20% !important;
+        }
+        
+        .cart-items-container .cart-table.table th:nth-child(4), 
+        .cart-items-container .cart-table.table td:nth-child(4) { 
+            width: 20% !important;
+        }
+        
+        .cart-items-container .cart-table.table th:nth-child(5), 
+        .cart-items-container .cart-table.table td:nth-child(5) { 
+            width: 15% !important;
+        }
+        
+        /* Reduce cart table cell heights to match web */
+        .cart-table th {
+            font-size: 0.7rem !important;
+            padding: 0.25rem 0.15rem !important;
+            font-weight: 600;
+            line-height: 1.1 !important;
+        }
+        
+        .cart-table td {
+            font-size: 0.7rem !important;
+            padding: 0.25rem 0.15rem !important;
+            height: auto !important;
+            vertical-align: middle !important;
+            line-height: 1.1 !important;
+        }
+        
+        /* Fix plant name column - allow text wrapping and NO max-width constraint */
+        #cart-table-body .plant-name {
+            max-width: none !important;
+            width: auto !important;
+            font-size: 0.7rem !important;
+            white-space: normal !important;
+            word-wrap: break-word !important;
+            overflow-wrap: break-word !important;
+            overflow: visible !important;
+            text-overflow: clip !important;
+            line-height: 1.2 !important;
+            padding: 0.25rem 0.15rem !important;
+        }
+        
+        /* Compact quantity input */
+        #cart-table-body .qty-input {
+            width: 35px !important;
+            min-width: 35px !important;
+            height: 24px !important;
+            font-size: 0.65rem !important;
+            padding: 0.1rem 0.15rem !important;
+        }
+        
+        /* Compact price and total displays */
+        #cart-table-body .price-display,
+        #cart-table-body .total-display {
+            font-size: 0.7rem !important;
+            min-width: 50px !important;
+            padding: 0.25rem 0.15rem !important;
+        }
+        
+        /* Compact delete button */
+        .cart-table .remove-item-btn {
+            padding: 0.15rem 0.25rem !important;
+            font-size: 0.65rem !important;
+        }
+        
+        .cart-table .remove-item-btn i {
+            font-size: 0.6rem !important;
+        }
+        
+        /* Reduce cart items container max height */
+        .cart-items-container {
+            max-height: 150px !important;
+            padding: 0.5rem !important;
+            overflow-x: auto !important; /* Allow horizontal scroll on mobile */
+            -webkit-overflow-scrolling: touch !important;
+        }
+        
+        /* Reduce Plant Selection table height to half on mobile */
+        .col-lg-8 .card-body .table-responsive {
+            max-height: 350px !important;
+        }
+        
+        /* Ensure search input is fully functional on mobile */
+        #plant-search {
+            font-size: 16px !important; /* Prevents iOS zoom on focus */
+            -webkit-appearance: none;
+            appearance: none;
+        }
+        
+        /* Ensure table rows show/hide properly on mobile */
+        #plants-table-body tr {
+            display: table-row !important;
+        }
+        
+        #plants-table-body tr[style*="display: none"] {
+            display: none !important;
+        }
+    }
+    
+    @media (max-width: 576px) {
+        /* Even more compact on small mobile */
+        .plant-selection-table {
+            min-width: 650px !important;
+        }
+        
+        .plant-selection-table th,
+        .plant-selection-table td {
+            padding: 0.3rem 0.2rem !important;
+            font-size: 0.7rem !important;
+        }
+        
+        .editable-field,
+        .form-control-sm {
+            padding: 0.1rem 0.2rem !important;
+            font-size: 0.6rem !important;
+            min-width: 50px !important;
+            width: 60px !important;
+        }
+        
+        .add-to-cart-btn {
+            padding: 0.2rem 0.4rem !important;
+            font-size: 0.65rem !important;
+        }
+        
+        h1.mb-0 {
+            font-size: 1.1rem !important;
+        }
+        
+        .card-header h5 {
+            font-size: 0.85rem !important;
+        }
+    }
 </style>
 
 <div class="container-fluid py-4" style="height: calc(100vh - 0px); display: flex; flex-direction: column; background: linear-gradient(135deg, #f5f7fa 0%, #e8f5e9 100%);">
+    <!-- Sidebar Toggle Button for Mobile -->
+    <button id="sidebarToggle" class="btn btn-success d-lg-none" type="button" aria-label="Open sidebar" style="position: fixed; top: 10px; right: 10px; z-index: 1000; width: 45px; height: 45px; border-radius: 8px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.2);">
+        <i class="fa fa-bars" style="font-size: 1.3rem;"></i>
+    </button>
+    
     <div class="row mb-4">
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center">
                 <h1 class="mb-0" style="color: #2e7d32; font-weight: 600; font-family: 'Poppins', sans-serif;">
                     <i class="fas fa-cash-register me-2" style="color: #4caf50;"></i>Point of Sale
                 </h1>
-                <div>
+                <div class="btn-group">
                     <button id="records-btn" class="btn btn-success ms-2" style="background: linear-gradient(135deg, #66bb6a 0%, #4caf50 100%); border: none; box-shadow: 0 2px 4px rgba(76, 175, 80, 0.3);">
                         <i class="fas fa-list me-1"></i> Records
                     </button>
@@ -1022,6 +1345,47 @@
 
 <?php $__env->startSection('scripts'); ?>
 <script>
+    // Sidebar toggle for mobile
+    document.addEventListener('DOMContentLoaded', function() {
+        const sidebar = document.getElementById('sidebarMenu');
+        const overlay = document.getElementById('sidebarOverlay');
+        const toggle = document.getElementById('sidebarToggle');
+
+        if (toggle && sidebar && overlay) {
+            // Toggle sidebar on button click
+            toggle.addEventListener('click', function(e) {
+                e.stopPropagation();
+                sidebar.classList.toggle('active');
+                overlay.classList.toggle('active');
+            });
+            
+            // Close sidebar when clicking overlay
+            overlay.addEventListener('click', function() {
+                sidebar.classList.remove('active');
+                overlay.classList.remove('active');
+            });
+            
+            // Close sidebar on Escape key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    sidebar.classList.remove('active');
+                    overlay.classList.remove('active');
+                }
+            });
+            
+            // Close sidebar when clicking a link (mobile only)
+            if (window.innerWidth <= 991) {
+                const sidebarLinks = sidebar.querySelectorAll('.sidebar-link');
+                sidebarLinks.forEach(link => {
+                    link.addEventListener('click', function() {
+                        sidebar.classList.remove('active');
+                        overlay.classList.remove('active');
+                    });
+                });
+            }
+        }
+    });
+    
     // Global function for POS quick filters (must be outside document.ready for onclick to work)
     function applyPOSQuickFilter(filter) {
         // Update button states

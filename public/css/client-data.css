@@ -158,9 +158,43 @@ body.bg-light .client-data-page .text-muted {
 
 /* Mobile overrides - CRITICAL: Override inventory.css mobile table styles */
 @media (max-width: 768px) {
+    /* Compact Open button on mobile */
+    body.bg-light .client-data-page .client-data-open-btn {
+        font-size: 0.65rem !important;
+        padding: 0.25rem 0.4rem !important;
+        border-radius: 0.25rem !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: auto !important;
+        max-width: 60px !important;
+        white-space: nowrap !important;
+    }
+    
+    body.bg-light .client-data-page .client-data-open-btn i {
+        font-size: 0.65rem !important;
+        margin-right: 0.2rem !important;
+    }
+    
+    /* Prevent Actions column from stretching button */
+    body.bg-light .client-data-page table td:last-child {
+        text-align: left !important;
+        padding: 0.25rem 0.2rem !important;
+    }
+    
+    /* Truncate file links on mobile only */
+    body.bg-light .client-data-page .file-link {
+        display: inline-block !important;
+        max-width: 80px !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        white-space: nowrap !important;
+        vertical-align: middle !important;
+    }
+    
     body.bg-light .client-data-page .table-responsive .table {
         display: table !important;
-        font-size: 0.75rem !important;
+        font-size: 0.65rem !important;
         overflow-x: visible !important;
         white-space: normal !important;
         table-layout: auto !important;
@@ -180,19 +214,40 @@ body.bg-light .client-data-page .text-muted {
     body.bg-light .client-data-page .table-responsive .table th,
     body.bg-light .client-data-page .table-responsive .table td {
         display: table-cell !important;
-        padding: 0.3rem !important;
-        font-size: 0.75rem !important;
+        padding: 0.25rem 0.2rem !important;
+        font-size: 0.65rem !important;
         white-space: normal !important;
         word-wrap: break-word !important;
         overflow-wrap: break-word !important;
         height: auto !important;
         min-height: auto !important;
         flex: none !important;
+        line-height: 1.2 !important;
     }
     
-    body.bg-light .client-data-page .table-responsive .table th:first-child,
-    body.bg-light .client-data-page .table-responsive .table td:first-child {
-        min-width: 150px !important;
+    /* Compact column widths on mobile */
+    body.bg-light .client-data-page .table-responsive .table th:nth-child(1),
+    body.bg-light .client-data-page .table-responsive .table td:nth-child(1) {
+        min-width: 100px !important;
+        max-width: 120px !important;
+    }
+    
+    body.bg-light .client-data-page .table-responsive .table th:nth-child(2),
+    body.bg-light .client-data-page .table-responsive .table td:nth-child(2) {
+        min-width: 80px !important;
+        max-width: 100px !important;
+    }
+    
+    body.bg-light .client-data-page .table-responsive .table th:nth-child(3),
+    body.bg-light .client-data-page .table-responsive .table td:nth-child(3) {
+        min-width: 70px !important;
+        max-width: 90px !important;
+    }
+    
+    body.bg-light .client-data-page .table-responsive .table th:nth-child(4),
+    body.bg-light .client-data-page .table-responsive .table td:nth-child(4) {
+        min-width: 70px !important;
+        max-width: 90px !important;
     }
     
     body.bg-light .client-data-page .table-responsive .table tbody tr {
@@ -204,12 +259,87 @@ body.bg-light .client-data-page .text-muted {
     body.bg-light .client-data-page .table-responsive .table td:nth-child(n) {
         display: table-cell !important;
     }
+    
+    /* Compact buttons and badges */
+    body.bg-light .client-data-page .btn-sm {
+        font-size: 0.65rem !important;
+        padding: 0.15rem 0.3rem !important;
+    }
+    
+    body.bg-light .client-data-page .badge {
+        font-size: 0.65rem !important;
+        padding: 0.15em 0.3em !important;
+    }
+    
+    /* FORCE vertical stacking - target the exact structure */
+    body.bg-light .client-data-page table tbody tr td form .input-group,
+    body.bg-light .client-data-page table tbody tr td form .input-group-sm {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: stretch !important;
+        flex-wrap: nowrap !important;
+    }
+    
+    body.bg-light .client-data-page table tbody tr td form .input-group > *,
+    body.bg-light .client-data-page table tbody tr td form .input-group-sm > * {
+        width: 100% !important;
+        flex: 0 0 auto !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+    }
+    
+    body.bg-light .client-data-page table tbody tr td form .input-group .form-control,
+    body.bg-light .client-data-page table tbody tr td form .input-group-sm .form-control {
+        font-size: 0.65rem !important;
+        padding: 0.15rem 0.3rem !important;
+        margin-bottom: 0.3rem !important;
+        border-radius: 0.25rem !important;
+    }
+    
+    body.bg-light .client-data-page table tbody tr td form .input-group .btn,
+    body.bg-light .client-data-page table tbody tr td form .input-group-sm .btn {
+        font-size: 0.65rem !important;
+        padding: 0.15rem 0.3rem !important;
+        border-radius: 0.25rem !important;
+    }
+    
+    body.bg-light .client-data-page small {
+        font-size: 0.6rem !important;
+        display: block !important;
+        margin-top: 0.2rem !important;
+    }
+    
+    /* Compact header on mobile */
+    body.bg-light .client-data-page h5 {
+        font-size: 0.85rem !important;
+    }
+    
+    body.bg-light .client-data-page .card-header {
+        padding: 0.3rem 0.5rem !important;
+    }
 }
 
 @media (max-width: 576px) {
+    /* Ultra compact Open button on small mobile */
+    body.bg-light .client-data-page .client-data-open-btn {
+        font-size: 0.6rem !important;
+        padding: 0.2rem 0.35rem !important;
+        max-width: 55px !important;
+    }
+    
+    body.bg-light .client-data-page .client-data-open-btn i {
+        font-size: 0.6rem !important;
+        margin-right: 0.15rem !important;
+    }
+    
+    /* Tighter Actions column on small mobile */
+    body.bg-light .client-data-page table td:last-child {
+        padding: 0.2rem 0.15rem !important;
+    }
+    
     body.bg-light .client-data-page .table-responsive .table {
         display: table !important;
-        font-size: 0.7rem !important;
+        font-size: 0.6rem !important;
         overflow-x: visible !important;
         white-space: normal !important;
         table-layout: auto !important;
@@ -229,19 +359,40 @@ body.bg-light .client-data-page .text-muted {
     body.bg-light .client-data-page .table-responsive .table th,
     body.bg-light .client-data-page .table-responsive .table td {
         display: table-cell !important;
-        padding: 0.25rem !important;
-        font-size: 0.7rem !important;
+        padding: 0.2rem 0.15rem !important;
+        font-size: 0.6rem !important;
         white-space: normal !important;
         word-wrap: break-word !important;
         overflow-wrap: break-word !important;
         height: auto !important;
         min-height: auto !important;
         flex: none !important;
+        line-height: 1.1 !important;
     }
     
-    body.bg-light .client-data-page .table-responsive .table th:first-child,
-    body.bg-light .client-data-page .table-responsive .table td:first-child {
-        min-width: 140px !important;
+    /* Even more compact column widths on small mobile */
+    body.bg-light .client-data-page .table-responsive .table th:nth-child(1),
+    body.bg-light .client-data-page .table-responsive .table td:nth-child(1) {
+        min-width: 90px !important;
+        max-width: 110px !important;
+    }
+    
+    body.bg-light .client-data-page .table-responsive .table th:nth-child(2),
+    body.bg-light .client-data-page .table-responsive .table td:nth-child(2) {
+        min-width: 70px !important;
+        max-width: 90px !important;
+    }
+    
+    body.bg-light .client-data-page .table-responsive .table th:nth-child(3),
+    body.bg-light .client-data-page .table-responsive .table td:nth-child(3) {
+        min-width: 60px !important;
+        max-width: 80px !important;
+    }
+    
+    body.bg-light .client-data-page .table-responsive .table th:nth-child(4),
+    body.bg-light .client-data-page .table-responsive .table td:nth-child(4) {
+        min-width: 60px !important;
+        max-width: 80px !important;
     }
     
     body.bg-light .client-data-page .table-responsive .table tbody tr {
@@ -273,5 +424,67 @@ body.bg-light .client-data-page .text-muted {
         display: table-cell !important;
         height: auto !important;
         min-height: auto !important;
+    }
+    
+    /* Ultra compact buttons and badges */
+    body.bg-light .client-data-page .btn-sm {
+        font-size: 0.6rem !important;
+        padding: 0.1rem 0.25rem !important;
+    }
+    
+    body.bg-light .client-data-page .badge {
+        font-size: 0.6rem !important;
+        padding: 0.1em 0.25em !important;
+    }
+    
+    /* FORCE vertical stacking on small mobile - target exact structure */
+    body.bg-light .client-data-page table tbody tr td form .input-group,
+    body.bg-light .client-data-page table tbody tr td form .input-group-sm {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: stretch !important;
+        flex-wrap: nowrap !important;
+    }
+    
+    body.bg-light .client-data-page table tbody tr td form .input-group > *,
+    body.bg-light .client-data-page table tbody tr td form .input-group-sm > * {
+        width: 100% !important;
+        flex: 0 0 auto !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+    }
+    
+    body.bg-light .client-data-page table tbody tr td form .input-group .form-control,
+    body.bg-light .client-data-page table tbody tr td form .input-group-sm .form-control {
+        font-size: 0.6rem !important;
+        padding: 0.1rem 0.25rem !important;
+        margin-bottom: 0.25rem !important;
+        border-radius: 0.25rem !important;
+    }
+    
+    body.bg-light .client-data-page table tbody tr td form .input-group .btn,
+    body.bg-light .client-data-page table tbody tr td form .input-group-sm .btn {
+        font-size: 0.6rem !important;
+        padding: 0.1rem 0.25rem !important;
+        border-radius: 0.25rem !important;
+    }
+    
+    body.bg-light .client-data-page small {
+        font-size: 0.55rem !important;
+        display: block !important;
+        margin-top: 0.15rem !important;
+    }
+    
+    /* Ultra compact header on small mobile */
+    body.bg-light .client-data-page h5 {
+        font-size: 0.8rem !important;
+    }
+    
+    body.bg-light .client-data-page .card-header {
+        padding: 0.25rem 0.4rem !important;
+    }
+    
+    body.bg-light .client-data-page .card-body {
+        padding: 0.3rem !important;
     }
 }

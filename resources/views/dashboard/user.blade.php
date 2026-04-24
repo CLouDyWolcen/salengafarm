@@ -58,7 +58,8 @@
     /* Custom table styling - completely independent from Bootstrap */
     .custom-inquiries-table {
         width: 100% !important;
-        border-collapse: collapse !important;
+        border-collapse: separate !important;
+        border-spacing: 0 !important;
         background: white !important;
         margin: 0 !important;
         border: none !important;
@@ -72,31 +73,50 @@
     }
     
     .custom-inquiries-table thead {
-        background: #f8f9fa !important;
-        border-bottom: 2px solid #dee2e6 !important;
+        background: linear-gradient(135deg, #198754 0%, #157347 100%) !important;
+        border-bottom: none !important;
     }
     
     .custom-inquiries-table th {
-        padding: 12px 16px !important;
+        padding: 14px 16px !important;
         text-align: left !important;
         font-weight: 600 !important;
-        color: #495057 !important;
-        border-bottom: 1px solid #dee2e6 !important;
-        border-top: none !important;
-        border-left: none !important;
-        border-right: none !important;
-        background: #f8f9fa !important;
+        color: white !important;
+        border: none !important;
+        background: transparent !important;
         vertical-align: middle !important;
+        font-size: 13px !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.5px !important;
+    }
+    
+    .custom-inquiries-table th:first-child {
+        border-radius: 0 !important;
+    }
+    
+    .custom-inquiries-table th:last-child {
+        border-radius: 0 !important;
     }
     
     .custom-inquiries-table td {
-        padding: 12px 16px !important;
-        border-bottom: 1px solid #f1f3f4 !important;
+        padding: 14px 16px !important;
+        border-bottom: 1px solid #e9ecef !important;
         border-top: none !important;
         border-left: none !important;
         border-right: none !important;
         vertical-align: middle !important;
         background: white !important;
+        color: #495057 !important;
+    }
+    
+    .custom-inquiries-table tbody tr {
+        transition: all 0.2s ease !important;
+    }
+    
+    .custom-inquiries-table tbody tr:hover {
+        background-color: #f8f9fa !important;
+        transform: translateX(2px) !important;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05) !important;
     }
     
     .custom-inquiries-table tbody tr:hover td {
@@ -105,6 +125,11 @@
     
     .custom-inquiries-table tbody tr:last-child td {
         border-bottom: none !important;
+    }
+    
+    .custom-inquiries-table tbody tr td:first-child {
+        font-weight: 600 !important;
+        color: #198754 !important;
     }
     
     /* Ensure table container doesn't have height restrictions */
@@ -126,69 +151,69 @@
         border: none !important;
     }
     
-    /* Custom action buttons - uniform size and better alignment */
-    .action-btn {
+    /* Custom action icons - compact circular buttons */
+    .action-icon {
         display: inline-flex !important;
         align-items: center !important;
         justify-content: center !important;
-        padding: 6px 12px !important;
-        margin: 2px !important;
+        width: 36px !important;
+        height: 36px !important;
+        padding: 0 !important;
+        margin: 0 4px !important;
         border: none !important;
-        border-radius: 4px !important;
-        font-size: 12px !important;
-        font-weight: 500 !important;
+        border-radius: 50% !important;
+        font-size: 14px !important;
         text-decoration: none !important;
         cursor: pointer !important;
         transition: all 0.2s ease !important;
-        min-width: 80px !important;
-        height: 32px !important;
-        white-space: nowrap !important;
-        line-height: 1 !important;
-        vertical-align: middle !important;
+        position: relative !important;
     }
     
-    .action-btn i {
-        margin-right: 4px !important;
-        font-size: 11px !important;
+    .action-icon i {
         line-height: 1 !important;
+        margin: 0 !important;
     }
     
-    .action-btn-primary {
+    .action-icon-primary {
         background-color: #007bff !important;
         color: white !important;
     }
     
-    .action-btn-primary:hover {
+    .action-icon-primary:hover {
         background-color: #0056b3 !important;
         color: white !important;
-        text-decoration: none !important;
+        transform: scale(1.1) !important;
+        box-shadow: 0 2px 8px rgba(0,123,255,0.3) !important;
     }
     
-    .action-btn-success {
+    .action-icon-success {
         background-color: #28a745 !important;
         color: white !important;
     }
     
-    .action-btn-success:hover {
+    .action-icon-success:hover {
         background-color: #1e7e34 !important;
         color: white !important;
-        text-decoration: none !important;
+        transform: scale(1.1) !important;
+        box-shadow: 0 2px 8px rgba(40,167,69,0.3) !important;
     }
     
-    .action-btn-danger {
+    .action-icon-danger {
         background-color: #dc3545 !important;
         color: white !important;
     }
     
-    .action-btn-danger:hover {
+    .action-icon-danger:hover {
         background-color: #c82333 !important;
         color: white !important;
+        transform: scale(1.1) !important;
+        box-shadow: 0 2px 8px rgba(220,53,69,0.3) !important;
     }
     
     .actions-container {
         display: flex !important;
-        flex-wrap: wrap !important;
-        gap: 4px !important;
+        flex-wrap: nowrap !important;
+        gap: 0 !important;
         align-items: center !important;
         justify-content: flex-start !important;
     }
@@ -266,9 +291,9 @@
     .custom-inquiries-table thead {
         position: sticky !important;
         top: 0 !important;
-        z-index: 10 !important;
-        background: #f8f9fa !important;
-        border-bottom: 2px solid #dee2e6 !important;
+        z-index: 100 !important;
+        background: linear-gradient(135deg, #198754 0%, #157347 100%) !important;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
     }
     
     /* Ensure each row has consistent height for scrolling calculation */
@@ -278,17 +303,19 @@
     }
     
     .inquiries-table-header {
-        background: #f8f9fa !important;
+        background: linear-gradient(135deg, #198754 0%, #157347 100%) !important;
         padding: 16px 20px !important;
-        border-bottom: 1px solid #dee2e6 !important;
+        border-bottom: none !important;
         border-radius: 8px 8px 0 0 !important;
     }
     
     .inquiries-table-header h6 {
         margin: 0 !important;
         font-weight: 600 !important;
-        color: #495057 !important;
+        color: white !important;
         font-size: 16px !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.5px !important;
     }
     
     /* Ensure the table wrapper doesn't restrict height */
@@ -316,6 +343,82 @@
         font-size: 48px;
         margin-bottom: 16px;
         opacity: 0.5;
+    }
+    
+    /* Mobile responsive styles */
+    @media (max-width: 768px) {
+        /* Make table horizontally scrollable on mobile */
+        .table-scroll-wrapper {
+            overflow-x: auto !important;
+            overflow-y: auto !important;
+            -webkit-overflow-scrolling: touch !important;
+        }
+        
+        /* Ensure table doesn't shrink columns on mobile */
+        .custom-inquiries-table {
+            min-width: 500px !important;
+        }
+        
+        /* Narrower Actions column with icon buttons */
+        .custom-inquiries-table th:last-child,
+        .custom-inquiries-table td:last-child {
+            min-width: 140px !important;
+            width: 140px !important;
+        }
+        
+        /* Compact action icons on mobile */
+        .action-icon {
+            width: 32px !important;
+            height: 32px !important;
+            font-size: 13px !important;
+            margin: 0 3px !important;
+        }
+        
+        /* Reduce table padding on mobile */
+        .custom-inquiries-table th,
+        .custom-inquiries-table td {
+            padding: 10px 12px !important;
+        }
+        
+        /* Compact header on mobile */
+        .inquiries-table-header {
+            padding: 12px 16px !important;
+        }
+        
+        .inquiries-table-header h6 {
+            font-size: 14px !important;
+        }
+    }
+    
+    @media (max-width: 576px) {
+        /* Even more compact on small mobile */
+        .custom-inquiries-table {
+            min-width: 450px !important;
+            font-size: 12px !important;
+        }
+        
+        .custom-inquiries-table th:last-child,
+        .custom-inquiries-table td:last-child {
+            min-width: 120px !important;
+            width: 120px !important;
+        }
+        
+        .action-icon {
+            width: 30px !important;
+            height: 30px !important;
+            font-size: 12px !important;
+            margin: 0 2px !important;
+        }
+        
+        .custom-inquiries-table th,
+        .custom-inquiries-table td {
+            padding: 8px 10px !important;
+        }
+        
+        .status-badge {
+            font-size: 10px !important;
+            padding: 3px 6px !important;
+        }
     }
 </style>
 @endpush
@@ -362,12 +465,18 @@
                                 <td>
                                     <div class="actions-container">
                                         @if($status === 'responded')
-                                            <a href="{{ route('user.inquiry.response', $r->id) }}" class="action-btn action-btn-primary">
-                                                <i class="fas fa-eye"></i>View Response
+                                            <a href="{{ route('user.inquiry.response', $r->id) }}" 
+                                               class="action-icon action-icon-primary" 
+                                               title="View Response"
+                                               data-tooltip="View Response">
+                                                <i class="fas fa-eye"></i>
                                             </a>
                                             @if($r->request_type === 'client' && $r->pdf_path)
-                                                <a href="{{ route('requests.download-pdf', $r->id) }}" class="action-btn action-btn-success">
-                                                    <i class="fas fa-download"></i>Download RFQ
+                                                <a href="{{ route('requests.download-pdf', $r->id) }}" 
+                                                   class="action-icon action-icon-success"
+                                                   title="Download RFQ"
+                                                   data-tooltip="Download RFQ">
+                                                    <i class="fas fa-download"></i>
                                                 </a>
                                             @endif
                                         @endif
@@ -375,8 +484,12 @@
                                             @csrf
                                             @method('DELETE')
                                         </form>
-                                        <button type="button" class="action-btn action-btn-danger" onclick="confirmDeleteInquiry({{ $r->id }})">
-                                            <i class="fas fa-trash"></i>Delete
+                                        <button type="button" 
+                                                class="action-icon action-icon-danger" 
+                                                title="Delete"
+                                                data-tooltip="Delete"
+                                                onclick="confirmDeleteInquiry({{ $r->id }})">
+                                            <i class="fas fa-trash"></i>
                                         </button>
                                     </div>
                                 </td>
@@ -864,6 +977,78 @@ function toggleAccountFields() {
         var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
         var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
             return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+        
+        // Long-press tooltip for mobile action icons
+        let longPressTimer;
+        let tooltip;
+        
+        document.querySelectorAll('.action-icon').forEach(icon => {
+            // Touch start - begin long press timer
+            icon.addEventListener('touchstart', function(e) {
+                const tooltipText = this.getAttribute('data-tooltip');
+                
+                if (tooltipText) {
+                    longPressTimer = setTimeout(() => {
+                        // Create tooltip
+                        tooltip = document.createElement('div');
+                        tooltip.className = 'mobile-action-tooltip';
+                        tooltip.textContent = tooltipText;
+                        tooltip.style.cssText = `
+                            position: fixed;
+                            background: rgba(0, 0, 0, 0.9);
+                            color: white;
+                            padding: 8px 12px;
+                            border-radius: 6px;
+                            font-size: 12px;
+                            z-index: 10001;
+                            white-space: nowrap;
+                            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+                            pointer-events: none;
+                        `;
+                        
+                        // Position tooltip above the icon
+                        const rect = this.getBoundingClientRect();
+                        tooltip.style.left = (rect.left + rect.width / 2) + 'px';
+                        tooltip.style.top = (rect.top - 40) + 'px';
+                        tooltip.style.transform = 'translateX(-50%)';
+                        
+                        document.body.appendChild(tooltip);
+                        
+                        // Vibrate if supported (haptic feedback)
+                        if (navigator.vibrate) {
+                            navigator.vibrate(50);
+                        }
+                    }, 500); // 500ms long press
+                }
+            });
+            
+            // Touch end - clear timer and remove tooltip
+            icon.addEventListener('touchend', function(e) {
+                clearTimeout(longPressTimer);
+                if (tooltip) {
+                    tooltip.remove();
+                    tooltip = null;
+                }
+            });
+            
+            // Touch cancel - clear timer and remove tooltip
+            icon.addEventListener('touchcancel', function(e) {
+                clearTimeout(longPressTimer);
+                if (tooltip) {
+                    tooltip.remove();
+                    tooltip = null;
+                }
+            });
+            
+            // Touch move - cancel long press if finger moves
+            icon.addEventListener('touchmove', function(e) {
+                clearTimeout(longPressTimer);
+                if (tooltip) {
+                    tooltip.remove();
+                    tooltip = null;
+                }
+            });
         });
     });
 </script>

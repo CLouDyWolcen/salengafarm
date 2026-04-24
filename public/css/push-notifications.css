@@ -45,25 +45,28 @@
     margin-top: 10px;
 }
 
-/* Sidebar notification dropdown positioning */
-.sidebar .notification-dropdown {
-    position: fixed !important;
-    left: 240px !important;
-    top: 50% !important;
-    transform: translateY(-50%) !important;
-    right: auto !important;
-    margin-top: 0 !important;
-    max-height: 70vh !important;
-    pointer-events: none;
-    z-index: 99999 !important;
-}
-
-.sidebar .notification-dropdown.show {
-    display: block !important;
-    animation: none !important;
-    transform: translateY(-50%) !important;
-    pointer-events: auto;
-    z-index: 99999 !important;
+/* Sidebar notification dropdown positioning - DESKTOP ONLY */
+@media (min-width: 769px) {
+    .sidebar .notification-dropdown,
+    #sidebarNotificationDropdown {
+        position: fixed !important;
+        left: 240px !important;
+        top: 50% !important;
+        transform: translateY(-50%) !important;
+        right: auto !important;
+        margin-top: 0 !important;
+        max-height: 70vh !important;
+        z-index: 99999 !important;
+    }
+    
+    .sidebar .notification-dropdown.show,
+    #sidebarNotificationDropdown.show {
+        display: block !important;
+        animation: none !important;
+        transform: translateY(-50%) !important;
+        pointer-events: auto;
+        z-index: 99999 !important;
+    }
 }
 
 .notification-dropdown.show {
@@ -128,6 +131,9 @@
     overflow-x: hidden;
     z-index: 99999;
     position: relative;
+    scroll-behavior: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
 }
 
 /* Custom scrollbar for notification list */
@@ -448,10 +454,185 @@
 }
 
 /* Responsive */
+@media (max-width: 768px) {
+    /* Override sidebar notification dropdown positioning on mobile */
+    .sidebar .notification-dropdown,
+    #sidebarNotificationDropdown {
+        position: fixed !important;
+        left: 10px !important;
+        right: auto !important;
+        top: auto !important;
+        bottom: 180px !important;
+        transform: none !important;
+        width: calc(200px - 20px) !important;
+        max-width: calc(200px - 20px) !important;
+        max-height: 300px !important;
+        margin-top: 0 !important;
+        z-index: 2002 !important;
+    }
+    
+    .sidebar .notification-dropdown.show,
+    #sidebarNotificationDropdown.show {
+        transform: none !important;
+    }
+    
+    .notification-dropdown {
+        width: auto !important;
+        right: 10px !important;
+        left: 10px !important;
+        max-width: none !important;
+        border-radius: 8px;
+    }
+    
+    .notification-header {
+        padding: 10px 12px;
+        border-radius: 6px 6px 0 0;
+    }
+    
+    /* Hide "Notifications" text on mobile, keep only bell icon */
+    .notification-header h6 .notification-text {
+        display: none;
+    }
+    
+    /* Keep the bell icon visible at normal size */
+    .notification-header h6 i.fa-bell {
+        font-size: 1.1rem !important;
+        margin-right: 0 !important;
+    }
+    
+    .notification-header h6 {
+        margin: 0;
+        display: flex;
+        align-items: center;
+    }
+    
+    .mark-all-read,
+    .delete-all-notifications {
+        font-size: 0.7rem;
+        padding: 3px 6px;
+    }
+    
+    /* Smaller delete mode buttons on mobile */
+    .cancel-delete-btn,
+    .confirm-delete-btn {
+        font-size: 0.65rem !important;
+        padding: 3px 6px !important;
+        white-space: nowrap;
+    }
+    
+    .cancel-delete-btn i,
+    .confirm-delete-btn i {
+        font-size: 0.65rem !important;
+    }
+    
+    .notification-item {
+        padding: 10px 12px;
+        gap: 10px;
+    }
+    
+    .notification-icon {
+        width: 35px;
+        height: 35px;
+        font-size: 1rem;
+    }
+    
+    .notification-content {
+        min-width: 0;
+    }
+    
+    .notification-title {
+        font-size: 0.8rem;
+    }
+    
+    .notification-message {
+        font-size: 0.7rem;
+        line-height: 1.3;
+    }
+    
+    .notification-time {
+        font-size: 0.65rem;
+    }
+    
+    .notification-list {
+        max-height: 250px;
+        scroll-behavior: auto;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior: contain;
+    }
+    
+    .notification-footer {
+        padding: 8px 12px;
+    }
+    
+    .notification-footer a {
+        font-size: 0.8rem;
+    }
+}
+
 @media (max-width: 576px) {
     .notification-dropdown {
-        width: calc(100vw - 40px);
-        right: -10px;
+        width: 280px !important;
+        max-width: 280px !important;
+        right: auto !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        max-height: 350px;
+        border-radius: 6px;
+    }
+    
+    .notification-header {
+        padding: 8px 10px;
+        border-radius: 4px 4px 0 0;
+    }
+    
+    .notification-header h6 {
+        font-size: 0.8rem;
+    }
+    
+    .mark-all-read,
+    .delete-all-notifications {
+        font-size: 0.75rem;
+        padding: 3px 6px;
+    }
+    
+    .notification-item {
+        padding: 8px 10px;
+        gap: 8px;
+    }
+    
+    .notification-icon {
+        width: 32px;
+        height: 32px;
+        font-size: 0.9rem;
+    }
+    
+    .notification-title {
+        font-size: 0.75rem;
+    }
+    
+    .notification-message {
+        font-size: 0.65rem;
+        line-height: 1.2;
+        max-height: 2.4em;
+    }
+    
+    .notification-time {
+        font-size: 0.6rem;
+    }
+    
+    .notification-list {
+        max-height: 200px;
+        scroll-behavior: auto;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior: contain;
+    }
+    
+    .notification-footer {
+        padding: 6px 10px;
+    }
+    
+    .notification-footer a {
+        font-size: 0.75rem;
     }
     
     .toast-container {

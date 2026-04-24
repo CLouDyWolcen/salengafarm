@@ -738,21 +738,120 @@
         .menu-btn {
             font-size: 0.98rem;
             font-weight: 500;
-            color: #fff;
-            background: transparent;
-            border: none;
-            outline: none;
-            box-shadow: none;
+            color: #fff !important;
+            background: transparent !important;
+            border: none !important;
+            outline: none !important;
+            box-shadow: none !important;
+            transition: all 0.3s ease;
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 40px;
+            text-decoration: none !important;
         }
-        .menu-btn:focus, .menu-btn:hover {
-            color: #e0e0e0;
-            background: #259d4e22;
+        
+        .menu-btn:focus, .menu-btn:hover, .menu-btn:active {
+            color: #e0e0e0 !important;
+            background: transparent !important;
+            border: none !important;
+            outline: none !important;
+            box-shadow: none !important;
         }
+        
+        /* Remove Bootstrap's btn-link default styles */
+        .menu-btn.btn-link {
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+        }
+        
+        .menu-btn.btn-link:hover,
+        .menu-btn.btn-link:focus,
+        .menu-btn.btn-link:active {
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            text-decoration: none !important;
+        }
+        
+        /* Remove Bootstrap dropdown toggle arrow */
+        .menu-btn.dropdown-toggle::after {
+            display: none !important;
+        }
+        
+        /* Icon and text container - positioned absolutely for smooth morphing */
+        .menu-btn .menu-icon,
+        .menu-btn .menu-text {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            pointer-events: none;
+        }
+        
+        /* Show icon by default */
+        .menu-btn .menu-icon {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+        
+        /* Hide text by default - use visibility to prevent white dot */
+        .menu-btn .menu-text {
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(0.5);
+            white-space: nowrap;
+            visibility: hidden;
+        }
+        
+        /* When menu is open: hide icon, show text with morph effect */
+        .menu-btn[aria-expanded="true"] .menu-icon {
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(0.5);
+            visibility: hidden;
+        }
+        
+        .menu-btn[aria-expanded="true"] .menu-text {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+            visibility: visible;
+        }
+        
+        /* Adjust button width when expanded to fit text */
+        .menu-btn[aria-expanded="true"] {
+            min-width: 70px;
+        }
+        
+        /* Smooth dropdown animation */
+        .dropdown-menu {
+            animation: slideDown 0.3s ease;
+            transform-origin: top;
+        }
+        
+        @keyframes slideDown {
+            0% {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
         .profile-btn {
             font-size: 0.98rem;
             min-width: 0;
             padding: 2px 8px;
+            transition: all 0.3s ease;
         }
+        
+        .profile-btn:hover {
+            background: #259d4e22;
+        }
+        
         .profile-pic, .profile-pic-placeholder {
             width: 28px !important;
             height: 28px !important;
@@ -762,6 +861,12 @@
             align-items: center;
             justify-content: center;
             font-size: 1.2rem;
+            transition: transform 0.3s ease;
+        }
+        
+        .profile-btn:hover .profile-pic,
+        .profile-btn:hover .profile-pic-placeholder {
+            transform: scale(1.1);
         }
     </style>
     <style>
@@ -902,9 +1007,20 @@
                         <?php if(auth()->user()->hasAdminAccess()): ?>
                             <div class="dropdown me-2">
                                 <button class="btn btn-link dropdown-toggle menu-btn px-3 py-1" type="button" id="menuDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="font-size: 0.98rem; font-weight: 500;">
-                                    <i class="fas fa-bars me-1"></i>Menu
+                                    <i class="fas fa-bars menu-icon"></i>
+                                    <span class="menu-text">Menu</span>
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="menuDropdown">
+                                    <!-- Mobile-only nav links (Home, Plant Guide) -->
+                                    <li class="d-md-none"><a class="dropdown-item" href="<?php echo e(route('public.plants')); ?>"><i class="fas fa-home me-2"></i>Home</a></li>
+                                    <?php if(auth()->user()->role === 'super_admin'): ?>
+                                        <li class="d-md-none"><a class="dropdown-item" href="<?php echo e(route('plant-care.index')); ?>"><i class="fas fa-leaf me-2"></i>Plant Guide</a></li>
+                                    <?php else: ?>
+                                        <li class="d-md-none"><a class="dropdown-item" href="<?php echo e(route('plant-care.admin')); ?>"><i class="fas fa-leaf me-2"></i>Plant Guide</a></li>
+                                    <?php endif; ?>
+                                    <li class="d-md-none"><hr class="dropdown-divider"></li>
+                                    
+                                    <!-- Desktop nav links (always visible) -->
                                     <li><a class="dropdown-item" href="<?php echo e(route('dashboard')); ?>"><i class="fas fa-tachometer-alt me-2"></i>Dashboard</a></li>
                                     <li><a class="dropdown-item" href="<?php echo e(route('plants.index')); ?>"><i class="fas fa-seedling me-2"></i>Inventory</a></li>
                                     <li><a class="dropdown-item" href="<?php echo e(route('requests.index')); ?>"><i class="fas fa-envelope-open-text me-2"></i>Request</a></li>
@@ -915,7 +1031,23 @@
                         <?php endif; ?>
                 </ul>
                             </div>
-                            <?php endif; ?>
+                        <?php else: ?>
+                            <!-- Regular users: Show Menu on mobile only with their nav links -->
+                            <div class="dropdown me-2 d-md-none">
+                                <button class="btn btn-link dropdown-toggle menu-btn px-3 py-1" type="button" id="menuDropdownMobile" data-bs-toggle="dropdown" aria-expanded="false" style="font-size: 0.98rem; font-weight: 500;">
+                                    <i class="fas fa-bars menu-icon"></i>
+                                    <span class="menu-text">Menu</span>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="menuDropdownMobile">
+                                    <li><a class="dropdown-item" href="<?php echo e(route('public.plants')); ?>"><i class="fas fa-home me-2"></i>Home</a></li>
+                                    <li><a class="dropdown-item" href="<?php echo e(route('dashboard.user')); ?>"><i class="fas fa-gauge me-2"></i>Dashboard</a></li>
+                                    <li><a class="dropdown-item" href="<?php echo e(route('plant-care.index')); ?>"><i class="fas fa-leaf me-2"></i>Plant Guide</a></li>
+                                    <?php if(Auth::user()->isClient()): ?>
+                                        <li><a class="dropdown-item" href="<?php echo e(route('client-data.index')); ?>"><i class="fas fa-folder-open me-2"></i>Client Data</a></li>
+                                    <?php endif; ?>
+                                </ul>
+                            </div>
+                        <?php endif; ?>
                     <div class="dropdown">
                             <button class="btn btn-link dropdown-toggle profile-btn px-2 py-1" type="button" id="profileDropdown" data-bs-toggle="dropdown" style="font-size: 0.98rem; min-width: 0;">
                                 <?php if(auth()->user() && auth()->user()->avatar): ?>

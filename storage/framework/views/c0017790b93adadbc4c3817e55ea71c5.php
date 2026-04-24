@@ -8,10 +8,50 @@
 <?php $attributes = $attributes->except(\App\View\Components\GuestLayout::ignoredParameterNames()); ?>
 <?php endif; ?>
 <?php $component->withAttributes([]); ?>
-    <link rel="stylesheet" href="<?php echo e(asset('css/auth.css')); ?>">
+    <link rel="stylesheet" href="<?php echo e(asset('css/auth.css')); ?>?v=<?php echo e(time()); ?>">
     <link rel="stylesheet" href="<?php echo e(asset('css/loading.css')); ?>">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script src="<?php echo e(asset('js/loading.js')); ?>"></script>
+    
+    <style>
+        /* Mobile-specific overrides with highest specificity */
+        @media (max-width: 640px) {
+            .login-container .max-w-md {
+                max-width: 95vw !important;
+                width: 95vw !important;
+            }
+            
+            .login-container .max-w-md.bg-white {
+                padding: 2rem !important;
+            }
+            
+            .login-container h2 {
+                font-size: 1.75rem !important;
+            }
+            
+            .login-container .text-sm {
+                font-size: 1.1rem !important;
+            }
+            
+            .login-container .form-label {
+                font-size: 1rem !important;
+            }
+            
+            .login-container input {
+                font-size: 1.1rem !important;
+                height: 55px !important;
+                padding: 14px 14px 14px 50px !important;
+            }
+            
+            .login-container .sign-in-btn,
+            .login-container .social-btn {
+                font-size: 1.1rem !important;
+                height: 55px !important;
+                padding: 1rem !important;
+            }
+        }
+    </style>
+    
     <div class="min-h-screen">
         <div class="login-container position-relative">
             <div class="max-w-md bg-white rounded-3xl shadow-2xl p-10">

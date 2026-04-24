@@ -9,6 +9,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="<?php echo e(asset('css/sidebar.css')); ?>" rel="stylesheet">
+    <link href="<?php echo e(asset('css/dashboard.css')); ?>" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         .form-section {
@@ -226,8 +227,13 @@
     </style>
 </head>
 <body class="bg-light">
+    <div id="sidebarOverlay"></div>
     <div class="dashboard-flex">
         <?php echo $__env->make('layouts.sidebar', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+        <!-- Sidebar Toggle Button for Mobile -->
+        <button id="sidebarToggle" class="btn btn-success d-lg-none" type="button" aria-label="Open sidebar">
+            <i class="fa fa-bars" style="font-size: 1.3rem;"></i>
+        </button>
         
         <div class="main-content">
             <div class="container-fluid">
@@ -1540,6 +1546,23 @@ unset($__errorArgs, $__bag); ?>
                 });
             }
         });
+        
+        // Sidebar toggle functionality
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const sidebar = document.getElementById('sidebarMenu');
+        const overlay = document.getElementById('sidebarOverlay');
+        
+        if (sidebarToggle && sidebar && overlay) {
+            sidebarToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('active');
+                overlay.classList.toggle('active');
+            });
+            
+            overlay.addEventListener('click', function() {
+                sidebar.classList.remove('active');
+                overlay.classList.remove('active');
+            });
+        }
     </script>
 </body>
 </html>

@@ -9,6 +9,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="{{ asset('css/sidebar.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/dashboard.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         .info-section {
@@ -110,7 +111,8 @@
             <div class="container-fluid">
         <div class="row">
             <div class="col-12">
-                <div class="d-flex justify-content-between align-items-center mb-4">
+                <!-- Desktop Layout -->
+                <div class="d-none d-md-flex justify-content-between align-items-center mb-2">
                     <h2>
                         <i class="fas fa-map-marker-alt me-2 text-success"></i>
                         Site Visit Details
@@ -122,12 +124,12 @@
                         @if(auth()->check() && auth()->user()->hasAdminAccess() && auth()->user()->role !== 'super_admin')
                             <form action="{{ route('site-visits.update-status', $siteVisit) }}" method="POST" class="d-inline-flex align-items-center me-2">
                                 @csrf
-                                <select name="status" class="form-select form-select-sm me-2" style="width:auto;">
+                                <select name="status" class="form-select form-select-sm" style="width:auto; margin-right: 1.5rem;">
                                     <option value="pending" {{ $siteVisit->status==='pending' ? 'selected' : '' }}>Pending</option>
                                     <option value="completed" {{ $siteVisit->status==='completed' ? 'selected' : '' }}>Completed</option>
                                     <option value="follow_up" {{ $siteVisit->status==='follow_up' ? 'selected' : '' }}>Follow-up</option>
                                 </select>
-                                <div class="form-check form-check-sm me-2">
+                                <div class="form-check form-check-sm" style="margin-right: 1.5rem;">
                                     <input class="form-check-input" type="checkbox" id="quick_cdo" name="client_data_open" value="1" {{ $siteVisit->client_data_open ? 'checked' : '' }}>
                                     <label class="form-check-label small" for="quick_cdo">Open Client Data</label>
                                 </div>
@@ -135,7 +137,7 @@
                             </form>
                         @endif
                         @if(auth()->user()->role !== 'super_admin')
-                        <a href="{{ route('site-visits.edit', $siteVisit) }}" class="btn btn-warning">
+                        <a href="{{ route('site-visits.edit', $siteVisit) }}" class="btn btn-warning me-2">
                             <i class="fas fa-edit me-2"></i>Edit
                         </a>
                         @endif
@@ -143,6 +145,57 @@
                             <i class="fas fa-arrow-left me-2"></i>Back to List
                         </a>
                     </div>
+                </div>
+                
+                <!-- Mobile Layout -->
+                <div class="d-md-none mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h2 style="font-size: 1.1rem; margin: 0;">
+                            <i class="fas fa-map-marker-alt me-2 text-success"></i>
+                            Site Visit Details
+                            <span class="badge bg-{{ $siteVisit->status_badge_color }} d-block mt-2" style="font-size: 0.75rem; width: fit-content;">
+                                {{ ucfirst(str_replace('_', ' ', $siteVisit->status)) }}
+                            </span>
+                        </h2>
+                        <a href="{{ route('site-visits.index') }}" class="btn btn-secondary" style="font-size: 0.75rem; padding: 0.25rem 0.5rem; white-space: nowrap;">
+                            <i class="fas fa-arrow-left" style="font-size: 0.7rem;"></i> Back to List
+                        </a>
+                    </div>
+                    
+                    @if(auth()->check() && auth()->user()->hasAdminAccess() && auth()->user()->role !== 'super_admin')
+                    <form action="{{ route('site-visits.update-status', $siteVisit) }}" method="POST">
+                        @csrf
+                        <div class="row g-2 mb-2">
+                            <div class="col-6">
+                                <button type="submit" class="btn btn-primary w-100">Update</button>
+                            </div>
+                            <div class="col-6">
+                                @if(auth()->user()->role !== 'super_admin')
+                                <a href="{{ route('site-visits.edit', $siteVisit) }}" class="btn btn-warning w-100">Edit</a>
+                                @endif
+                            </div>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-6">
+                                <select name="status" class="form-select form-select-sm">
+                                    <option value="pending" {{ $siteVisit->status==='pending' ? 'selected' : '' }}>Pending</option>
+                                    <option value="completed" {{ $siteVisit->status==='completed' ? 'selected' : '' }}>Completed</option>
+                                    <option value="follow_up" {{ $siteVisit->status==='follow_up' ? 'selected' : '' }}>Follow-up</option>
+                                </select>
+                            </div>
+                            <div class="col-6">
+                                <div class="form-check d-flex align-items-center h-100">
+                                    <input class="form-check-input me-2" type="checkbox" id="quick_cdo_mobile" name="client_data_open" value="1" {{ $siteVisit->client_data_open ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="quick_cdo_mobile" style="font-size: 0.85rem;">Open Client Data</label>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    @else
+                        @if(auth()->user()->role !== 'super_admin')
+                        <a href="{{ route('site-visits.edit', $siteVisit) }}" class="btn btn-warning w-100">Edit</a>
+                        @endif
+                    @endif
                 </div>
             </div>
         </div>

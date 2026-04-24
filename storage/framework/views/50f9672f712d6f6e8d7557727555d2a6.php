@@ -1,6 +1,29 @@
-<?php $__env->startSection('title', 'Requests - Salenga Farm'); ?>
-
-<?php $__env->startSection('content'); ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
+    <title>Requests - Salenga Farm</title>
+    <link rel="icon" type="image/x-icon" href="<?php echo e(asset('tree-leaf.ico')); ?>">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="<?php echo e(asset('css/sidebar.css')); ?>" rel="stylesheet">
+    <link href="<?php echo e(asset('css/dashboard.css')); ?>" rel="stylesheet">
+    <link href="<?php echo e(asset('css/push-notifications.css')); ?>?v=<?php echo e(time()); ?>" rel="stylesheet">
+    <link href="<?php echo e(asset('css/no-hover.css')); ?>?v=<?php echo e(time()); ?>" rel="stylesheet">
+    <link href="<?php echo e(asset('css/responsive-fixes.css')); ?>" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <div id="sidebarOverlay"></div>
+    <div class="dashboard-flex">
+        <?php echo $__env->make('layouts.sidebar', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+        <!-- Sidebar Toggle Button for Mobile -->
+        <button id="sidebarToggle" class="btn btn-success d-lg-none" type="button" aria-label="Open sidebar">
+            <i class="fa fa-bars" style="font-size: 1.3rem;"></i>
+        </button>
+        <div class="main-content">
+            <div style="padding-top: 0;">
 <div class="container-fluid mt-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div>
@@ -263,11 +286,15 @@
         </div>
     </div>
 </div>
+            </div>
+        </div>
+    </div>
 
-<?php $__env->stopSection(); ?>
-
-<?php $__env->startSection('scripts'); ?>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="<?php echo e(asset('js/alerts.js')); ?>?v=<?php echo e(time()); ?>"></script>
 <script src="<?php echo e(asset('js/push-notifications.js')); ?>?v=<?php echo e(time()); ?>"></script>
+
 <script>
     $(document).ready(function() {
         // Check if we should activate a specific tab
@@ -355,8 +382,10 @@
         // Handle delete request functionality
         let formToDelete = null;
 
-        // Delete request button click
-        $('.delete-request-btn').on('click', function() {
+        // Delete request button click - use event delegation for better mobile support
+        $(document).on('click', '.delete-request-btn', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
             formToDelete = $(this).closest('form');
             $('#deleteConfirmModal').modal('show');
         });
@@ -599,11 +628,29 @@
         });
     });
 </script>
-<?php $__env->stopSection(); ?>
 
-<?php $__env->startPush('styles'); ?>
-<link href="<?php echo e(asset('css/no-hover.css')); ?>?v=<?php echo e(time()); ?>" rel="stylesheet">
-<link href="<?php echo e(asset('css/push-notifications.css')); ?>?v=<?php echo e(time()); ?>" rel="stylesheet">
+<!-- Sidebar toggle functionality -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const sidebar = document.getElementById('sidebarMenu');
+    const overlay = document.getElementById('sidebarOverlay');
+    
+    if (sidebarToggle && sidebar && overlay) {
+        sidebarToggle.addEventListener('click', function() {
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        });
+        
+        overlay.addEventListener('click', function() {
+            sidebar.classList.remove('active');
+            overlay.classList.remove('active');
+        });
+    }
+});
+</script>
+</body>
+</html>set('css/push-notifications.css') }}?v=<?php echo e(time()); ?>" rel="stylesheet">
 <style>
 /* Override global card height constraint from public.css */
 #client-requests .card,
@@ -756,6 +803,73 @@
     color: #856404;
     border-left: 4px solid #ffc107;
 }
+
+/* Mobile responsive table improvements */
+@media (max-width: 768px) {
+    /* Make table scrollable horizontally */
+    .requests-table-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    /* Reduce table font size on mobile */
+    .table {
+        font-size: 0.75rem;
+    }
+    
+    .table th,
+    .table td {
+        padding: 0.5rem 0.3rem;
+        white-space: nowrap;
+    }
+    
+    /* Make action buttons smaller on mobile */
+    .table .btn-sm {
+        padding: 0.25rem 0.4rem;
+        font-size: 0.7rem;
+    }
+    
+    .table .btn-sm i {
+        font-size: 0.8rem;
+    }
+    
+    /* Adjust badge size */
+    .table .badge {
+        font-size: 0.65rem;
+        padding: 0.25em 0.5em;
+    }
+    
+    /* Tab navigation improvements */
+    .nav-tabs .nav-link {
+        font-size: 0.85rem;
+        padding: 0.5rem 0.75rem;
+    }
+    
+    .nav-tabs .nav-link i {
+        font-size: 0.9rem;
+    }
+    
+    .nav-tabs .badge {
+        font-size: 0.7rem;
+        padding: 0.25em 0.5em;
+    }
+}
+
+/* Ensure modals appear above everything on mobile */
+.modal {
+    z-index: 10000 !important;
+}
+
+.modal-backdrop {
+    z-index: 9999 !important;
+}
+
+/* Make sure delete buttons are clickable */
+.delete-request-btn {
+    position: relative;
+    z-index: 1;
+    cursor: pointer;
+}
 </style>
-<?php $__env->stopPush(); ?>
-<?php echo $__env->make('layouts.public', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\CODING\my_Inventory\resources\views/admin/requests/index.blade.php ENDPATH**/ ?>
+
+<script><?php /**PATH C:\CODING\my_Inventory\resources\views/admin/requests/index.blade.php ENDPATH**/ ?>
