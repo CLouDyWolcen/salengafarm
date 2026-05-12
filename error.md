@@ -1,332 +1,574 @@
-Internal Server Error
+root@salengafarm:/var/www/salengafarm# git status
+On branch main
+Your branch is behind 'origin/main' by 1 commit, and can be fast-forwarded.
+  (use "git pull" to update your local branch)
 
-Error
-Class "App\Http\Controllers\Notification" not found
-PATCH 127.0.0.1:8000
-PHP 8.2.12 — Laravel 11.36.1
+Changes not staged for commit:
+  (use "git add/rm <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+        modified:   .editorconfig
+        modified:   .env.example
+        modified:   .gitattributes
+        modified:   .gitignore
+        modified:   .kiro/specs/admin-plant-care-navbar/COMPLETION_SUMMARY.md
+        modified:   .kiro/specs/admin-plant-care-navbar/IMPLEMENTATION_SUMMARY.md
+        modified:   .kiro/specs/admin-plant-care-navbar/VISUAL_GUIDE.md
+        modified:   .kiro/specs/admin-plant-care-navbar/requirements.md
+        modified:   .kiro/specs/email-fix-summary.md
+        modified:   .kiro/specs/inquiry-response-system/design.md
+        modified:   .kiro/specs/inquiry-response-system/requirements.md
+        modified:   .kiro/specs/inquiry-response-system/tasks.md
+        modified:   .kiro/specs/inventory-ui-improvements/requirements.md
+        modified:   .kiro/specs/plant-care-final-fixes.md
+        modified:   .kiro/specs/plant-care-layout-fixes.md
+        modified:   .kiro/specs/plant-care-library-summary.md
+        modified:   .kiro/specs/plant-care-navigation-update.md
+        modified:   .kiro/specs/pwa-mobile-enhancement/design.md
+        modified:   .kiro/specs/pwa-mobile-enhancement/requirements.md
+        modified:   .kiro/specs/questionnaire-enhancements/design.md
+        modified:   .kiro/specs/questionnaire-enhancements/requirements.md
+        modified:   .kiro/specs/site-visit-autofill/design.md
+        modified:   .kiro/specs/site-visit-autofill/requirements.md
+        modified:   .kiro/specs/site-visit-autofill/tasks.md
+        modified:   .kiro/specs/user-experience-improvements/IMPLEMENTATION_SUMMARY.md
+        modified:   .kiro/specs/user-experience-improvements/TESTING_GUIDE.md
+        modified:   .kiro/specs/user-experience-improvements/VISUAL_CHANGES.md
+        modified:   .kiro/specs/user-experience-improvements/requirements.md
+        modified:   1stSampleManus.md
+        modified:   2ndSampleManus.md
+        modified:   3rdSamppleManus.md
+        modified:   ADMIN_DASHBOARD_ANALYSIS.md
+        modified:   APPENDIX_10_RELEVANT_SOURCE_CODE.md
+        modified:   APPENDIX_RELEVANT_SOURCE_CODE.md
+        modified:   CHAPTER4_RESULT_AND_DISCUSSION.md
+        modified:   CHAPTER5_SUMMARY_CONCLUSION_RECOMMENDATION.md
+        modified:   DATABASE_TABLES_USAGE_STATUS.md
+        modified:   MOBILE_TESTING_GUIDE.md
+        modified:   ManuscriptSalenga.md
+        modified:   Procfile
+        modified:   QUICK_RESPONSIVE_SETUP.md
+        modified:   RAILWAY_DEPLOYMENT_GUIDE.md
+        modified:   RAILWAY_QUICK_CHECKLIST.md
+        modified:   RAILWAY_SETUP_NEW_ACCOUNT.md
+        modified:   RAILWAY_TROUBLESHOOTING.md
+        modified:   README.md
+        modified:   RESPONSIVE_DESIGN_IMPLEMENTATION.md
+        modified:   REVISED_DATA_USED_SECTION_FINAL.md
+        modified:   SYSTEM_COMPREHENSIVE_ANALYSIS.md
+        modified:   SYSTEM_FUNCTIONS_BY_USER_ROLE.md
+        modified:   app/Console/Commands/TestBrevoEmail.php
+        modified:   app/Console/Commands/TestBrevoSetup.php
+        modified:   app/Console/Commands/TestEmail.php
+        modified:   app/Console/Commands/TransferMySQLToSQLite.php
+        modified:   app/Console/Commands/UpdateAdminUser.php
+        modified:   app/Exceptions/Handler.php
+        modified:   app/Http/Controllers/Auth/AuthenticatedSessionController.php
+        modified:   app/Http/Controllers/Auth/ConfirmablePasswordController.php
+        modified:   app/Http/Controllers/Auth/EmailVerificationNotificationController.php
+        modified:   app/Http/Controllers/Auth/EmailVerificationPromptController.php
+        modified:   app/Http/Controllers/Auth/LoginController.php
+        modified:   app/Http/Controllers/Auth/NewPasswordController.php
+        modified:   app/Http/Controllers/Auth/PasswordController.php
+        modified:   app/Http/Controllers/Auth/PasswordResetLinkController.php
+        modified:   app/Http/Controllers/Auth/RegisterController.php
+        modified:   app/Http/Controllers/Auth/RegisteredUserController.php
+        modified:   app/Http/Controllers/Auth/SocialiteController.php
+        modified:   app/Http/Controllers/Auth/VerifyEmailController.php
+        modified:   app/Http/Controllers/CategoryController.php
+        modified:   app/Http/Controllers/ClientRequestController.php
+        modified:   app/Http/Controllers/Controller.php
+        modified:   app/Http/Controllers/DashboardController.php
+        modified:   app/Http/Controllers/NotificationController.php
+        modified:   app/Http/Controllers/PlantCareController.php
+        modified:   app/Http/Controllers/PlantController.php
+        modified:   app/Http/Controllers/ProfileController.php
+        modified:   app/Http/Controllers/PublicController.php
+        modified:   app/Http/Controllers/RequestFormController.php
+        modified:   app/Http/Controllers/SiteVisitController.php
+        modified:   app/Http/Controllers/SystemLogController.php
+        modified:   app/Http/Controllers/UserController.php
+        modified:   app/Http/Controllers/UserDashboardController.php
+        modified:   app/Http/Controllers/UserPlantRequestController.php
+        modified:   app/Http/Controllers/WalkInInventoryController.php
+        modified:   app/Http/Controllers/WalkInSalesController.php
+        modified:   app/Http/Kernel.php
+        modified:   app/Http/Middleware/AdminMiddleware.php
+        modified:   app/Http/Middleware/ClientAccessMiddleware.php
+        modified:   app/Http/Middleware/ManagerMiddleware.php
+        modified:   app/Http/Middleware/PartnerAccessMiddleware.php
+        modified:   app/Http/Middleware/UserMiddleware.php
+        modified:   app/Http/Middleware/authsss.php
+        modified:   app/Http/Requests/Auth/LoginRequest.php
+        modified:   app/Http/Requests/ProfileUpdateRequest.php
+        modified:   app/Mail/PlantRequestMail.php
+        modified:   app/Models/AutofillCache.php
+        modified:   app/Models/Category.php
+        modified:   app/Models/DisplayPlant.php
+        modified:   app/Models/Notification.php
+        modified:   app/Models/Plant.php
+        modified:   app/Models/PlantRequest.php
+        modified:   app/Models/RoleRequest.php
+        modified:   app/Models/Sale.php
+        modified:   app/Models/SiteVisit.php
+        modified:   app/Models/User.php
+        modified:   app/Providers/AppServiceProvider.php
+        modified:   app/Providers/AuthServiceProvider.php
+        modified:   app/Providers/MiddlewareServiceProvider.php
+        modified:   app/Providers/RouteServiceProvider.php
+        modified:   app/Services/BrevoEmailService.php
+        modified:   app/View/Components/AppLayout.php
+        modified:   app/View/Components/GuestLayout.php
+        modified:   artisan
+        modified:   backup_database.bat
+        modified:   bootstrap/app.php
+        modified:   bootstrap/cache/.gitignore
+        modified:   bootstrap/providers.php
+        modified:   composer.json
+        modified:   composer.lock
+        modified:   config/app.php
+        modified:   config/auth.php
+        modified:   config/cache.php
+        modified:   config/database.php
+        modified:   config/filesystems.php
+        modified:   config/logging.php
+        modified:   config/mail.php
+        modified:   config/permission.php
+        modified:   config/queue.php
+        modified:   config/services.php
+        modified:   config/session.php
+        modified:   database/.gitignore
+        modified:   database/factories/UserFactory.php
+        modified:   database/migrations/0001_01_01_000000_create_users_table.php
+        modified:   database/migrations/0001_01_01_000001_create_cache_table.php
+        modified:   database/migrations/0001_01_01_000002_create_jobs_table.php
+        modified:   database/migrations/2024_02_10_000000_add_avatar_to_users_table.php
+        modified:   database/migrations/2025_04_21_174303_create_plants_table.php
+        modified:   database/migrations/2025_04_21_174310_create_plant_requests_table.php
+        modified:   database/migrations/2025_04_21_174311_add_pricing_to_plant_requests_table.php
+        modified:   database/migrations/2025_04_21_174315_add_request_type_to_plant_requests_table.php
+        modified:   database/migrations/2025_04_21_174317_add_fields_to_users_table.php
+        modified:   database/migrations/2025_04_21_174319_create_display_plants_table.php
+        modified:   database/migrations/2025_04_26_123037_create_sales_table.php
+        modified:   database/migrations/2025_04_26_125544_add_physical_attributes_to_sales_table.php
+        modified:   database/migrations/2025_05_30_012934_create_password_reset_tokens_table.php
+        modified:   database/migrations/2025_07_20_095844_create_permission_tables.php
+        modified:   database/migrations/2025_07_31_000000_create_site_visits_table.php
+        modified:   database/migrations/2025_07_31_rename_roles_in_users_table.php
+        modified:   database/migrations/2025_08_13_180646_add_terms_and_design_quotation_to_site_visits_table.php
+        modified:   database/migrations/2025_10_05_000001_create_categories_table.php
+        modified:   database/migrations/2025_10_05_205900_add_user_id_to_site_visits_table.php
+        modified:   database/migrations/2025_10_05_215600_add_checklist_statuses_to_site_visits_table.php
+        modified:   database/migrations/2025_10_13_155000_add_client_data_open_to_site_visits_table.php
+        modified:   database/migrations/2025_10_23_100424_create_autofill_caches_table.php
+        modified:   database/migrations/2026_01_27_000000_create_role_requests_table.php
+        modified:   database/migrations/2026_01_27_041017_create_notifications_table.php
+        modified:   database/migrations/2026_01_27_133231_add_account_type_fields_to_users_table.php
+        modified:   database/migrations/2026_02_02_155410_add_care_info_to_display_plants_table.php
+        modified:   database/migrations/2026_02_17_072623_add_response_fields_to_plant_requests_table.php
+        modified:   database/migrations/2026_02_17_074051_add_responded_status_to_plant_requests_table.php
+        modified:   database/seeders/AdminUserSeeder.php
+        modified:   database/seeders/ComprehensivePlantCareSeeder.php
+        modified:   database/seeders/DatabaseSeeder.php
+        modified:   database/seeders/PlantCareSeeder.php
+        modified:   database/seeders/PlantSeeder.php
+        modified:   database/seeders/TemporaryAdminSeeder.php
+        modified:   debug_plant_controller.php
+        modified:   image.png
+        modified:   nixpacks.toml
+        modified:   package-lock.json
+        modified:   package.json
+        modified:   pastchat.md
+        modified:   phpunit.xml
+        modified:   postcss.config.js
+        modified:   practice_debug.php
+        modified:   public/.htaccess
+        modified:   public/css/auth.css
+        modified:   public/css/client-data.css
+        modified:   public/css/client-requests.css
+        modified:   public/css/custom.css
+        modified:   public/css/dashboard.css
+        modified:   public/css/inventory.css
+        modified:   public/css/loading.css
+        modified:   public/css/no-hover.css
+        modified:   public/css/plant-details-fix.css
+        modified:   public/css/plant-details.css
+        modified:   public/css/plant-request.css
+        modified:   public/css/plant-requests.css
+        modified:   public/css/plant-selection-grid.css
+        modified:   public/css/plant-selection.css
+        modified:   public/css/profile.css
+        modified:   public/css/public.css
+        modified:   public/css/push-notifications.css
+        modified:   public/css/request-details.css
+        modified:   public/css/responsive-fixes.css
+        modified:   public/css/sidebar.css
+        modified:   public/favicon.ico
+        modified:   public/images/categories/bamboo-g.png
+        modified:   public/images/categories/fertilizer-g.png
+        modified:   public/images/categories/grass-g.png
+        modified:   public/images/categories/herbs-g.png
+        modified:   public/images/categories/palm-g.png
+        modified:   public/images/categories/shrub-g.png
+        modified:   public/images/categories/tree-g.png
+        modified:   public/images/plantpic/bamboo-p.jpg
+        modified:   public/images/plantpic/fertilizer-p.jpg
+        modified:   public/images/plantpic/grass-p.jpg
+        modified:   public/images/plantpic/herbs-pp.jpg
+        modified:   public/images/plantpic/palm-pp.jpg
+        modified:   public/images/plantpic/shrubs-p.jpg
+        modified:   public/images/plantpic/tree-p.jpg
+        modified:   public/images/salengap-modified.png
+        modified:   public/images/salengap.png
+        modified:   public/images/warehouse-blur.jpg
+        modified:   public/index.php
+        modified:   public/js/alerts.js
+        modified:   public/js/dashboard.js
+        modified:   public/js/home.js
+        modified:   public/js/loading.js
+        modified:   public/js/push-notifications-global.js
+        modified:   public/js/push-notifications.js
+        modified:   public/js/rfq.js
+        modified:   public/js/view_request.js
+        modified:   public/plant-icon.svg
+        modified:   public/robots.txt
+        modified:   public/storage/.gitignore
+        modified:   public/storage/avatars/1dSXnsJXg7JJSVGn2HvYrTUYKX8V6HCuJdaiL5nn.png
+        modified:   public/storage/avatars/8ZllogE79p6eqfD7TE7UYO9V3BYp2KrXFB9NZbIH.png
+        modified:   public/storage/avatars/AjRAVc9kvqHQ3yKdOTtL5DI3A1mVAxBMwAJ1xzqO.png
+        modified:   public/storage/avatars/PNdd6gYbSNHubian8ji45hO8cZPs6qLWxtMR4veg.jpg
+        modified:   public/storage/avatars/iXKALDz030qwZqFSrVPm9gSDgKXB3nvyMS505ErE.png
+        modified:   public/storage/avatars/vAOYxBNa5q5T9VnY9jisHaukidGPDztnHJvnNTMC.jpg
+        modified:   public/storage/avatars/z6ChNV6Oeoxa7BFu4wSMQw9hACETJRamIPYKTWGE.jpg
+        modified:   public/storage/display-plant-photos/14jbad9q4H5jNGdCbuXcChcdZ3Jo7OjlwB0mgtSM.jpg
+        modified:   public/storage/display-plant-photos/2haX7ik0B3piba6mc0OryRHG1W4409SDBJHEctRw.jpg
+        modified:   public/storage/display-plant-photos/4YKc3XjeiXBXr5VHmZA3KMLZI4Tow1wmbDEZkrAs.jpg
+        modified:   public/storage/display-plant-photos/7tsTMsS3n99LSM4DRgrNPC9WWKBApgFML2B7eWJB.jpg
+        modified:   public/storage/display-plant-photos/8NCXP2Z052wnYqW3mOLlDbc0umLNICiyIM5JYxlf.webp
+        modified:   public/storage/display-plant-photos/8k8bygZ2bzhpUJdyxxVvf81LpJEAypfh891a4NPe.webp
+        modified:   public/storage/display-plant-photos/Cz6jqLY0nmqEfMuQXwp1QVLh3zFklj3rxcrnr5ki.webp
+        modified:   public/storage/display-plant-photos/EQoFnWiziPa5HqLrGqTDfrd0zF4PXXXjqN9s4SKu.jpg
+        modified:   public/storage/display-plant-photos/EuCFqQyq3mHO0GwnKIRg7oMZxhuo4033FycSuTSo.jpg
+        modified:   public/storage/display-plant-photos/GUVBBXooJfAOFsafvBWxPzEyHpDuVQVqrpF0ZuDp.jpg
+        modified:   public/storage/display-plant-photos/HazoYezh9QVc3B6RSopRWLnXs74TM5QrWtVYUoJc.webp
+        modified:   public/storage/display-plant-photos/M8bjOggZEUNpcdEL2WANC1JQYBAAdsymZC1xWQbh.webp
+        modified:   public/storage/display-plant-photos/Mj2u6HZgNoBSlTDhwfOb1AvG9aJ5KEXlgPOnGtEp.jpg
+        modified:   public/storage/display-plant-photos/NT5Bm5EphgZ8obxEyPF46Ls2BpRscIOLHkHudYan.jpg
+        modified:   public/storage/display-plant-photos/P7FRNqeqhX1I59LP9yfTGZRk18AOOqEyql7m0EYG.jpg
+        modified:   public/storage/display-plant-photos/QyKAhyEqZx7LuQP1Cm963chRoK01Rnnlg18ynpJT.jpg
+        modified:   public/storage/display-plant-photos/RoXD4pcGT8EVoTW80Y1EuLqXYM2f6xEmWJRYQy1x.webp
+        modified:   public/storage/display-plant-photos/S6aKRm0W7sGQtOi6k96FKmudIKpHsaWRdHI9cefr.webp
+        modified:   public/storage/display-plant-photos/TsRyG7vnIyXLFBrx3pYKRUEuQFMIww9Ljyaketyr.jpg
+        modified:   public/storage/display-plant-photos/TsYyeUiLF3c1DYXmAE4H1Q4b81dzdTHHeSpFAo7B.jpg
+        modified:   public/storage/display-plant-photos/XaVJ5gfiA209UOqhHESWKf0BKnvVFCC131tklv6W.jpg
+        modified:   public/storage/display-plant-photos/fPTOmCffoGeOEeFL36R412cDHpigx1zkMPgUs3St.jpg
+        modified:   public/storage/display-plant-photos/fgROxmgXaSipeBjolrbEUFnm2QcsUu0O1vbA1oIx.jpg
+        modified:   public/storage/display-plant-photos/jMtgHVeNmv7o8qVYeYepvozLX18PZK4htrAV2L82.webp
+        modified:   public/storage/display-plant-photos/kBDi87nPJWbGktOiTvUKxDuixEWML2E6HWXMEpQV.jpg
+        modified:   public/storage/display-plant-photos/lLv2xQQmQtWt1QI5OUkr33xoxOLRArLUiUpEQk4g.webp
+        modified:   public/storage/display-plant-photos/lcrwyhJyj9v3VfQHbyc2Sh38N98kCm9arUwSgCue.webp
+        modified:   public/storage/display-plant-photos/mhTUvQxj7h3GUf2wDz2Kq9H3vmQxx6vBeNqdLhTv.jpg
+        modified:   public/storage/display-plant-photos/oArp1ZbIT1yrxSh7iw7nBd2UcSZeuS4a2cBzRQ5L.jpg
+        modified:   public/storage/display-plant-photos/qkpvB4r6LH2sEml2XlHcq6cNjzYJTkDag9w8aUna.webp
+        modified:   public/storage/display-plant-photos/r4bKWuVBOfEpJO8I2clc3i91eykPzsGEyu1bYw7Y.jpg
+        modified:   public/storage/display-plant-photos/ri9B57Z9K0p6wDH8SOPvCBz0JoOl165bE5ZJ30q1.jpg
+        modified:   public/storage/display-plant-photos/shRhnXALic1CFdk2pPlrpATDg8bR4PnKkxJe3PFP.jpg
+        modified:   public/storage/display-plant-photos/uXGybhuCaA8hnzBotkvqu7vCZIfcf1CnqFco5s85.jpg
+        modified:   public/storage/display-plant-photos/wa5JzLydW8XZC85EBhyT6lHksy5Kmqs7iAZmiqFN.webp
+        modified:   public/storage/display-plant-photos/x12NgUsgR9H74Hi4C4rH893Bm47zaaDq02Esy2tA.jpg
+        modified:   public/storage/display-plant-photos/z0Vkrlv0sM4STk63uqrZrpJqgyw4mxSGAX6F7L54.jpg
+        modified:   public/storage/plant-photos/6QvDFetAvV4eS3t9EnKUlMkoPFf1vmZWMKCGkzOp.jpg
+        modified:   public/storage/plant-photos/7D3KKaKL2vao7u7hbMvcDeYDToTi6nFkfe1VJBPQ.jpg
+        modified:   public/storage/plant-photos/7PLP2V5oFk8zss7vJPq5B8WufAhHxjQqwPLj2GhX.jpg
+        modified:   public/storage/plant-photos/85qenc49OhNyDBnXTfmxtvpDu92a5wDaZZXdjvby.jpg
+        modified:   public/storage/plant-photos/F8zqYQhzTLYHd3qM5ywfxYTMhZgb4IPx7p1yKsm5.jpg
+        modified:   public/storage/plant-photos/TNwYXtIpYTy8I5WiHuow0yKfNo3wmNhyhYcPBPQy.jpg
+        modified:   public/storage/plant-photos/VLH6okCHJB3u0MzJvAu97pYzbxtJY1BKbxhtDU7f.jpg
+        modified:   public/storage/plant-photos/Z2EnCNaCi1OUujPNU1nzRWZzzT5kBO0BTVq7v99N.jpg
+        modified:   public/storage/plant-photos/iNzIkjs41K7d7Hgj8UZqe3L62Roli6FPWqtYhS48.jpg
+        modified:   public/storage/plant-photos/lZXvCQ1jhgTWaaPqIP4tJlwUWzNlDCvyh5OjbVPc.jpg
+        modified:   public/storage/plant-photos/p2RlaYJJ0TAfJc5huBV8HZaLQVYaXEUDYntJe9zc.jpg
+        modified:   public/storage/plant-photos/qRTghiizTmn92qW5mPUpx3eFjeZMPrFtoUxNk6ID.jpg
+        modified:   public/storage/plant-photos/smUW4LlNzmvkXPQUDYdXpdE3BtohOSMW3FLGDvzH.jpg
+        modified:   public/storage/plant-photos/z1qr8qKkKyi02d4d4QtKOjBVyLB3kpHQJEFAawyU.jpg
+        modified:   public/storage/site-visits/1d75nwYwSUhBhygnDRXEwF1moZhZFKfG2X83uv8r.jpg
+        modified:   public/storage/site-visits/BilV1ri5qqpndlNRe10c2K7LFPMednzHmRtd48FD.pdf
+        modified:   public/storage/site-visits/G2uFXv18T6PDOWNWaZlIh7ueLquNx08IKJroWw1j.png
+        modified:   public/storage/site-visits/L8xy17FIWLw4aLYThQk5DooJRqTgm09YpBb2QNNd.pdf
+        modified:   public/storage/site-visits/Rk5Z5vlrzwHQp3eZnDoaQZZuHJR2wCIcdgd1Aonm.jpg
+        modified:   public/storage/site-visits/TDKVkAGMlgLk08yP7xCcHSrHYtlcUSgWR9w5CFQc.png
+        modified:   public/storage/site-visits/Yl73UOdtJeYQhuo6EJDp1heqpMkdkQYSRAs42Vey.png
+        modified:   public/storage/site-visits/iwZRweHDxJ4CBCIrQ0zAKy1p0gln7Cj4wEpOIRfS.png
+        modified:   public/storage/site-visits/mfnYiskosGc0eYJU9c3PXe3XbryxrVjoDbdTO1Ng.jpg
+        modified:   public/storage/site-visits/tR2quytLTLyvVCx64HnDqAPp2OMGyVsklITWGSQs.png
+        modified:   public/storage/site-visits/wVbJPGFU03v0Uju74Q8b0GQdAFGJ3f3V9q4dt7h2.pdf
+        modified:   public/tree-leaf.ico
+        modified:   railway.json
+        modified:   resources/css/app.css
+        modified:   resources/js/app.js
+        modified:   resources/js/bootstrap.js
+        modified:   resources/views/admin/request/view_request_details.blade.php
+        modified:   resources/views/admin/requests/index.blade.php
+        modified:   resources/views/admin/requests/user-request-detail.blade.php
+        modified:   resources/views/admin/requests/user-requests.blade.php
+        modified:   resources/views/admin/users/create.blade.php
+        modified:   resources/views/admin/users/edit-role-request.blade.php
+        modified:   resources/views/admin/users/edit.blade.php
+        modified:   resources/views/admin/users/index.blade.php
+        modified:   resources/views/auth/confirm-password.blade.php
+        modified:   resources/views/auth/forgot-password.blade.php
+        modified:   resources/views/auth/login.blade.php
+        modified:   resources/views/auth/register.blade.php
+        modified:   resources/views/auth/reset-password.blade.php
+        modified:   resources/views/auth/verify-email.blade.php
+        modified:   resources/views/client-data/index.blade.php
+        modified:   resources/views/client-data/show.blade.php
+        modified:   resources/views/client-requests/index.blade.php
+        modified:   resources/views/components/application-logo.blade.php
+        modified:   resources/views/components/auth-session-status.blade.php
+        modified:   resources/views/components/danger-button.blade.php
+        modified:   resources/views/components/dropdown-link.blade.php
+        modified:   resources/views/components/dropdown.blade.php
+        modified:   resources/views/components/input-error.blade.php
+        modified:   resources/views/components/input-label.blade.php
+        modified:   resources/views/components/modal.blade.php
+        modified:   resources/views/components/nav-link.blade.php
+        modified:   resources/views/components/primary-button.blade.php
+        modified:   resources/views/components/responsive-nav-link.blade.php
+        modified:   resources/views/components/secondary-button.blade.php
+        modified:   resources/views/components/text-input.blade.php
+        modified:   resources/views/dashboard.blade.php
+        modified:   resources/views/dashboard/user-enhanced.blade.php
+        modified:   resources/views/dashboard/user.blade.php
+        modified:   resources/views/emails/client-request.blade.php
+        modified:   resources/views/emails/inquiry-response.blade.php
+        modified:   resources/views/emails/plant-request.blade.php
+        modified:   resources/views/emails/role-request.blade.php
+        modified:   resources/views/errors/request-view.blade.php
+        modified:   resources/views/layouts/app.blade.php
+        modified:   resources/views/layouts/guest.blade.php
+        modified:   resources/views/layouts/navigation.blade.php
+        modified:   resources/views/layouts/public.blade.php
+        modified:   resources/views/layouts/sidebar.blade.php
+        modified:   resources/views/pdf/rfq.blade.php
+        modified:   resources/views/pdf/user-request.blade.php
+        modified:   resources/views/plant-care/admin-index.blade.php
+        modified:   resources/views/plant-care/edit.blade.php
+        modified:   resources/views/plant-care/index.blade.php
+        modified:   resources/views/plant-care/show.blade.php
+        modified:   resources/views/plants/index.blade.php
+        modified:   resources/views/profile/edit.blade.php
+        modified:   resources/views/profile/partials/delete-user-form.blade.php
+        modified:   resources/views/profile/partials/update-password-form.blade.php
+        modified:   resources/views/profile/partials/update-profile-information-form.blade.php
+        modified:   resources/views/profile/partials/update-profile-information.blade.php
+        modified:   resources/views/profile/partials/update-profile-picture.blade.php
+        modified:   resources/views/public/plants.blade.php
+        modified:   resources/views/requests/view-request.blade.php
+        modified:   resources/views/site-visits.blade.php
+        modified:   resources/views/site-visits/_scope_of_work_text.blade.php
+        modified:   resources/views/site-visits/create.blade.php
+        modified:   resources/views/site-visits/edit.blade.php
+        modified:   resources/views/site-visits/edit.blade.php.bak
+        modified:   resources/views/site-visits/index.blade.php
+        modified:   resources/views/site-visits/my.blade.php
+        modified:   resources/views/site-visits/show.blade.php
+        modified:   resources/views/user/inquiry-response.blade.php
+        modified:   resources/views/user/plant-request/create.blade.php
+        modified:   resources/views/user/plant-request/select-plants.blade.php
+        modified:   resources/views/user/plant-request/success.blade.php
+        modified:   resources/views/user/request-confirmation.blade.php
+        modified:   resources/views/user/request-form.blade.php
+        modified:   resources/views/user/request-success.blade.php
+        modified:   resources/views/user/request/view_request_details.blade.php
+        modified:   resources/views/vendor/mail/html/button.blade.php
+        modified:   resources/views/vendor/mail/html/footer.blade.php
+        modified:   resources/views/vendor/mail/html/header.blade.php
+        modified:   resources/views/vendor/mail/html/layout.blade.php
+        modified:   resources/views/vendor/mail/html/message.blade.php
+        modified:   resources/views/vendor/mail/html/panel.blade.php
+        modified:   resources/views/vendor/mail/html/subcopy.blade.php
+        modified:   resources/views/vendor/mail/html/table.blade.php
+        modified:   resources/views/vendor/mail/html/themes/default.css
+        modified:   resources/views/vendor/mail/text/button.blade.php
+        modified:   resources/views/vendor/mail/text/footer.blade.php
+        modified:   resources/views/vendor/mail/text/header.blade.php
+        modified:   resources/views/vendor/mail/text/layout.blade.php
+        modified:   resources/views/vendor/mail/text/message.blade.php
+        modified:   resources/views/vendor/mail/text/panel.blade.php
+        modified:   resources/views/vendor/mail/text/subcopy.blade.php
+        modified:   resources/views/vendor/mail/text/table.blade.php
+        modified:   resources/views/walk-in/index.blade.php
+        modified:   resources/views/walk-in/inventory.blade.php
+        modified:   resources/views/walk-in/records.blade.php
+        modified:   restore_all_shrubs.php
+        modified:   restore_palms.php
+        modified:   routes/api.php
+        modified:   routes/auth.php
+        modified:   routes/console.php
+        modified:   routes/web.php
+        modified:   ruleenglish.md
+        modified:   storage/app/.gitignore
+        modified:   storage/app/private/.gitignore
+        modified:   storage/app/public/.gitignore
+        modified:   storage/app/public/avatars/1dSXnsJXg7JJSVGn2HvYrTUYKX8V6HCuJdaiL5nn.png
+        modified:   storage/app/public/avatars/8ZllogE79p6eqfD7TE7UYO9V3BYp2KrXFB9NZbIH.png
+        modified:   storage/app/public/avatars/AjRAVc9kvqHQ3yKdOTtL5DI3A1mVAxBMwAJ1xzqO.png
+        modified:   storage/app/public/avatars/PNdd6gYbSNHubian8ji45hO8cZPs6qLWxtMR4veg.jpg
+        modified:   storage/app/public/avatars/iXKALDz030qwZqFSrVPm9gSDgKXB3nvyMS505ErE.png
+        modified:   storage/app/public/avatars/vAOYxBNa5q5T9VnY9jisHaukidGPDztnHJvnNTMC.jpg
+        modified:   storage/app/public/avatars/z6ChNV6Oeoxa7BFu4wSMQw9hACETJRamIPYKTWGE.jpg
+        modified:   storage/app/public/display-plant-photos/14jbad9q4H5jNGdCbuXcChcdZ3Jo7OjlwB0mgtSM.jpg
+        modified:   storage/app/public/display-plant-photos/2haX7ik0B3piba6mc0OryRHG1W4409SDBJHEctRw.jpg
+        modified:   storage/app/public/display-plant-photos/4YKc3XjeiXBXr5VHmZA3KMLZI4Tow1wmbDEZkrAs.jpg
+        modified:   storage/app/public/display-plant-photos/7tsTMsS3n99LSM4DRgrNPC9WWKBApgFML2B7eWJB.jpg
+        modified:   storage/app/public/display-plant-photos/8NCXP2Z052wnYqW3mOLlDbc0umLNICiyIM5JYxlf.webp
+        modified:   storage/app/public/display-plant-photos/8k8bygZ2bzhpUJdyxxVvf81LpJEAypfh891a4NPe.webp
+        modified:   storage/app/public/display-plant-photos/Cz6jqLY0nmqEfMuQXwp1QVLh3zFklj3rxcrnr5ki.webp
+        modified:   storage/app/public/display-plant-photos/EQoFnWiziPa5HqLrGqTDfrd0zF4PXXXjqN9s4SKu.jpg
+        modified:   storage/app/public/display-plant-photos/EuCFqQyq3mHO0GwnKIRg7oMZxhuo4033FycSuTSo.jpg
+        modified:   storage/app/public/display-plant-photos/GUVBBXooJfAOFsafvBWxPzEyHpDuVQVqrpF0ZuDp.jpg
+        modified:   storage/app/public/display-plant-photos/HazoYezh9QVc3B6RSopRWLnXs74TM5QrWtVYUoJc.webp
+        modified:   storage/app/public/display-plant-photos/M8bjOggZEUNpcdEL2WANC1JQYBAAdsymZC1xWQbh.webp
+        modified:   storage/app/public/display-plant-photos/Mj2u6HZgNoBSlTDhwfOb1AvG9aJ5KEXlgPOnGtEp.jpg
+        modified:   storage/app/public/display-plant-photos/NT5Bm5EphgZ8obxEyPF46Ls2BpRscIOLHkHudYan.jpg
+        modified:   storage/app/public/display-plant-photos/P7FRNqeqhX1I59LP9yfTGZRk18AOOqEyql7m0EYG.jpg
+        modified:   storage/app/public/display-plant-photos/QyKAhyEqZx7LuQP1Cm963chRoK01Rnnlg18ynpJT.jpg
+        modified:   storage/app/public/display-plant-photos/RoXD4pcGT8EVoTW80Y1EuLqXYM2f6xEmWJRYQy1x.webp
+        modified:   storage/app/public/display-plant-photos/S6aKRm0W7sGQtOi6k96FKmudIKpHsaWRdHI9cefr.webp
+        modified:   storage/app/public/display-plant-photos/TsRyG7vnIyXLFBrx3pYKRUEuQFMIww9Ljyaketyr.jpg
+        modified:   storage/app/public/display-plant-photos/TsYyeUiLF3c1DYXmAE4H1Q4b81dzdTHHeSpFAo7B.jpg
+        modified:   storage/app/public/display-plant-photos/XaVJ5gfiA209UOqhHESWKf0BKnvVFCC131tklv6W.jpg
+        modified:   storage/app/public/display-plant-photos/fPTOmCffoGeOEeFL36R412cDHpigx1zkMPgUs3St.jpg
+        modified:   storage/app/public/display-plant-photos/fgROxmgXaSipeBjolrbEUFnm2QcsUu0O1vbA1oIx.jpg
+        modified:   storage/app/public/display-plant-photos/jMtgHVeNmv7o8qVYeYepvozLX18PZK4htrAV2L82.webp
+        modified:   storage/app/public/display-plant-photos/kBDi87nPJWbGktOiTvUKxDuixEWML2E6HWXMEpQV.jpg
+        modified:   storage/app/public/display-plant-photos/lLv2xQQmQtWt1QI5OUkr33xoxOLRArLUiUpEQk4g.webp
+        modified:   storage/app/public/display-plant-photos/lcrwyhJyj9v3VfQHbyc2Sh38N98kCm9arUwSgCue.webp
+        modified:   storage/app/public/display-plant-photos/mhTUvQxj7h3GUf2wDz2Kq9H3vmQxx6vBeNqdLhTv.jpg
+        modified:   storage/app/public/display-plant-photos/oArp1ZbIT1yrxSh7iw7nBd2UcSZeuS4a2cBzRQ5L.jpg
+        modified:   storage/app/public/display-plant-photos/qkpvB4r6LH2sEml2XlHcq6cNjzYJTkDag9w8aUna.webp
+        modified:   storage/app/public/display-plant-photos/r4bKWuVBOfEpJO8I2clc3i91eykPzsGEyu1bYw7Y.jpg
+        modified:   storage/app/public/display-plant-photos/ri9B57Z9K0p6wDH8SOPvCBz0JoOl165bE5ZJ30q1.jpg
+        modified:   storage/app/public/display-plant-photos/shRhnXALic1CFdk2pPlrpATDg8bR4PnKkxJe3PFP.jpg
+        modified:   storage/app/public/display-plant-photos/uXGybhuCaA8hnzBotkvqu7vCZIfcf1CnqFco5s85.jpg
+        modified:   storage/app/public/display-plant-photos/wa5JzLydW8XZC85EBhyT6lHksy5Kmqs7iAZmiqFN.webp
+        modified:   storage/app/public/display-plant-photos/x12NgUsgR9H74Hi4C4rH893Bm47zaaDq02Esy2tA.jpg
+        modified:   storage/app/public/display-plant-photos/z0Vkrlv0sM4STk63uqrZrpJqgyw4mxSGAX6F7L54.jpg
+        modified:   storage/app/public/plant-photos/6QvDFetAvV4eS3t9EnKUlMkoPFf1vmZWMKCGkzOp.jpg
+        modified:   storage/app/public/plant-photos/7D3KKaKL2vao7u7hbMvcDeYDToTi6nFkfe1VJBPQ.jpg
+        modified:   storage/app/public/plant-photos/7PLP2V5oFk8zss7vJPq5B8WufAhHxjQqwPLj2GhX.jpg
+        modified:   storage/app/public/plant-photos/85qenc49OhNyDBnXTfmxtvpDu92a5wDaZZXdjvby.jpg
+        modified:   storage/app/public/plant-photos/F8zqYQhzTLYHd3qM5ywfxYTMhZgb4IPx7p1yKsm5.jpg
+        modified:   storage/app/public/plant-photos/TNwYXtIpYTy8I5WiHuow0yKfNo3wmNhyhYcPBPQy.jpg
+        modified:   storage/app/public/plant-photos/VLH6okCHJB3u0MzJvAu97pYzbxtJY1BKbxhtDU7f.jpg
+        modified:   storage/app/public/plant-photos/Z2EnCNaCi1OUujPNU1nzRWZzzT5kBO0BTVq7v99N.jpg
+        modified:   storage/app/public/plant-photos/iNzIkjs41K7d7Hgj8UZqe3L62Roli6FPWqtYhS48.jpg
+        modified:   storage/app/public/plant-photos/lZXvCQ1jhgTWaaPqIP4tJlwUWzNlDCvyh5OjbVPc.jpg
+        modified:   storage/app/public/plant-photos/p2RlaYJJ0TAfJc5huBV8HZaLQVYaXEUDYntJe9zc.jpg
+        modified:   storage/app/public/plant-photos/qRTghiizTmn92qW5mPUpx3eFjeZMPrFtoUxNk6ID.jpg
+        modified:   storage/app/public/plant-photos/smUW4LlNzmvkXPQUDYdXpdE3BtohOSMW3FLGDvzH.jpg
+        modified:   storage/app/public/plant-photos/z1qr8qKkKyi02d4d4QtKOjBVyLB3kpHQJEFAawyU.jpg
+        modified:   storage/framework/.gitignore
+        modified:   storage/framework/cache/.gitignore
+        modified:   storage/framework/cache/data/.gitignore
+        modified:   storage/framework/sessions/.gitignore
+        modified:   storage/framework/testing/.gitignore
+        deleted:    storage/framework/views/01769a04f3fd9047bb5f281bd1c74c0b.php
+        deleted:    storage/framework/views/03e62e5a76063dd381dbded31dfa3165.php
+        deleted:    storage/framework/views/0775a015f196a953db46938724e486b8.php
+        deleted:    storage/framework/views/0d6f1cbc9c21760ff2542aab55a737d3.php
+        deleted:    storage/framework/views/144b1660f33390a9a4fdc08da1f72eb7.php
+        deleted:    storage/framework/views/18d8fb8f0b813a669fbb2587b01bfb01.php
+        deleted:    storage/framework/views/1d1a4721a47c10dca263cbf15dd85017.php
+        deleted:    storage/framework/views/1e32d6bebfbcd6916b428ccef38c393a.php
+        deleted:    storage/framework/views/200c30431249a43a8597ee669c50ec58.php
+        deleted:    storage/framework/views/20f783d9e248f1cf546ccbf087a4ff2e.php
+        deleted:    storage/framework/views/2c35b830c6fbadb2d1135b432ec5a0bf.php
+        deleted:    storage/framework/views/31d7048882550fa4e2624471d2192e3c.php
+        deleted:    storage/framework/views/327b14a56eb0e866ad6e4a75be68192e.php
+        deleted:    storage/framework/views/3b9ef6f01d1cec6de32874a55ad2fd16.php
+        deleted:    storage/framework/views/3c400dc933cf72e99d4e767ef17492f7.php
+        deleted:    storage/framework/views/3d5987ef71fdfd9b51882f8eeed25793.php
+        deleted:    storage/framework/views/3f2d5aa51f98d25f2683fff5d253696c.php
+        deleted:    storage/framework/views/4efebe72135f6824149905879a13404e.php
+        deleted:    storage/framework/views/50f9672f712d6f6e8d7557727555d2a6.php
+        deleted:    storage/framework/views/56d1af9e45723bc230c852a1d2af84ae.php
+        deleted:    storage/framework/views/5859ef1493b599ea9020e6e35938d764.php
+        deleted:    storage/framework/views/5b3b7c9c1a2c7561df1ef97f541db7c2.php
+        deleted:    storage/framework/views/5c7e03e110a1b75e4f99f8a2891991f2.php
+        deleted:    storage/framework/views/5daba631a3b9bb9b17abceb291adfe06.php
+        deleted:    storage/framework/views/6340d3ea9169da6f46605c1639393d7d.php
+        deleted:    storage/framework/views/648903cb607f17f67db74ae48e5bcc0d.php
+        deleted:    storage/framework/views/64c7de1e7159b25d7d0c8ff7f9b388d1.php
+        deleted:    storage/framework/views/6559cb0fafe51baf29e94c101f0ffcaf.php
+        deleted:    storage/framework/views/6cb802b1c09549e9678097038a2f408c.php
+        deleted:    storage/framework/views/70bc96befc90858e48a1ee7d151c7420.php
+        deleted:    storage/framework/views/727129873d31dec277469372c4faf4e2.php
+        deleted:    storage/framework/views/729e2a1e64e8729e147ffac146fcb85d.php
+        deleted:    storage/framework/views/74d7896decadff1645493be67f93601e.php
+        deleted:    storage/framework/views/74db45eb13c68ff32c1ca56d2c2f2414.php
+        deleted:    storage/framework/views/751666f5d8888c21d977eb7d5641e774.php
+        deleted:    storage/framework/views/75de1d30ebdd6e01c70a38eff9370ba6.php
+        deleted:    storage/framework/views/78916b6b14a4a5c8000a3ae535278e71.php
+        deleted:    storage/framework/views/82261bb177f1457c88a185ea475a8510.php
+        deleted:    storage/framework/views/8901a3e901b1347c5149c22e2a9a6946.php
+        deleted:    storage/framework/views/8c31bb94f8895aafae7b983bdbf412ea.php
+        deleted:    storage/framework/views/8d883dea45d69a17edae5db4e270da7e.php
+        deleted:    storage/framework/views/8d8cc9d06341357aafa5970d25b1ad58.php
+        deleted:    storage/framework/views/8fa19ad1ed0d25cf345057e57d2c4275.php
+        deleted:    storage/framework/views/91ce625aacd4af380042f58abd9b67a9.php
+        deleted:    storage/framework/views/95f6d78965530dac0631a96d0e48299b.php
+        deleted:    storage/framework/views/992ec11916c98c05f6b57962b003c1f2.php
+        deleted:    storage/framework/views/9b81bd56102f5ae8dcd2b9bb36f88c89.php
+        deleted:    storage/framework/views/a1fd63052249b737f3aaf4ec4234cb34.php
+        deleted:    storage/framework/views/a568417a1c0bf86efcbb2e74ed03c1bf.php
+        deleted:    storage/framework/views/a6e49003d1bb289261546b279fc6fe34.php
+        deleted:    storage/framework/views/ab4b91b5997e60c5a8e157fde65ea891.php
+        deleted:    storage/framework/views/ab54e2759599dda537f18d37f776b108.php
+        deleted:    storage/framework/views/b1508ee4c4b7293b26cafb0229446fc5.php
+        deleted:    storage/framework/views/b42d2ad60fed053257a0cd8a3a7f147e.php
+        deleted:    storage/framework/views/ba8a6d95aef5065ef694782401bd4d05.php
+        deleted:    storage/framework/views/bfd33a31dad53dec11e34b5aaa78c687.php
+        deleted:    storage/framework/views/c0017790b93adadbc4c3817e55ea71c5.php
+        deleted:    storage/framework/views/c021ea17faafcc82ba5c7eef573d6fcd.php
+        deleted:    storage/framework/views/ccd4285716cd818b8215a2f79c6464b5.php
+        deleted:    storage/framework/views/d1c41b3357d9ff0953f87640ff21423f.php
+        deleted:    storage/framework/views/d32546e12d5da4540efa328ecd3a79ec.php
+        deleted:    storage/framework/views/d4bc5eccdeffadedf73bb23a7fc0de90.php
+        deleted:    storage/framework/views/d5936c01a2672c22fb4d3d35036b8c00.php
+        deleted:    storage/framework/views/d88f500b9943ee97332f0f02fe6926ff.php
+        deleted:    storage/framework/views/e1178c730d8b8b01a577453a45006057.php
+        deleted:    storage/framework/views/e1e0373951fa505faf11c7bc61851bbb.php
+        deleted:    storage/framework/views/e3ac5f6e0dcf8db8829001ecda298249.php
+        modified:   storage/logs/.gitignore
+        modified:   tailwind.config.js
+        modified:   temp_log_line.txt
+        modified:   test-email-complete.php
+        modified:   tests/Feature/Auth/AuthenticationTest.php
+        modified:   tests/Feature/Auth/EmailVerificationTest.php
+        modified:   tests/Feature/Auth/PasswordConfirmationTest.php
+        modified:   tests/Feature/Auth/PasswordResetTest.php
+        modified:   tests/Feature/Auth/PasswordUpdateTest.php
+        modified:   tests/Feature/Auth/RegistrationTest.php
+        modified:   tests/Feature/ExampleTest.php
+        modified:   tests/Feature/ProfileTest.php
+        modified:   tests/Pest.php
+        modified:   tests/TestCase.php
+        modified:   tests/Unit/ExampleTest.php
+        modified:   vite.config.js
 
-Expand
-vendor frames
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+        public/phpmyadmin
+        storage/framework/views/0ef2e84d93229dee69635d10bd67aeba.php
+        storage/framework/views/11d747d730ecef52f7c8c732092af4d2.php
+        storage/framework/views/33f0bc150237ce74183f4c41521804a2.php
+        storage/framework/views/3e5fb04c2f00786d205590f2a3908886.php
+        storage/framework/views/68e5049fe01b00042e5d7cd8b40de024.php
+        storage/framework/views/c4c3a63d271d35b7a7b0d0a7b0455616.php
+        storage/framework/views/d5938df445543a870c3bd8f86d481c01.php
+        storage/framework/views/db9acf25ba189bc1e992abd1b30dcc83.php
+        storage/framework/views/f5e7f59c8e9da71d1e12a9da64ed5a5d.php
 
-App\Http\Controllers\SiteVisitController
-:1191
-approveRequest
-
-Illuminate\Routing\ControllerDispatcher
-:47
-dispatch
-
-Illuminate\Routing\Route
-:266
-runController
-
-Illuminate\Routing\Route
-:212
-run
-
-Illuminate\Routing\Router
-:808
-Illuminate\Routing\{closure}
-
-Illuminate\Pipeline\Pipeline
-:144
-Illuminate\Pipeline\{closure}
-
-Illuminate\Auth\Middleware\Authorize
-:60
-handle
-
-Illuminate\Pipeline\Pipeline
-:183
-Illuminate\Pipeline\{closure}
-
-Illuminate\Routing\Middleware\SubstituteBindings
-:51
-handle
-
-Illuminate\Pipeline\Pipeline
-:183
-Illuminate\Pipeline\{closure}
-
-Illuminate\Auth\Middleware\Authenticate
-:64
-handle
-
-Illuminate\Pipeline\Pipeline
-:183
-Illuminate\Pipeline\{closure}
-
-Illuminate\Foundation\Http\Middleware\VerifyCsrfToken
-:88
-handle
-
-Illuminate\Pipeline\Pipeline
-:183
-Illuminate\Pipeline\{closure}
-
-Illuminate\View\Middleware\ShareErrorsFromSession
-:49
-handle
-
-Illuminate\Pipeline\Pipeline
-:183
-Illuminate\Pipeline\{closure}
-
-Illuminate\Session\Middleware\StartSession
-:121
-handleStatefulRequest
-
-Illuminate\Session\Middleware\StartSession
-:64
-handle
-
-Illuminate\Pipeline\Pipeline
-:183
-Illuminate\Pipeline\{closure}
-
-Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse
-:37
-handle
-
-Illuminate\Pipeline\Pipeline
-:183
-Illuminate\Pipeline\{closure}
-
-Illuminate\Cookie\Middleware\EncryptCookies
-:75
-handle
-
-Illuminate\Pipeline\Pipeline
-:183
-Illuminate\Pipeline\{closure}
-
-Illuminate\Pipeline\Pipeline
-:119
-then
-
-Illuminate\Routing\Router
-:807
-runRouteWithinStack
-
-Illuminate\Routing\Router
-:786
-runRoute
-
-Illuminate\Routing\Router
-:750
-dispatchToRoute
-
-Illuminate\Routing\Router
-:739
-dispatch
-
-Illuminate\Foundation\Http\Kernel
-:201
-Illuminate\Foundation\Http\{closure}
-
-Illuminate\Pipeline\Pipeline
-:144
-Illuminate\Pipeline\{closure}
-
-Illuminate\Foundation\Http\Middleware\TransformsRequest
-:21
-handle
-
-Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull
-:31
-handle
-
-Illuminate\Pipeline\Pipeline
-:183
-Illuminate\Pipeline\{closure}
-
-Illuminate\Foundation\Http\Middleware\TransformsRequest
-:21
-handle
-
-Illuminate\Foundation\Http\Middleware\TrimStrings
-:51
-handle
-
-Illuminate\Pipeline\Pipeline
-:183
-Illuminate\Pipeline\{closure}
-
-Illuminate\Http\Middleware\ValidatePostSize
-:27
-handle
-
-Illuminate\Pipeline\Pipeline
-:183
-Illuminate\Pipeline\{closure}
-
-Illuminate\Foundation\Http\Middleware\PreventRequestsDuringMaintenance
-:110
-handle
-
-Illuminate\Pipeline\Pipeline
-:183
-Illuminate\Pipeline\{closure}
-
-Illuminate\Http\Middleware\HandleCors
-:49
-handle
-
-Illuminate\Pipeline\Pipeline
-:183
-Illuminate\Pipeline\{closure}
-
-Illuminate\Http\Middleware\TrustProxies
-:58
-handle
-
-Illuminate\Pipeline\Pipeline
-:183
-Illuminate\Pipeline\{closure}
-
-Illuminate\Foundation\Http\Middleware\InvokeDeferredCallbacks
-:22
-handle
-
-Illuminate\Pipeline\Pipeline
-:183
-Illuminate\Pipeline\{closure}
-
-Illuminate\Pipeline\Pipeline
-:119
-then
-
-Illuminate\Foundation\Http\Kernel
-:176
-sendRequestThroughRouter
-
-Illuminate\Foundation\Http\Kernel
-:145
-handle
-
-Illuminate\Foundation\Application
-:1190
-handleRequest
-
-C:\CODING\my_Inventory\public\index.php
-:17
-require_once
-
-C:\CODING\my_Inventory\vendor\laravel\framework\src\Illuminate\Foundation\resources\server.php
-:23
-C:\CODING\my_Inventory\app\Http\Controllers\SiteVisitController.php :1191
-            'site_visit_id' => $siteVisit->id,
-        ]);
- 
-        // Create notification for the client
-        if ($siteVisitRequest->user_id) {
-            Notification::create([
-                'user_id' => $siteVisitRequest->user_id,
-                'type' => 'site_visit_approved',
-                'title' => 'Site Visit Request Approved',
-                'message' => 'Your site visit request has been approved! You can now view the site data and upload your documents.',
-                'link' => route('client-data.show', $siteVisit->id),
-                'is_read' => false,
-            ]);
-        }
- 
-        return redirect()->route('site-visit-requests.index')
-            ->with('success', 'Site visit request approved and site visit created successfully. The site visit is now in the Pending tab.');
-Request
-PATCH /site-visit-requests/4/approve
-Headers
-host
-127.0.0.1:8000
-connection
-keep-alive
-content-length
-74
-cache-control
-max-age=0
-sec-ch-ua
-"Chromium";v="148", "Google Chrome";v="148", "Not/A)Brand";v="99"
-sec-ch-ua-mobile
-?0
-sec-ch-ua-platform
-"Windows"
-upgrade-insecure-requests
-1
-content-type
-application/x-www-form-urlencoded
-user-agent
-Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36
-origin
-http://127.0.0.1:8000
-accept
-text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
-sec-fetch-site
-same-origin
-sec-fetch-mode
-navigate
-sec-fetch-user
-?1
-sec-fetch-dest
-document
-referer
-http://127.0.0.1:8000/site-visit-requests
-accept-encoding
-gzip, deflate, br, zstd
-accept-language
-en-US,en;q=0.9
-cookie
-XSRF-TOKEN=eyJpdiI6Im52eHEwRExkcGJXY1Z1SGJ0LytBSFE9PSIsInZhbHVlIjoiZ0ZZQ2V5YmdidTZUSWp4UEQxYXkxelVTMnUzSk9kbDFlTWxVUjE1WXpMM21LdGxaMzdpdklGNzk5ZXJDVTdweTh1SE1BVVpGeGJ1YzdiUE9SUVdEMU80bTZKaDRoK25GcnRlTmRqWXZjNUEwR0dwQjZWUjIzUm11cU5KZFlEdHMiLCJtYWMiOiI2YjZkNDI4ODg1MmNmZTU4YTBhMzNjNDZhYjE3ZWU3ZDJhYjJiMzhhNGMwNGE5MGIyOTVmMTY1MThjYTdiNGRjIiwidGFnIjoiIn0%3D; laravel_session=eyJpdiI6Ilh2anVwd3BSVXVtaFRIMi9JVllXQVE9PSIsInZhbHVlIjoiVHZrTm5TSnNwUHlrYmdJWDU4Qy9KY1gzQjR3N2F5MGRjanp1RkpyTXVrM3hCSEQySnRhWUtNRUFjczFQem1NM090L2dSOGsrZ05kUVNlT0QzQldUenhEclUxVUh4UEV2dUtDTzRPdnVDQW9rNDZtckJzNXRtc1RPUnJjcWQrVDMiLCJtYWMiOiJlMTkwZDYwNGZkMGNjZmI3NzE2ODhmOWY5MzAwNzRlNDkyNGM4NzAyYjNlM2U2ZjI3YmM3ZjBhYzA3MDkyNzZiIiwidGFnIjoiIn0%3D
-Body
-{
-    "_token": "rWHJTpc81BXQjOsThmXAetlx7vmNpeCGigfxsTLZ",
-    "_method": "PATCH",
-    "admin_notes": null
-}
-Application
-Routing
-controller
-App\Http\Controllers\SiteVisitController@approveRequest
-route name
-site-visit-requests.approve
-middleware
-web, auth, can:access-admin
-Routing Parameters
-{
-    "siteVisitRequest": {
-        "id": 4,
-        "user_id": 4,
-        "site_visit_id": 17,
-        "preferred_date": "2026-05-16T00:00:00.000000Z",
-        "preferred_time": "00:23:00",
-        "property_address": "sadf",
-        "property_size": "asdf",
-        "current_condition": "other",
-        "project_description": "fasdf",
-        "special_requirements": "asdf",
-        "photos": [],
-        "status": "approved",
-        "admin_notes": null,
-        "rejection_reason": null,
-        "reviewed_by": 2,
-        "reviewed_at": "2026-05-12T18:56:15.000000Z",
-        "created_at": "2026-05-12T18:53:56.000000Z",
-        "updated_at": "2026-05-12T18:56:16.000000Z"
-    }
-}
-Database Queries
-mysql (4.6 ms)
-select * from `users` where `id` = 2 limit 1
-mysql (1.38 ms)
-select * from `site_visit_requests` where `id` = '4' limit 1
-mysql (25.62 ms)
-update `site_visit_requests` set `status` = 'approved', `reviewed_by` = 2, `reviewed_at` = '2026-05-12 18:56:15', `site_visit_requests`.`updated_at` = '2026-05-12 18:56:15' where `id` = 4
-mysql (1.17 ms)
-select * from `users` where `users`.`id` = 4 limit 1
-mysql (22.94 ms)
-insert into `site_visits` (`user_id`, `location_address`, `client`, `contact_number`, `email`, `visit_date`, `status`, `client_data_open`, `notes`, `updated_at`, `created_at`) values (4, 'sadf', 'Clement Teneciel', '09667590644', 'client1@salenga.com', '2026-05-16 00:00:00', 'pending', '1', 'Created from Site Visit Request #4
-
-Project Description: fasdf
-Property Size: asdf
-Current Condition: other
-Special Requirements: asdf', '2026-05-12 18:56:15', '2026-05-12 18:56:15')
-mysql (27.72 ms)
-update `site_visit_requests` set `site_visit_id` = 17, `site_visit_requests`.`updated_at` = '2026-05-12 18:56:16' where `id` = 4
+no changes added to commit (use "git add" and/or "git commit -a")
+root@salengafarm:/var/www/salengafarm# 
