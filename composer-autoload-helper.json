@@ -1,0 +1,8 @@
+{
+    "note": "Add this to your composer.json file",
+    "autoload": {
+        "files": [
+            "app/Helpers/BrandHelper.php"
+        ]
+    }
+}
