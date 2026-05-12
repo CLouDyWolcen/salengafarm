@@ -121,26 +121,22 @@
                         </span>
                     </h2>
                     <div>
-                        @if(auth()->check() && auth()->user()->hasAdminAccess() && auth()->user()->role !== 'super_admin')
-                            <form action="{{ route('site-visits.update-status', $siteVisit) }}" method="POST" class="d-inline-flex align-items-center me-2">
-                                @csrf
-                                <select name="status" class="form-select form-select-sm" style="width:auto; margin-right: 1.5rem;">
-                                    <option value="pending" {{ $siteVisit->status==='pending' ? 'selected' : '' }}>Pending</option>
-                                    <option value="completed" {{ $siteVisit->status==='completed' ? 'selected' : '' }}>Completed</option>
-                                    <option value="follow_up" {{ $siteVisit->status==='follow_up' ? 'selected' : '' }}>Follow-up</option>
-                                </select>
-                                <div class="form-check form-check-sm" style="margin-right: 1.5rem;">
-                                    <input class="form-check-input" type="checkbox" id="quick_cdo" name="client_data_open" value="1" {{ $siteVisit->client_data_open ? 'checked' : '' }}>
-                                    <label class="form-check-label small" for="quick_cdo">Open Client Data</label>
-                                </div>
-                                <button type="submit" class="btn btn-sm btn-primary">Update</button>
-                            </form>
-                        @endif
-                        @if(auth()->user()->role !== 'super_admin')
+                        <form action="{{ route('site-visits.update-status', $siteVisit) }}" method="POST" class="d-inline-flex align-items-center me-2">
+                            @csrf
+                            <select name="status" class="form-select form-select-sm" style="width:auto; margin-right: 1.5rem;">
+                                <option value="pending" {{ $siteVisit->status==='pending' ? 'selected' : '' }}>Pending</option>
+                                <option value="completed" {{ $siteVisit->status==='completed' ? 'selected' : '' }}>Completed</option>
+                                <option value="follow_up" {{ $siteVisit->status==='follow_up' ? 'selected' : '' }}>Follow-up</option>
+                            </select>
+                            <div class="form-check form-check-sm" style="margin-right: 1.5rem;">
+                                <input class="form-check-input" type="checkbox" id="quick_cdo" name="client_data_open" value="1" {{ $siteVisit->client_data_open ? 'checked' : '' }}>
+                                <label class="form-check-label small" for="quick_cdo">Open Client Data</label>
+                            </div>
+                            <button type="submit" class="btn btn-sm btn-primary">Update</button>
+                        </form>
                         <a href="{{ route('site-visits.edit', $siteVisit) }}" class="btn btn-warning me-2">
                             <i class="fas fa-edit me-2"></i>Edit
                         </a>
-                        @endif
                         <a href="{{ route('site-visits.index') }}" class="btn btn-secondary">
                             <i class="fas fa-arrow-left me-2"></i>Back to List
                         </a>
@@ -162,7 +158,6 @@
                         </a>
                     </div>
                     
-                    @if(auth()->check() && auth()->user()->hasAdminAccess() && auth()->user()->role !== 'super_admin')
                     <form action="{{ route('site-visits.update-status', $siteVisit) }}" method="POST">
                         @csrf
                         <div class="row g-2 mb-2">
@@ -170,9 +165,7 @@
                                 <button type="submit" class="btn btn-primary w-100">Update</button>
                             </div>
                             <div class="col-6">
-                                @if(auth()->user()->role !== 'super_admin')
                                 <a href="{{ route('site-visits.edit', $siteVisit) }}" class="btn btn-warning w-100">Edit</a>
-                                @endif
                             </div>
                         </div>
                         <div class="row g-2">
@@ -191,11 +184,6 @@
                             </div>
                         </div>
                     </form>
-                    @else
-                        @if(auth()->user()->role !== 'super_admin')
-                        <a href="{{ route('site-visits.edit', $siteVisit) }}" class="btn btn-warning w-100">Edit</a>
-                        @endif
-                    @endif
                 </div>
             </div>
         </div>
@@ -753,7 +741,7 @@
                                             @endif
                                         </td>
                                         <td>
-                                            @if($canUploadClientData && auth()->user()->role !== 'super_admin')
+                                            @if($canUploadClientData)
                                                 <form action="{{ route('site-visits.client-data.upload', ['siteVisit' => $siteVisit->id, 'itemKey' => $key]) }}" method="POST" enctype="multipart/form-data">
                                                     @csrf
                                                     <div class="input-group input-group-sm upload-group">
@@ -781,7 +769,7 @@
                                                     <small class="text-muted d-block">Note: {{ $note }}</small>
                                                 @endif
                                             </div>
-                                            @if($isAdmin && auth()->user()->role !== 'super_admin')
+                                            @if($isAdmin)
                                                 <form action="{{ route('site-visits.client-data.status', ['siteVisit' => $siteVisit->id, 'itemKey' => $key]) }}" method="POST" class="row g-2 align-items-center">
                                                     @csrf
                                                     <div class="col-auto">
@@ -859,7 +847,7 @@
                                             @endif
                                         </td>
                                         <td>
-                                            @if($isAdmin && auth()->user()->role !== 'super_admin')
+                                            @if($isAdmin)
                                                 <form action="{{ route('site-visits.proposal.upload', ['siteVisit' => $siteVisit->id, 'itemKey' => $key]) }}" method="POST" enctype="multipart/form-data">
                                                     @csrf
                                                     <div class="input-group input-group-sm upload-group">
@@ -931,7 +919,6 @@
                             <i class="fas fa-arrow-left me-2"></i>Back to List
                         </a>
                     </div>
-                    @if(auth()->user()->role !== 'super_admin')
                     <div>
                         <a href="{{ route('site-visits.edit', $siteVisit) }}" class="btn btn-warning">
                             <i class="fas fa-edit me-2"></i>Edit Visit
@@ -940,7 +927,6 @@
                             <i class="fas fa-trash me-2"></i>Delete Visit
                         </button>
                     </div>
-                    @endif
                 </div>
             </div>
         </div>

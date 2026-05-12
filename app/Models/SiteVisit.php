@@ -109,4 +109,12 @@ class SiteVisit extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    /**
+     * Get the site visit request that created this site visit (if any)
+     */
+    public function siteVisitRequest()
+    {
+        return $this->hasOne(SiteVisitRequest::class);
+    }
 }

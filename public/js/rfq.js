@@ -93,6 +93,12 @@ document.addEventListener('DOMContentLoaded', function() {
     function setupSelectionMode() {
         console.log('Setting up selection mode');
         
+        // Check if this is Plant Inquiry mode - if so, don't create RFQ interface
+        if (document.body.getAttribute('data-selection-type') === 'plant-inquiry') {
+            console.log('Plant Inquiry mode detected - skipping RFQ interface setup');
+            return;
+        }
+        
         // Store original search controls
         const searchControlsContainer = document.querySelector('.search-controls-container');
         if (searchControlsContainer) {
@@ -160,6 +166,12 @@ document.addEventListener('DOMContentLoaded', function() {
     function setupPlantCards() {
         // Only setup cards if in selection mode
         if (!document.body.classList.contains('plant-selection-mode')) {
+            return;
+        }
+        
+        // Check if this is Plant Inquiry mode - if so, let Plant Inquiry handle the cards
+        if (document.body.getAttribute('data-selection-type') === 'plant-inquiry') {
+            console.log('Plant Inquiry mode detected - skipping RFQ card setup');
             return;
         }
         

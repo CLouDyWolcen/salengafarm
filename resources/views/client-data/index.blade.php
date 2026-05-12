@@ -11,6 +11,9 @@
                 <i class="fas fa-folder-open me-2 text-success"></i>
                 Client Data
             </h2>
+            <a href="{{ route('site-visit-requests.create') }}" class="btn btn-success">
+                <i class="fas fa-calendar-plus me-2"></i>Request Site Visit
+            </a>
         </div>
 
         @if(session('success'))

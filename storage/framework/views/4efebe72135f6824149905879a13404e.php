@@ -397,11 +397,9 @@
                         </div>
                         <div class="card-body d-flex align-items-center">
                             <div class="d-grid gap-2 w-100">
-                                <?php if(Auth::user()->role !== 'super_admin'): ?>
                                 <button class="btn btn-info text-white" id="updateStockBtn" data-bs-toggle="modal" data-bs-target="#updateStockModal">
                                     <i class="fas fa-sync me-2"></i>Update Stock
                                 </button>
-                                <?php endif; ?>
                                 <?php if(Auth::user()->role === 'super_admin'): ?>
                                 <button class="btn btn-info text-white" id="viewSystemLogsBtn">
                                     <i class="fas fa-file-alt me-2"></i>System Logs

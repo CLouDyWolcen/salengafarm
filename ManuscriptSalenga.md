@@ -143,7 +143,7 @@ System Design 							      28
           Back-up and Recovery Activities 				      64
 
 CHAPTER IV RESULT AND DISCUSSION
-Super Admin Module that Manage User Accounts 
+Super Admin Module that Manage Client Accounts 
      and Roles 							      67
 Super Admin Module That Monitors System Logs 		      69
 Admin Module That Manages Plant Inventory 			      71
@@ -154,8 +154,6 @@ Admin Module That Conducts and Records Site Visits 		      79
 Admin Module That Displays Dashboard Analytics 		      81
 Client Module That Submits Requests for Quotation (RFQ)	      84
 Client Module That Participates in Site Visits 			      86
-User Module That Submits Plant Inquiries 			      88
-User Module That Views Inquiry Responses 			      91
 Evaluation Ratings of Respondents in Terms of 
      Functional Suitability 						      93
 Summary of User Rating based on ISO 25010 
@@ -204,9 +202,9 @@ FIGURES 				TITLE					PAGE
      12		Operational Framework of the System			      52
      13		Flowchart of the Plant Inquiry and Response Process	      55
      14		Graphical user Interface for Super Admin 
-Module That Manages User Accounts and Roles		      68	
+Module That Manages Client Accounts and Roles		      68	
      15		Pseudocode for Super Admin Module That 
-		Manages User Accounts						      69
+		Manages Client Accounts						      69
      16		Graphical user Interface for Super Admin Module 
 		That Monitors System Logs					      70
      17		Pseudocode for Super Admin Module That 
@@ -238,14 +236,6 @@ Monitors System Logs					      71
 		Participates in Site Visits					      87
      31		Pseudocode for Client Module That 
 		Participates in Site Visits					      88
-     32		Graphical User Interface for User Module That 
-Submits Plant Inquiries					      89
-     33		Pseudocode for User Module That 
-Submits Plant Inquiries					      91
-     34		Graphical User Interface for User Module That 
-Views Inquiry Responses					      92
-     35		Pseudocode for User Module That 
-Views Inquiry Responses					      93
  
 LIST OF TABLES
 
@@ -265,10 +255,9 @@ Super Administrator Module				      94
 Administrator and Advisory Committee in 
 Terms of Functional Suitability for the 
 Super Administrator Module				      96
-      7		Evaluation Ratings from the Respondents User, 
-Client, and Advisory Committee in Terms of 
-Functional Suitability for the User and 
-Client Module							      97
+      7		Evaluation Ratings from the Respondents Client 
+and Advisory Committee in Terms of 
+Functional Suitability for the Client Module		      97
       8		Descriptive Rating of the Summary of Functionalities	    100
       9		Summary of Respondent’s Rating Based on 
 ISO 25010 Software Quality Frameworks			    103
@@ -323,7 +312,7 @@ Objectives of the Study
 The primary objective of the project is to develop a web-based management system for Salenga Farm to streamline plant inventory, point-of-sale transactions, site visits, and client requests. 
 Specifically, it aims to:
 1.	Develop a Super Admin module with the following functionalities:
-1.1 Manage user accounts and assign roles;
+1.1 Manage client accounts, assign roles, and configure page access permissions;
 1.2 View dashboard analytics, including:
 1.2.1 Stock distribution and total plants with low stock alerts; and
 1.2.2 Sales by category and overall sales records;
@@ -339,57 +328,55 @@ Specifically, it aims to:
 2.2.2 Monitor POS activities and generate receipts; 
 2.3 Conduct and record site visits for the following:
 2.3.1 Create, record, and review site visits with GPS mapping and assessment forms; and
-2.3.2 Review client data submissions and upload proposal documents;
-2.4 Manage user and client requests for the following:
+2.3.2 Review site data submissions and upload proposal documents;
+2.4 Manage client requests for the following:
 2.4.1 Review and approve plant requests;
 2.4.2 Send email notifications and status updates; and
-	2.4.3 Generate PDF quotations;
-3. Develop a User and Client module with the following 
-    functionalities:
+2.4.3 Generate PDF quotations;
+3. Develop a Client module with the following functionalities:
 3.1 Access and browse the plant catalog;
-3.2 Submit plant requests or requests for quotation;
-3.3 View request status and download approved
-quotations;
-3.4 Collaborate on assigned site visits through document 
-uploads and approvals;
+3.2 Submit plant inquiries and requests for quotation (RFQ) with detailed specifications;
+3.3 View request status and download approved quotations;
+3.4 Access site data through a secure verification process to collaborate on assigned site visits;
+3.5 Receive confirmations and notifications regarding RFQ and site visit status;
 4. Evaluate the system in terms of:
 4.1 Functional Suitability;
 4.2 Reliability; and
 4.3 Usability;
 4.4 Performance Efficiency; and
-		4.5 Security;
+4.5 Security;
 
 
 Scope and Limitations
 
 
-The study will develop a web-based Comprehensive Plant Inventory and Site Visit Management System for Salenga Farm. The platform will enable authorized personnel to manage plant records, process sales with receipt generation and automatic stock updates, and administer user accounts with role-based permissions. The site visit module will provide GPS location mapping, comprehensive assessment forms (physical factors, topography, utilities, tools), and document exchange workflows in which clients can upload required documents (land titles, plans) and administrators will deliver proposals (quotations, agreements, designs). Clients will be able to approve or request changes to proposals. The request system supports user plant requests and client RFQ submissions with email notifications and PDF generation. Public users can browse the catalog, view plant details, submit requests, and download quotations.
-The system will be limited to Salenga Farm's operational workflows. External integrations (payment gateways, logistics, advanced analytics), automated plant recommendations, and advanced geospatial analysis will be excluded. Data accuracy will depend on timely user input. Site visit documents will require manual admin review. System Performance may vary depending on device capabilities and connectivity.
+The study develops a web-based Comprehensive Plant Inventory and Site Visit Management System for Salenga Farm. The platform enables authorized personnel to manage plant records, process sales with receipt generation and automatic stock updates, and administer client accounts with role-based and page-level access permissions. The site visit module provides GPS location mapping, comprehensive assessment forms (physical factors, topography, utilities, tools), and document exchange workflows in which verified clients access site data to upload required documents (land titles, plans) and administrators deliver proposals (quotations, agreements, designs). Clients are able to approve or request changes to proposals. The request system supports client RFQ submissions with email notifications and PDF generation. Public visitors can browse the catalog and view plant details, but must register as clients to submit requests and download quotations.
+The system is limited to Salenga Farm's operational workflows. External integrations (payment gateways, logistics, advanced analytics), automated plant recommendations, and advanced geospatial analysis are excluded. Data accuracy depends on timely user input. Site visit documents require manual admin review. System performance may vary depending on device capabilities and connectivity.
 
 Significance of the Study
 
 
-The development of the proposed Comprehensive Plant Inventory and Site Visit Management System for Salenga Farm will address key operational challenges faced by contemporary agricultural enterprises. The study is expected to provide valuable contributions to the agricultural sector and will hold significance for the following stakeholders:
-Salenga Farm Owners and Management. The system will provide robust tools for resource allocation, inventory monitoring, sales tracking, and strategic planning. Through the integration of real-time data facilitates informed decision-making, trend analysis, and optimization of farm operations, ultimately supporting the farm's growth trajectory and long-term sustainability.
-Farm Staff and Employees. Personnel will benefit from streamlined processes through automated inventory updates, simplified transaction recording, and digital site visit documentation. The system will reduces manual record-keeping tasks, minimize errors, and enable staff to focus on more productive activities such as client engagement and plant care.
-Clients and Customers. Clients will benefit from improved access to comprehensive plant catalogs, simplified request and quotation processes, and transparent communication regarding order status and site visit outcomes. The system will enable faster response times to inquiries, accurate availability information, and convenient access to quotations and documentation.
-Agricultural Enterprises and Nurseries. Similar agricultural businesses may use the outcome of this study as a model for modernizing their operations through digital transformation. The integrated approach to inventory management, point-of-sale transactions, and field data collection will provide methodologies and insights that can be adapted to various operational contexts.
-Future Researchers and Developers. This study will serve as a key reference point for future research into agricultural management systems and digital farm technologies. The findings will contribute to the broader field by demonstrating effective integration of inventory management, POS, and site visit technologies within a single platform, guiding further improvements in optimizing these systems within agricultural settings.
-Local Community and Economy. The improved operational efficiency and business performance of Salenga Farm will contribute to local economic development by supporting job creation, enhancing service quality, and promoting sustainable agricultural practices within the community.
+The development of the proposed Comprehensive Plant Inventory and Site Visit Management System for Salenga Farm addresses key operational challenges faced by contemporary agricultural enterprises. The study provides valuable contributions to the agricultural sector and holds significance for the following stakeholders:
+Salenga Farm Owners and Management. The system provides robust tools for resource allocation, inventory monitoring, sales tracking, and strategic planning. The integration of real-time data facilitates informed decision-making, trend analysis, and optimization of farm operations, ultimately supporting the farm's growth trajectory and long-term sustainability.
+Farm Staff and Employees. Personnel benefit from streamlined processes through automated inventory updates, simplified transaction recording, and digital site visit documentation. The system reduces manual record-keeping tasks, minimizes errors, and enables staff to focus on more productive activities such as client engagement and plant care.
+Clients. Clients benefit from improved access to comprehensive plant catalogs, simplified request and quotation processes, and transparent communication regarding order status and site visit outcomes. The system enables faster response times to inquiries, accurate availability information, and convenient access to quotations and documentation.
+Agricultural Enterprises and Nurseries. Similar agricultural businesses may use the outcome of this study as a model for modernizing their operations through digital transformation. The integrated approach to inventory management, point-of-sale transactions, and field data collection provides methodologies and insights that can be adapted to various operational contexts.
+Future Researchers and Developers. This study serves as a key reference point for future research into agricultural management systems and digital farm technologies. The findings contribute to the broader field by demonstrating effective integration of inventory management, POS, and site visit technologies within a single platform, guiding further improvements in optimizing these systems within agricultural settings.
+Local Community and Economy. The improved operational efficiency and business performance of Salenga Farm contributes to local economic development by supporting job creation, enhancing service quality, and promoting sustainable agricultural practices within the community.
 Definition of Terms
 
 
 The section provides definitions of key terms used throughout the study to facilitate a clear understanding of the concepts and functionalities discussed.
 CRUD. It refers to the fundamental operations of Create, Read, Update, and Delete used for managing data within the system.
-Database. It refers to an organized collection of structured information, stored electronically, that supports the efficient management of inventory, user, and transaction records.
+Database. It refers to an organized collection of structured information, stored electronically, that supports the efficient management of inventory, client, and transaction records.
+Email Notification. It refers to automated messages sent by the system to inform clients about the status of their requests or transactions.
+Geotagging. It refers to the process of associating digital data, such as site visit checklists or inspection records, with specific geographic coordinates for visualization and analysis.
 Inventory Management. It refers to the systematic process of tracking, updating, and analyzing plant stock levels, availability, and sales transactions to ensure accurate business operations.
+PDF Quotation. It refers to a digital document generated by the system in Portable Document Format, providing clients with formal price quotations for plant requests.
 Point-of-Sale (POS) Module. It refers to a system feature that supports in-person sales transactions, real-time inventory updates, and integration with the overall inventory management platform.
 Progressive Web Application (PWA). It refers to a web application designed to provide a responsive, app-like experience across desktop and mobile devices, with offline capabilities and enhanced performance.
 Site Visit and Inspection System. It refers to a platform that enables staff to conduct digital assessments of client sites, complete checklist forms, geotag visits, and document inspection outcomes for operational and client support purposes.
-User Roles. It refers to designated access levels within the system, including super admin, admin, user/client, and visitor, each with specific permissions and responsibilities.
-PDF Quotation. It refers to a digital document generated by the system in Portable Document Format, providing clients with formal price quotations for plant requests.
-Geotagging. It refers to the process of associating digital data, such as site visit checklists or inspection records, with specific geographic coordinates for visualization and analysis.
-Email Notification. It refers to automated messages sent by the system to inform users and clients about the status of their requests or transactions.
+User Roles. It refers to designated access levels within the system, including super admin, admin, client, and visitor, each with specific permissions and responsibilities.
 
  
 CHAPTER II
@@ -492,7 +479,7 @@ Conceptual Framework of the Study
 
 
 The conceptual framework serves as a structured blueprint of the proposed system, outlining the key components, their relationships, and how they collectively achieve the study’s objectives.
-Figure 2 illustrates the flow starting with Online Users and Clients accessing the Salenga Farm application to browse the Plant Catalog and submit requests. The Admin manages Inventory, Dashboard analytics, POS transactions, and Site Visits, while the Super Admin handles user management and overall oversight. All modules read from and write to the Database and generate reports. This diagram highlights how information moves from user activity to administrative processing and reporting, supporting efficient management and decision-making. 
+Figure 2 illustrates the flow starting with Clients and Visitors accessing the Salenga Farm application to browse the Plant Catalog and submit requests. The Admin manages Inventory, Dashboard analytics, POS transactions, and Site Visits, while the Super Admin handles client management, page access permissions, and overall oversight. All modules read from and write to the Database and generate reports. This diagram highlights how information moves from client activity to administrative processing and reporting, supporting efficient management and decision-making. 
 
  
 Figure 2. Conceptual Framework of the Study 
@@ -505,7 +492,7 @@ METHODOLOGY
 Capstone Locale
 
 
-The research locale for the capstone project will Salenga Farm, a specialized plant nursery and landscaping enterprise operating under the registered name "Esther's Flower Garden and Landscaping." The farm is strategically located in front of Fatima Village, Sitio MCL, Davao City, Philippines, at approximately 7.0707° N latitude and 125.6087° E longitude. Figure 3 will present a map of Salenga Farm, with a red indicator marking the precise location of the establishment within an area characterized by abundant vegetation, commercial structures, and residential dwellings.
+The research locale for the capstone project is Salenga Farm, a specialized plant nursery and landscaping enterprise operating under the registered name "Esther's Flower Garden and Landscaping." The farm is strategically located in front of Fatima Village, Sitio MCL, Davao City, Philippines, at approximately 7.0707° N latitude and 125.6087° E longitude. Figure 3 presents a map of Salenga Farm, with a red indicator marking the precise location of the establishment within an area characterized by abundant vegetation, commercial structures, and residential dwellings.
 Salenga Farm was selected as the research venue because of its extensive and diverse botanical inventory, which includes a wide range of shrubs, herbs, palms, trees, grasses, bamboo varieties, and agricultural supplements.  This diversity provides an optimal environment for the implementation and evaluation of Comprehensive Plant Inventory Management System with Point-of-Sale and Site Visit for Salenga Farm. The locale’s operational complexity and variety of plant species make it an exemplary setting for applied research, enabling the systematic collection and analysis of data to address community-specific concerns and enhance horticultural management practices.
 
  
@@ -515,21 +502,21 @@ Figure 3. Capstone Locale of The Study
 Design System
 
 
-System design establishes a structured and methodical framework for the development and implementation of the proposed solution. The framework defines architectural components, system modules, user interfaces, and data structures that will be required to meet the project's functional and non-functional requirements. The research methodology outlines the procedures and analytical techniques that will be utilized to address the study's objectives, ensuring that each phase of system development remains systematic and responsive to identified needs. 
-To guide the development process, the study will adopt the Agile Software Development methodology, which emphasizes iterative and incremental progress through a series of defined phases. Agile has been widely recognized as particularly effective for web-based systems that require frequent stakeholder feedback and adaptive requirements management (Dingsøyr et al., 2012; Serrador & Pinto, 2015). Research by Campanelli and Parreiras (2015) demonstrates that Agile methodologies significantly improve project success rates in small to medium-scale web applications, making them well-suited for agricultural management systems such as the one proposed for Salenga Farm. Furthermore, studies by Misra et al. (2009) and Abrahamsson et al. (2017) highlight Agile's advantages in environments where requirements evolve based on user feedback and operational needs, which is characteristic of farm management systems that must adapt to seasonal changes and varying client demands.
-The Agile cycle to be used in this study will consist of the following stages: Requirement, Design, Develop, Test, and Deploy. This approach will enable the project team to collaborate closely with stakeholders, prioritize requirements, and deliver functional increments of the system in manageable cycles.
+System design establishes a structured and methodical framework for the development and implementation of the proposed solution. The framework defines architectural components, system modules, user interfaces, and data structures that are required to meet the project's functional and non-functional requirements. The research methodology outlines the procedures and analytical techniques that are utilized to address the study's objectives, ensuring that each phase of system development remains systematic and responsive to identified needs. 
+To guide the development process, the study adopts the Agile Software Development methodology, which emphasizes iterative and incremental progress through a series of defined phases. Agile has been widely recognized as particularly effective for web-based systems that require frequent stakeholder feedback and adaptive requirements management (Dingsøyr et al., 2012; Serrador & Pinto, 2015). Research by Campanelli and Parreiras (2015) demonstrates that Agile methodologies significantly improve project success rates in small to medium-scale web applications, making them well-suited for agricultural management systems such as the one proposed for Salenga Farm. Furthermore, studies by Misra et al. (2009) and Abrahamsson et al. (2017) highlight Agile's advantages in environments where requirements evolve based on user feedback and operational needs, which is characteristic of farm management systems that must adapt to seasonal changes and varying client demands.
+The Agile cycle used in this study consists of the following stages: Requirement, Design, Develop, Test, and Deploy. This approach enables the project team to collaborate closely with stakeholders, prioritize requirements, and deliver functional increments of the system in manageable cycles.
 
  
 Figure 4. Agile Software Development of the Study
 
 
-As illustrated in Figure 4, the Agile process will begin the Requirement phase, during which functional and non-functional requirements will be gathered and prioritized in consultation with Salenga Farm stakeholders. The Design phase will be focus on creating system architecture, database schemas, and user interface mockups. During the Develop phase, system modules and features will be implemented incrementally, with each iteration producing working software that can be demonstrated to users. Testing phase will involve rigorous quality assurance activities, including functional testing, usability testing, and security validation, to ensure that each increment meets defined acceptance criteria. Finally, Deploy phase will mark the release of validated increments for operational use, with continuous monitoring and feedback collection to inform subsequent iterations.
-The Agile methodology offers significant advantages for agricultural inventory and site visit management systems because of its emphasis on continuous feedback cycles, rapid adaptation to changing requirements, and incremental delivery of value (Highsmith & Cockburn, 2001). This iterative approach is expected to be especially valuable in environments where operational requirements evolve in response to seasonal factors, variable client demand patterns, and emerging business needs. Through structured, cyclical development, the system will be able to adapt to changing requirements while maintaining alignment with core business processes at Salenga Farm, ultimately ensuring that the delivered solution effectively addresses real-world operational challenges.
+As illustrated in Figure 4, the Agile process begins with the Requirement phase, during which functional and non-functional requirements are gathered and prioritized in consultation with Salenga Farm stakeholders. The Design phase focuses on creating system architecture, database schemas, and user interface mockups. During the Develop phase, system modules and features are implemented incrementally, with each iteration producing working software that can be demonstrated to users. Testing phase involves rigorous quality assurance activities, including functional testing, usability testing, and security validation, to ensure that each increment meets defined acceptance criteria. Finally, Deploy phase marks the release of validated increments for operational use, with continuous monitoring and feedback collection to inform subsequent iterations.
+The Agile methodology offers significant advantages for agricultural inventory and site visit management systems because of its emphasis on continuous feedback cycles, rapid adaptation to changing requirements, and incremental delivery of value (Highsmith & Cockburn, 2001). This iterative approach is especially valuable in environments where operational requirements evolve in response to seasonal factors, variable client demand patterns, and emerging business needs. Through structured, cyclical development, the system is able to adapt to changing requirements while maintaining alignment with core business processes at Salenga Farm, ultimately ensuring that the delivered solution effectively addresses real-world operational challenges.
 
 Requirements
 
 
-In this stage, the researcher will perform the following tasks: (1) formulating specific objectives derived from the desired web-based Salenga Farm Plant Inventory and Site Visit Management System; (2) conduct data gathering to capture catalog attributes, role‑determined request workflows, and operational policies; and (3) identifying development strategies and selecting tools appropriate for a Laravel‑based web application.
+In this stage, the researcher performs the following tasks: (1) formulating specific objectives derived from the desired web-based Salenga Farm Plant Inventory and Site Visit Management System; (2) conduct data gathering to capture catalog attributes, role‑determined request workflows, and operational policies; and (3) identifying development strategies and selecting tools appropriate for a Laravel‑based web application.
 
 System Requirements
 
@@ -556,19 +543,19 @@ PHP Framework	Laravel 11
 Dependency Management	Composer 2.7.6	 
 API Testing	Postman	 
 Package Management	Node Package Manager (npm)	 
-The Selection of software influences project outcomes through technical capabilities and functional parameters. The development environment will utilize Windows 10 as the operating system and Visual Studio Code as the integrated development environment. Application architecture will employ Laravel 11 for backend operations, with Composer managing dependencies. 
-Frontend development will incorporate ReactJS libraries for user interfaces, with npm handling package management. MySQL will serve as the database management system, and Postman will be used for API testing. The chosen technology stack will enable efficient development of plant inventory tracking and client request processing within a secure, scalable architecture that aligns with project objectives and developer competencies.
+The Selection of software influences project outcomes through technical capabilities and functional parameters. The development environment utilizes Windows 10 as the operating system and Visual Studio Code as the integrated development environment. Application architecture employs Laravel 11 for backend operations, with Composer managing dependencies. 
+Frontend development incorporates ReactJS libraries for user interfaces, with npm handling package management. MySQL serves as the database management system, and Postman is used for API testing. The chosen technology stack enables efficient development of plant inventory tracking and client request processing within a secure, scalable architecture that aligns with project objectives and developer competencies.
 
 Data Used
-Data Used refers to the specific information and datasets employed to support the development and operation of the system. It describes the types of data involved and explains how data will be collected, stored, processed, and managed to achieve the system's objectives. In the context of the Comprehensive Plant Inventory and Site Visit Management System for Salenga Farm, data will encompass user accounts, plant inventory records, client requests, sales transactions, site visit documentation, and supporting system information. The system will utilize a combination of structured database storage and file-based storage to maintain data integrity and support operational requirements. Structured data, including user profiles, plant specifications, transaction records, and request details, will be stored in a relational database management system (MySQL). Unstructured data, such as plant photographs, site visit documentation, user avatars, and generated PDF reports, will be stored in the file system with references maintained in the database. This hybrid approach will ensure efficient data retrieval, scalability, and support for multimedia content essential to plant catalog presentation and site visit documentation.
- 	Datasets of the Project. Datasets are organized collections of data essential for maintaining accurate and efficient operations within the plant inventory and site visit management system. They can be structured or unstructured, depending on the nature of the information (e.g., plant specifications, transaction records, site visit checklists, user profiles). These datasets will be fundamental to the system's operation, making information such as plant availability, pricing, client requests, and site inspection results readily accessible and up-to-date. The data will be required to be secure, accurate, and reliable to prevent errors and maintain proper processing of inventory management, sales transactions, and client service operations, thereby ensuring the system's integrity and operational effectiveness while supporting real-time decision-making processes. Additionally, these datasets will facilitate comprehensive reporting and analytics capabilities, enabling administrators to generate insights for business optimization and strategic planning purposes.
-Data Dictionary of the Project. The Data Dictionary will contain key information about the data structures used in the system. Data will be obtained from Salenga Farm's operational records and requirements, including plant inventory specifications, client information, transaction histories, and site visit documentation. The system will be designed to accommodate both registered users (clients with accounts) and online visitors (unregistered users who can browse the catalog and submit basic requests) while maintaining comprehensive data validation and integrity checks throughout all operations. Additionally, the dictionary will define data types, field constraints, and relationships between tables to ensure consistent database design and facilitate future system maintenance and scalability.
+Data Used refers to the specific information and datasets employed to support the development and operation of the system. It describes the types of data involved and explains how data is collected, stored, processed, and managed to achieve the system's objectives. In the context of the Comprehensive Plant Inventory and Site Visit Management System for Salenga Farm, data encompasses client accounts, plant inventory records, client requests, sales transactions, site visit documentation, and supporting system information. The system utilizes a combination of structured database storage and file-based storage to maintain data integrity and support operational requirements. Structured data, including client profiles, plant specifications, transaction records, and request details, is stored in a relational database management system (MySQL). Unstructured data, such as plant photographs, site visit documentation, client avatars, and generated PDF reports, is stored in the file system with references maintained in the database. This hybrid approach ensures efficient data retrieval, scalability, and support for multimedia content essential to plant catalog presentation and site visit documentation.
+ 	Datasets of the Project. Datasets are organized collections of data essential for maintaining accurate and efficient operations within the plant inventory and site visit management system. They can be structured or unstructured, depending on the nature of the information (e.g., plant specifications, transaction records, site visit checklists, client profiles). These datasets are fundamental to the system's operation, making information such as plant availability, pricing, client requests, and site inspection results readily accessible and up-to-date. The data is required to be secure, accurate, and reliable to prevent errors and maintain proper processing of inventory management, sales transactions, and client service operations, thereby ensuring the system's integrity and operational effectiveness while supporting real-time decision-making processes. Additionally, these datasets facilitate comprehensive reporting and analytics capabilities, enabling administrators to generate insights for business optimization and strategic planning purposes.
+Data Dictionary of the Project. The Data Dictionary contains key information about the data structures used in the system. Data is obtained from Salenga Farm's operational records and requirements, including plant inventory specifications, client information, transaction histories, and site visit documentation. The system is designed to accommodate registered clients and public visitors (unregistered visitors who can browse the catalog but must register as clients to submit requests) while maintaining comprehensive data validation and integrity checks throughout all operations. Additionally, the dictionary defines data types, field constraints, and relationships between tables to ensure consistent database design and facilitate future system maintenance and scalability.
 
  
 Figure 5. Database Structure of Salenga Farm Inventory System
 
 
-As illustrated in Figure 5, MySQL Workbench will display the database schema of the Salenga Farm system, comprising twenty (20) structured and standardized tables that will facilitate the system's primary functions. The database will be organized into two main categories: core business tables and system support tables. The core business tables will include users, which will manage all user accounts and role-based access control; plants, which will store the complete inventory of available plants with pricing, stock levels, and specifications; display_plants, which will maintain the public-facing plant catalog with care information and images; plant_requests, which will track all client inquiries and requests for quotations; site_visits, which will document field inspections with geolocation data and digital checklists; sales, which will record all walk-in point-of-sale transactions; and categories, which will organize plants into groups such as shrubs, herbs, palms, trees, grasses, bamboo, and fertilizers. The database will also include system support tables that will ensure proper system operation and data management. The notifications table will manage system alerts and user notifications for request updates and system events. The cache and cache_locks tables will support Laravel's caching system for improved performance. The migrations table will track database version control and schema changes throughout development. The password_reset_tokens table will support secure password recovery. The jobs, job_batches, and failed_jobs tables will support Laravel's queue system for background task processing, such as email notifications and report generation. Additionally, the database will include permission management tables from the Spatie Laravel-Permission package: permissions, roles, model_has_permissions, model_has_roles, and role_has_permissions. While these tables will be present in the database structure, the system will implement a simplified role-based access control through the role field in the users table, which will separate super admin, admin, manager, client, and standard user roles. The autofill_caches table will be designed to store frequently used form data for site visit entries, allowing faster data entry for recurring client information and location details.
+As illustrated in Figure 5, MySQL Workbench displays the database schema of the Salenga Farm system, comprising twenty (20) structured and standardized tables that facilitate the system's primary functions. The database is organized into two main categories: core business tables and system support tables. The core business tables include users, which manages all client accounts and role-based access control; plants, which stores the complete inventory of available plants with pricing, stock levels, and specifications; display_plants, which maintains the public-facing plant catalog with care information and images; plant_requests, which tracks all client inquiries and requests for quotations; site_visits, which documents field inspections with geolocation data and digital checklists; sales, which records all walk-in point-of-sale transactions; and categories, which organizes plants into groups such as shrubs, herbs, palms, trees, grasses, bamboo, and fertilizers. The database also includes system support tables that ensure proper system operation and data management. The notifications table manages system alerts and client notifications for request updates and system events. The cache and cache_locks tables support Laravel's caching system for improved performance. The migrations table tracks database version control and schema changes throughout development. The password_reset_tokens table supports secure password recovery. The jobs, job_batches, and failed_jobs tables support Laravel's queue system for background task processing, such as email notifications and report generation. Additionally, the database includes permission management tables from the Spatie Laravel-Permission package: permissions, roles, model_has_permissions, model_has_roles, and role_has_permissions. These tables empower the Super Admin to configure specific page access permissions and manage role-based access across the system. The autofill_caches table is designed to store frequently used form data for site visit entries, allowing faster data entry for recurring client information and location details.
 
 User Design
 
@@ -585,70 +572,70 @@ Diagrams serve as visual representations that illustrate information, relationsh
  
 Figure 6. Use Case Diagram of the System
 
-As shown in Figure 6, the system features four primary actors: Online User, Client, Admin, and Super Admin. Online Users can (1) log in to the system, (2) browse the plant catalog to view available plants and their descriptions, (3) submit plant requests, and (4) receive email notifications regarding their requests. Clients, as registered users, can (1) submit plant requests and RFQ forms to the admin, (2) view the status of their requests, (3) receive email updates, and (4) access all features available to Online Users. Admins are responsible for managing the core system functions, including: (1) managing plant inventory by adding, editing, or deleting plant records, (2) handling and processing requests from users and clients, (3) sending email notifications and updates, (4) conducting site visits and filling out digital checklists, (5) viewing site visit maps and statistics, and (6) generating and accessing system dashboards and reports. Super Admin are responsible in (1) managing user accounts by adding, editing, or deleting users. Both Admin and Super Admin roles ensure the smooth operation of the system, from inventory management and request processing to site inspection and reporting.
+As shown in Figure 6, the system features four primary actors: Visitor, Client, Admin, and Super Admin. Visitors can (1) browse the plant catalog to view available plants and their descriptions, but must register as clients to submit requests. Clients, as registered users, can (1) log in to the system, (2) browse the plant catalog, (3) submit RFQ forms to the admin, (4) view the status of their requests, (5) receive email updates, and (6) participate in assigned site visits by verifying access to site data. Admins are responsible for managing the core system functions, including: (1) managing plant inventory by adding, editing, or deleting plant records, (2) handling and processing requests from clients, (3) sending email notifications and updates, (4) conducting site visits and filling out digital checklists, (5) viewing site visit maps and statistics, and (6) generating and accessing system dashboards and reports. Super Admins are responsible for (1) managing client accounts by adding, editing, or deleting users, and configuring page access permissions. Both Admin and Super Admin roles ensure the smooth operation of the system, from inventory management and request processing to site inspection and reporting.
 Entity Relationship Diagram (ERD). An Entity Relationship Diagram (ERD) below illustrates the proposed system's database structure. It defines the entities (tables), attributes, and relationships (one-to-one, one-to-many, many-to-many) to ensure efficient data design. This model provides a shared blueprint for developers and stakeholders to accurately implement the database.
 
  
 Figure 7. Entity-Relationship Diagram of the System
 
 
-Figure 7 will illustrate the entity-relationship diagram of the system. As shown in the figure, there will be twelve (12) entities represented: users, system logs, inventory logs, plant categories, plants, display plants, plant request, request details, sales, payment records, site visits, and RFQ requests.
-A user will be able to create multiple plant requests, record many sales, conduct site visits, and submit RFQ requests in the system. The plants entity will serve as a central component, connecting to several tables including plant categories, display plants, inventory logs, request details, and sales. Each plant will be assigned to one plant category, while display plants will represent the public catalog view of available plants in inventory.
-Sales records will capture transaction details and are linked to payment records for financial tracking. Plant requests to be submitted by users will contain multiple request details, each referencing specific plants. The site visits entity will record inspection activities to be conducted by users, storing geolocation, client, and visit information along with digital checklists. The RFQ requests entity will manage client requests for quotations, capturing client information and requested plant details. System logs and inventory logs will track important system activities and changes in plant quantities. Every entity in the diagram will be connected to at least one other entity, forming a comprehensive network that will support all major inventory, request, sales, site visit, and quotation management operations within the system.
- 	Data Flow Diagram (DFD). A data flow diagram will depict the flow of data across the system. It will demonstrate the transformation and storing of data by many system components, making it a useful instrument for examining and constructing systems. It also helps identify how information moves between users, processes, and data stores within the system. By visualizing these interactions, developers gain a clearer understanding of system requirements and potential problem areas. A DFD provides a structured way to break down complex processes into simpler, more manageable parts. It also supports better communication among stakeholders by offering a visual representation of system operations. Ultimately, a DFD ensures that the system design is accurate, efficient, and aligned with user needs.
-The figure 8 will show the data flow diagram of the system. The diagram will outline the primary external entities, system processes, and data stores, as well as the flow of information between them. In the current system, visitors and clients will be able to browse the plant catalog, with clients able to submit specific plant requests and view site visit results. Registration and authentication will be required for clients, staff, and administrators to access additional features. 
+Figure 7 illustrates the entity-relationship diagram of the system. As shown in the figure, there are twelve (12) entities represented: users, system logs, inventory logs, plant categories, plants, display plants, plant request, request details, sales, payment records, site visits, and RFQ requests.
+A client is able to create multiple plant requests, record many sales, conduct site visits, and submit RFQ requests in the system. The plants entity serves as a central component, connecting to several tables including plant categories, display plants, inventory logs, request details, and sales. Each plant is assigned to one plant category, while display plants represent the public catalog view of available plants in inventory.
+Sales records capture transaction details and are linked to payment records for financial tracking. Plant requests submitted by clients contain multiple request details, each referencing specific plants. The site visits entity records inspection activities conducted by clients, storing geolocation, client, and visit information along with digital checklists. The RFQ requests entity manages client requests for quotations, capturing client information and requested plant details. System logs and inventory logs track important system activities and changes in plant quantities. Every entity in the diagram is connected to at least one other entity, forming a comprehensive network that supports all major inventory, request, sales, site visit, and quotation management operations within the system.
+ 	Data Flow Diagram (DFD). A data flow diagram depicts the flow of data across the system. It demonstrates the transformation and storing of data by many system components, making it a useful instrument for examining and constructing systems. It also helps identify how information moves between clients, processes, and data stores within the system. By visualizing these interactions, developers gain a clearer understanding of system requirements and potential problem areas. A DFD provides a structured way to break down complex processes into simpler, more manageable parts. It also supports better communication among stakeholders by offering a visual representation of system operations. Ultimately, a DFD ensures that the system design is accurate, efficient, and aligned with client needs.
+The figure 8 shows the data flow diagram of the system. The diagram outlines the primary external entities, system processes, and data stores, as well as the flow of information between them. In the current system, visitors and clients are able to browse the plant catalog, with clients able to submit specific plant requests and view site visit results. Registration and authentication are required for clients, staff, and administrators to access additional features. 
 
  
 Figure 8. Data Flow Diagram of the System
 
 
-The super admin can only manage users while viewing plant inventory data, point-of-sale (POS), site visits, and requests. Admin and staff will manage inventory, process sales, conduct site visits, handle client requests, and generate reports, but will have not have access to user management. Each process will interact with its corresponding data store: user management will access the user database, inventory management will update the plant database, POS transactions will be recorded in the sales database, site visit results will be stored in the site visit records, and client requests will be logged in the client requests database. 
-The reporting module will aggregate data from all relevant sources to provide comprehensive statistics and insights. This DFD will ensure that data flows securely and efficiently between users, processes, and data stores, supporting the system’s objectives of accurate inventory tracking, streamlined sales, effective site visit management, and responsive client service. The clear separation of roles and modules will enhance both security and usability, with the admin retaining the highest level of system privilege.
+The super admin can only manage clients and page access permissions while viewing plant inventory data, point-of-sale (POS), site visits, and requests. Admins manage inventory, process sales, conduct site visits, handle client requests, and generate reports, but do not have access to client management. Each process interacts with its corresponding data store: client management accesses the client database and permission tables, inventory management updates the plant database, POS transactions are recorded in the sales database, site visit results are stored in the site visit records, and client requests are logged in the client requests database. 
+The reporting module aggregates data from all relevant sources to provide comprehensive statistics and insights. This DFD ensures that data flows securely and efficiently between clients, processes, and data stores, supporting the system’s objectives of accurate inventory tracking, streamlined sales, effective site visit management, and responsive client service. The clear separation of roles and modules enhances both security and usability, with the Super Admin retaining the highest level of system privilege.
 Flowchart. A flowchart visually represents the sequence of processes and decision points within a system. Using standardized symbols—rectangles for processes, diamonds for decisions, and arrows for control flow—it provides a universal language for both technical and non-technical audiences. This clarity aids in identifying bottlenecks, debugging logic prior to coding, and documenting workflows for training and compliance. Ultimately, a flowchart acts as a single source of truth, aligning cross-functional teams with a shared understanding of the process. 
  
 Figure 9. Flowchart of the System
 
 
- 	Graphical User Interface (GUI). The graphical user interface (GUI) will provide a clear and consistent entry point to the system. It follows a catalog first design and will use readable typography, high contrast elements, and responsive layouts suitable for desktop and mobile. Full page interfaces will be presented in the Implementation Plan; this section it will present the Welcome Home Page as the entry screen for users.
+ 	Graphical User Interface (GUI). The graphical user interface (GUI) provides a clear and consistent entry point to the system. It follows a catalog first design and uses readable typography, high contrast elements, and responsive layouts suitable for desktop and mobile. Full page interfaces are presented in the Implementation Plan; this section presents the Welcome Home Page as the entry screen for clients.
 
  
 Figure 10. Welcome Home Page Interface
 
 
-The Figure 10 will show Welcome Home Page The welcome screen will present a centered hero banner with the title “Welcome to Salenga Farm,” a brief subtitle introducing the catalog, and a prominent “Explore Plants” call to action. A soft, blurred plant background will draw focus to the banner and guides the user toward the catalog. Selecting “Explore Plants” will lead directly to the Plant Catalog, from which standard users will proceed to a Normal Plant Request and client accounts will proceed to a Request for Quotation (RFQ). The layout will maintain clarity, contrast, and
+The Figure 10 shows Welcome Home Page The welcome screen presents a centered hero banner with the title “Welcome to Salenga Farm,” a brief subtitle introducing the catalog, and a prominent “Explore Plants” call to action. A soft, blurred plant background draws focus to the banner and guides the client toward the catalog. Selecting “Explore Plants” will lead directly to the Plant Catalog, from which standard users will proceed to a Normal Plant Request and client accounts will proceed to a Request for Quotation (RFQ). The layout will maintain clarity, contrast, and
 responsiveness across device sizes.
 
  
 Figure 11. Login and Registration Interface
 
 
-The Figure 11 will present the authentication interfaces of the Salenga Farm system, featuring secure pages for login and registration. The Login Page will be designed for existing users, requiring an email address and password, with additional options for password recovery. The Registration Page will simplify the account creation process for new clients by requesting their first name, last name, email address, contact number, company name (optional), and password confirmation. This streamlined approach will ensure quick and user-friendly access to the Salenga Farm platform, supporting both public browsing and authenticated features such as request submissions and quotation management.
+The Figure 11 presents the authentication interfaces of the Salenga Farm system, featuring secure pages for login and registration. The Login Page is designed for existing clients, requiring an email address and password, with additional options for password recovery. The Registration Page simplifies the account creation process for new clients by requesting their first name, last name, email address, contact number, company name (optional), and password confirmation. This streamlined approach ensures quick and user-friendly access to the Salenga Farm platform, supporting both public browsing and authenticated features such as request submissions and quotation management.
 
 Operational Framework
 
 An operational framework is a structured plan that outlines how a project or organization will achieve its goals through defined processes, resources, and coordinated activities. It guides implementation, daily operations, and performance evaluation to ensure all stakeholders work efficiently together. By clarifying responsibilities, workflows, timelines, and quality standards, it reduces risks, promotes accountability, and enhances the overall effectiveness and sustainability of the initiative. When consistently applied, this framework also provides the flexibility to adapt to changing circumstances or unexpected challenges without losing sight of the core objectives.
-Figure 12 will illustrate the operational framework to be applied in the study. The framework will be essential for the project as it defines the fundamental concepts and procedures involved in the system development. This framework serves as a roadmap that guides systematic implementation of each module, ensuring consistency throughout development. Additionally, it establishes interconnections between system components, facilitating seamless data flow and user interactions.
+Figure 12 illustrates the operational framework applied in the study. The framework is essential for the project as it defines the fundamental concepts and procedures involved in the system development. This framework serves as a roadmap that guides systematic implementation of each module, ensuring consistency throughout development. Additionally, it establishes interconnections between system components, facilitating seamless data flow and client interactions.
  
 Figure 12. Operational Framework of the System
 
 
 Development
 
-During this phase, the approved screens and workflows will guide implementation. The team will build the Laravel web application with a responsive layout, clear validation, and consistent feedback so users will be able access accounts, browse the Plant Catalog, and submit requests with minimal steps on both desktop and mobile.
+During this phase, the approved screens and workflows guide implementation. The team builds the Laravel web application with a responsive layout, clear validation, and consistent feedback so clients are able to access accounts, browse the Plant Catalog, and submit requests with minimal steps on both desktop and mobile.
 
 How the System Will Work
-This section will provide a broad overview of the Salenga Farm system to be developed in this study. A concise summary of the principal features and workflow to be included in the platform is presented below.
-1.	The system will operate through four distinct user roles with specific access levels. The Super Admin will oversee user management, role assignments, and system logs while accessing comprehensive analytics on stock distribution, sales performance, and low stock alerts. The Admin workspace will serve as the operational center, managing plant inventory with create, update, and delete operations, processing point-of-sale transactions with automatic inventory updates, scheduling site visits with GPS mapping and assessment forms, and reviewing user inquiries and client RFQ submissions with availability status updates and PDF quotation generation.
-2.	Client accounts will access a dedicated Request for Quotation (RFQ) system to browse the catalog, select multiple plants with detailed specifications, submit formal requests, and download approved quotations. Clients will collaborate on site visits by uploading required documents and approving administrator proposals. Regular users will browse the plant catalog, select plants by clicking "Add to Inquiry," and submit inquiries through a modal interface. Users will receive email confirmations, track inquiry status through their dashboard, and view administrator responses showing availability status and remarks. Public visitors will browse the catalog in view-only mode but must register to submit inquiries.
-3.	Activity across all modules will support comprehensive analytics and reporting, providing real-time data on stock levels, sales performance, inquiry response rates, and site visit completion for inventory planning and continuous operational improvement.
+This section provides a broad overview of the Salenga Farm system developed in this study. A concise summary of the principal features and workflow included in the platform is presented below.
+1.	The system operates through three distinct user roles with specific access levels. The Super Admin oversees client management, role assignments, and system logs while accessing comprehensive analytics on stock distribution, sales performance, and low stock alerts. The Admin workspace serves as the operational center, managing plant inventory with create, update, and delete operations, processing point-of-sale transactions with automatic inventory updates, scheduling site visits with GPS mapping and assessment forms, and reviewing client RFQ submissions with availability status updates and PDF quotation generation.
+2.	Client accounts access a dedicated Request for Quotation (RFQ) system to browse the catalog, select multiple plants with detailed specifications, submit formal requests, and download approved quotations. Clients collaborate on site visits by uploading required documents and approving administrator proposals. Public visitors browse the catalog in view-only mode but must register as clients to submit requests.
+3.	Activity across all modules supports comprehensive analytics and reporting, providing real-time data on stock levels, sales performance, request response rates, and site visit completion for inventory planning and continuous operational improvement.
 
 Implementation Activities 
-Implementation activities outline the steps, resources, and interfaces needed to deploy the Salenga Farm web system on time and within budget. The system will include three main modules: (1) Super Admin, for user and role administration with system-wide viewing and search; (2) Admin, for plant data and inventory, sales/point-of-sale (POS), site visits, and request processing; and (3) User/Client, for catalog browsing, role-based submissions, status tracking, and downloading approved quotations. This modular structure ensures clear separation of concerns, allowing different user types to access only the functions relevant to their responsibilities while maintaining data integrity across the platform. Successful implementation will involve phased testing of each module, user training sessions, and continuous feedback collection to refine system performance before full-scale deployment.
+Implementation activities outline the steps, resources, and interfaces needed to deploy the Salenga Farm web system on time and within budget. The system includes three main modules: (1) Super Admin, for client and role administration with system-wide viewing and search; (2) Admin, for plant data and inventory, sales/point-of-sale (POS), site visits, and request processing; and (3) Client, for catalog browsing, RFQ submissions, status tracking, and downloading approved quotations. This modular structure ensures clear separation of concerns, allowing different user types to access only the functions relevant to their responsibilities while maintaining data integrity across the platform. Successful implementation involves phased testing of each module, client training sessions, and continuous feedback collection to refine system performance before full-scale deployment.
 
  Figure 13. Flowchart of the Plant Inquiry and Response Process
 
 
- The flowchart shows the steps in the Plant Inquiry and Response Process of the Salenga Farm system. It helps plan, visualize, and improve the workflow. As shown in Figure 13, the process begins by checking if the user is logged in. If the user is not logged in, the system prompts the user to fill up registration details and proceed to login. After login, the system verifies if the login was successful. If login fails, an error message is displayed and the user can retry. Once successfully logged in, the user can browse the plant catalog and select desired plants by clicking "Add to Inquiry" on plant cards. After selecting plants, the user submits the inquiry with contact information and plant specifications. The inquiry is then sent to the administrator for review. The administrator reviews the inquiry, sets availability status for each requested plant, and adds optional remarks. Once the administrator sends the response, the user receives an email and in-app notification. The user can then view the response in their dashboard, which displays the availability status and admin remarks for each plant. This streamlined process ensures efficient communication between users and administrators, supporting timely responses and clear availability information for plant inquiries.
+ The flowchart shows the steps in the Plant Request and Response Process of the Salenga Farm system. It helps plan, visualize, and improve the workflow. As shown in Figure 13, the process begins by checking if the client is logged in. If the client is not logged in, the system prompts the client to fill up registration details and proceed to login. After login, the system verifies if the login was successful. If login fails, an error message is displayed and the client can retry. Once successfully logged in, the client can browse the plant catalog and select desired plants by clicking "Add to RFQ" on plant cards. After selecting plants, the client submits the RFQ with contact information and plant specifications. The RFQ is then sent to the administrator for review. The administrator reviews the RFQ, sets availability status for each requested plant, and adds optional remarks. Once the administrator sends the response, the client receives an email and in-app notification. The client can then view the response in their dashboard, which displays the availability status and admin remarks for each plant. This streamlined process ensures efficient communication between clients and administrators, supporting timely responses and clear availability information for plant requests.
 
 Testing and Evaluation
 
@@ -657,27 +644,26 @@ The fourth stage of the system development is testing. The proposed design is ca
 
 Testing 
 
-Testing will be essential to verify proper operation and conformance with defined parameters for a web-based catalog-first platform. It aims to identify defects while confirming intended functions such as Plant Catalog rendering, search and filtering accuracy, plant detail presentation, and completion of role-determined submission paths (plant inquiries for standard users and Request for Quotation for client accounts), including confirmations and PDF generation where applicable. The test program will also include cross-browser and device responsiveness checks, performance measurements for page load and search responsiveness, and security reviews focused on access control, CSRF protections, session handling, and rate-limit behavior. The system will be tested by an academic panel and IT experts from the partner institution, together with Salenga Farm administrative staff, managerial personnel, and selected client representatives. Through these activities—encompassing both functional and non-functional tests—potential issues will be identified and resolved prior to deployment to ensure reliable operation.
+Testing is essential to verify proper operation and conformance with defined parameters for a web-based catalog-first platform. It aims to identify defects while confirming intended functions such as Plant Catalog rendering, search and filtering accuracy, plant detail presentation, and completion of RFQ submission paths for client accounts, including confirmations and PDF generation where applicable. The test program also includes cross-browser and device responsiveness checks, performance measurements for page load and search responsiveness, and security reviews focused on access control, CSRF protections, session handling, and rate-limit behavior. The system is tested by an academic panel and IT experts from the partner institution, together with Salenga Farm administrative staff, managerial personnel, and selected client representatives. Through these activities—encompassing both functional and non-functional tests—potential issues are identified and resolved prior to deployment to ensure reliable operation.
 
 Evaluation
 
-In this phase, the system will be evaluated against ISO/IEC 9126 quality characteristics, with emphasis on functionality, reliability, usability, and efficiency. Functionality evaluation will determine whether the platform fulfills defined objectives—accurate catalog presentation, effective search and retrieval, and successful completion of role‑appropriate submissions. Reliability evaluation will assess the system's capability to operate continuously with minimal errors or downtime and resilient failure handling. Usability evaluation will consider clarity of labels and messages, ease of navigation, layout consistency, accessibility across screen sizes, and search effectiveness. Efficiency evaluation will examine resource utilization and response times during common interactions, including catalog filtering and submission processing. Findings from these evaluations will guide targeted refinements to improve the system's fitness for purpose prior to official release.
- 	Respondents. Respondents  are  individuals or groups  who
-will participate in a surveys, evaluations, or provide information for project implementation. As the system will be installed in Salenga Farm, the respondents will be the Salenga Farm administrators (Super Admin and Admin) and purposively selected IT faculty. The combined feedback from operational administrators and expert reviewers will help further improve the Comprehensive Plant Inventory and Site Visit Management System.
+In this phase, the system is evaluated against ISO/IEC 9126 quality characteristics, with emphasis on functionality, reliability, usability, and efficiency. Functionality evaluation determines whether the platform fulfills defined objectives—accurate catalog presentation, effective search and retrieval, and successful completion of RFQ submissions. Reliability evaluation assesses the system's capability to operate continuously with minimal errors or downtime and resilient failure handling. Usability evaluation considers clarity of labels and messages, ease of navigation, layout consistency, accessibility across screen sizes, and search effectiveness. Efficiency evaluation examines resource utilization and response times during common interactions, including catalog filtering and submission processing. Findings from these evaluations guide targeted refinements to improve the system's fitness for purpose prior to official release.
+ 	Respondents. Respondents are individuals or groups who participate in surveys, evaluations, or provide information for project implementation. As the system is installed in Salenga Farm, the respondents are the Salenga Farm administrators (Super Admin and Admin) and purposively selected IT faculty. The combined feedback from operational administrators and expert reviewers helps further improve the Comprehensive Plant Inventory and Site Visit Management System.
  	Sampling Design and Technique. Sampling and design technique refers to the method used in gathering and analyzing the data in the study. The researchers used purposive sampling. In this study, respondents are not randomly selected but are chosen based on their role expertise and relevance to the research: Salenga Farm administrators as operational users, and IT faculty as expert evaluators.
  	Evaluation Procedure. The evaluation procedure includes the processes that measure the performance, quality, and efficiency of the study. The output of the project assists the proponent in decision-making, the identification of particular areas to be rectified, and validation of research.
-Step 1. Request for Evaluation. The proponent will request permission for evaluation of the system that was created.
-Step 2. Permission Letter Presentation. The requested letter of permission signed by the adviser will be granted to the evaluators.
-Step 3. Orientation of Respondents. The proponent will provide a detailed presentation to the respondents on how to access and utilize the Salenga Farm system.
-Step 4. Dissemination of Survey Questionnaire Form. The proponent will distribute the form composed of questions that evaluate the assessment process to the respondents, who will include Salenga Farm administrators and IT faculty.
-Step 5. Establish a Timeframe for Data Collection. Three to five days will be allocated to the respondents to complete the survey questionnaire.
-Step 6. Data Collection. The proponent will collect the filled-up questionnaire or rating sheet.
-Step 7. Analyze the Data and Apply Findings. Upon collection of data, the proponent will analyze the collected feedback and apply the findings of the study conducted.
+Step 1. Request for Evaluation. The proponent requests permission for evaluation of the system that was created.
+Step 2. Permission Letter Presentation. The requested letter of permission signed by the adviser is granted to the evaluators.
+Step 3. Orientation of Respondents. The proponent provides a detailed presentation to the respondents on how to access and utilize the Salenga Farm system.
+Step 4. Dissemination of Survey Questionnaire Form. The proponent distributes the form composed of questions that evaluate the assessment process to the respondents, who include Salenga Farm administrators and IT faculty.
+Step 5. Establish a Timeframe for Data Collection. Three to five days are allocated to the respondents to complete the survey questionnaire.
+Step 6. Data Collection. The proponent collects the filled-up questionnaire or rating sheet.
+Step 7. Analyze the Data and Apply Findings. Upon collection of data, the proponent analyzes the collected feedback and applies the findings of the study conducted.
 
 Survey Instrument of the Study
 
-The survey instrument for the evaluation phase will be a printed questionnaire. Respondents will use this to rate the developed system based on its functionality, reliability, and usability. This assessment tool is adapted from the ISO Software Quality Model 9126 and tailored to the specific context of Salenga Farm operations.
-The survey will focus on three key areas: the system's functionality, reliability, and usability. Each of these will be measured using a 5-point Likert scale. The questionnaire will assess respondents' level of agreement in each of the five areas using a 5-Likert psychometric rating scale. There will be five (5) categories: very good, good, fair, poor, and very poor. The degree of agreement used for statistical analysis in obtaining the verbal description will be graded using the matrix below.
+The survey instrument for the evaluation phase is a printed questionnaire. Respondents use this to rate the developed system based on its functionality, reliability, and usability. This assessment tool is adapted from the ISO Software Quality Model 9126 and tailored to the specific context of Salenga Farm operations.
+The survey focuses on three key areas: the system's functionality, reliability, and usability. Each of these is measured using a 5-point Likert scale. The questionnaire assesses respondents' level of agreement in each of the five areas using a 5-Likert psychometric rating scale. There are five (5) categories: very good, good, fair, poor, and very poor. The degree of agreement used for statistical analysis in obtaining the verbal description is graded using the matrix below.
 
 Table 4. Likert Scale of Measurement for functionality, reliability 
                and usefulness of the system
@@ -695,11 +681,11 @@ The mean is employed to determine the extent of functionality, reliability and a
 Deployment Activities
 
 
-The deployment phase of the Salenga Farm Plant Inventory and Site Visit Management System involved key steps to ensure its successful implementation. Using the Agile Software Development approach, the system included three main modules: the Super Admin module for user and role administration, the Admin module for plant data and inventory management, and the User/Client module for catalog browsing and submissions. This phase ensured that each component was properly installed, configured, tested, and made ready for use. Backup procedures, security measures, and maintenance plans were also prepared to guarantee smooth operation and minimal disruption during deployment.
+The deployment phase of the Salenga Farm Plant Inventory and Site Visit Management System involves key steps to ensure its successful implementation. Using the Agile Software Development approach, the system includes three main modules: the Super Admin module for client and role administration, the Admin module for plant data and inventory management, and the Client module for catalog browsing and submissions. This phase ensures that each component is properly installed, configured, tested, and made ready for use. Backup procedures, security measures, and maintenance plans are also prepared to guarantee smooth operation and minimal disruption during deployment.
 
 Installation Activities
 
-The installation activities outlines the steps needed to set up the software, hardware, or system and configure it for its intended use. The installation process for the Salenga Farm Plant Inventory and Site Visit Management System includes the following steps.
+The installation activities outline the steps needed to set up the software, hardware, or system and configure it for its intended use. The installation process for the Salenga Farm Plant Inventory and Site Visit Management System includes the following steps.
 Step 1: Obtain a hosting server and register a domain name.
 Step 2: Create a subdomain for the website.
 Step 3: Set up and configure the subdomain.
@@ -711,15 +697,15 @@ Step 8: Configure email service integration for notifications.
 
 Maintenance Activities
 
-A maintenance Activities was a set of steps and schedules designed to keep the system, software, and hardware working well and to prevent problems. The system followed a preventive, corrective, and improvement-based maintenance approach to ensure continuous reliability and performance. Regular updates and system checks were conducted to address emerging issues before they could disrupt operations.
-Step 1: The system was regularly checked and updated to keep the software and its required tools up to date.
-Step 2: The system's performance was monitored, and any problems that could slow it down were identified.
-Step 3: Regular backups were scheduled to protect data in case of system failure or downtime.
-Step 4: A detailed record was kept for all maintenance activities and updates.
+Maintenance Activities is a set of steps and schedules designed to keep the system, software, and hardware working well and to prevent problems. The system follows a preventive, corrective, and improvement-based maintenance approach to ensure continuous reliability and performance. Regular updates and system checks are conducted to address emerging issues before they could disrupt operations.
+Step 1: The system is regularly checked and updated to keep the software and its required tools up to date.
+Step 2: The system's performance is monitored, and any problems that could slow it down are identified.
+Step 3: Regular backups are scheduled to protect data in case of system failure or downtime.
+Step 4: A detailed record is kept for all maintenance activities and updates.
 
 Backup and Recovery Activities
 
-A backup and recovery activities was a set of steps used to protect and restore data if the system failed, data became damaged, or unexpected problems happened. The backup process for the Salenga Farm Plant Inventory and Site Visit Management System included the following steps:
+Backup and Recovery Activities is a set of steps used to protect and restore data if the system fails, data becomes damaged, or unexpected problems happen. The backup process for the Salenga Farm Plant Inventory and Site Visit Management System includes the following steps:
 Step 1: Set a backup schedule to make sure system data is saved regularly and securely.
 Step 2: Assign an employee to manually back up the data every week. Having a specific person handle this task ensures backups are done on time.
 Step 3: Test the backup files to make sure they can be restored properly. The assigned employee must regularly check that the backup files are complete and working.
@@ -731,46 +717,47 @@ CHAPTER IV
 RESULT AND DISCUSSION
 
 
-This chapter presents the results gathered from the evaluation of the Comprehensive Plant Inventory and Site Visit Management System for Salenga Farm. The discussion follows the system's specific objectives, focusing on the functionalities designed for the Super Administrator, Administrator, Client, and User. The results were derived from system testing, user feedback through surveys, and observations made during the system deployment.
-The system allows Super Administrators to manage user accounts, assign roles, and monitor system logs for security and maintenance purposes. Administrators evaluated the functions that allow them to manage plant inventory, process sales transactions, handle client requests, and conduct site visits. The system enables Administrators to add, update, and delete plant records, generate PDF quotations, and send email notifications to clients. Clients tested the ability to submit requests for quotation (RFQ), download approved quotations, and participate in assigned site visits by uploading required documents. Regular Users assessed the functionality that allows them to browse the plant catalog, submit plant inquiries, and view inquiry responses from administrators.
+This chapter presents the results gathered from the evaluation of the Comprehensive Plant Inventory and Site Visit Management System for Salenga Farm. The discussion follows the system's specific objectives, focusing on the functionalities designed for the Super Administrator, Administrator, and Client. The results were derived from system testing, client feedback through surveys, and observations made during the system deployment.
+The system allows Super Administrators to manage client accounts, assign roles, and monitor system logs for security and maintenance purposes. Administrators evaluated the functions that allow them to manage plant inventory, process sales transactions, handle client requests, and conduct site visits. The system enables Administrators to add, update, and delete plant records, generate PDF quotations, and send email notifications to clients. Clients tested the ability to submit requests for quotation (RFQ), download approved quotations, and participate in assigned site visits by uploading required documents.
 
-Super Admin Module that Manage User Accounts and Roles
-
- 
-This module allows the Super Admin to manage user accounts and assign roles within the system. It enables the Super Admin to create new user accounts, update existing user information, delete accounts, and assign appropriate roles such as Admin, Client, or User. This functionality ensures proper system management, security, and access control by restricting functions to authorized users only. The module also maintains a complete audit log of all account modifications, providing transparency and traceability for compliance and security monitoring purposes.
-Figure 14 shows the interface of the Super Admin Module for managing user accounts. Through this module, the Super Admin can view a list of all registered users, including their names, email addresses, roles, and account status. The interface provides action buttons for editing user details, changing roles, and removing accounts when necessary. This feature maintains system organization and ensures that only authorized personnel have access to administrative functions while providing comprehensive oversight of all user activities.
+Super Admin Module that Manage Client Accounts and Roles
 
  
-Figure 14. Graphical user Interface for Super Admin Module That Manages User Accounts and Roles
+This module allows the Super Admin to manage client accounts, assign roles, and configure specific page access permissions within the system. It enables the Super Admin to create new client accounts, update existing client information, delete accounts, assign appropriate roles such as Admin or Client, and explicitly control which system pages each user can access. This functionality ensures proper system management, granular security, and strict access control by restricting functions to authorized users only. The module also maintains a complete audit log of all account modifications, providing transparency and traceability for compliance and security monitoring purposes.
+Figure 14 shows the interface of the Super Admin Module for managing client accounts. Through this module, the Super Admin can view a list of all registered clients, including their names, email addresses, roles, and account status. The interface provides action buttons for editing client details, changing roles, and removing accounts when necessary. This feature maintains system organization and ensures that only authorized personnel have access to administrative functions while providing comprehensive oversight of all client activities.
+
+ 
+Figure 14. Graphical user Interface for Super Admin Module That Manages Client Accounts and Roles
 
 
-The pseudocode in Figure 15 shows how the Super Admin manages user accounts within the system. It begins by displaying the user management interface with a table listing all users and their details. When the Super Admin clicks "Add User," the system opens a registration form where new user information can be entered, including name, email, password, and assigned role. If the "Edit" button is clicked, the system retrieves the selected user's data and displays it in an editable form. When changes are saved, the system updates the user information in the database. If the "Delete" button is clicked, the system displays a confirmation dialog to prevent accidental deletions. Upon confirmation, the user account is removed from the system. This function ensures efficient user management and maintains accurate account records.
+The pseudocode in Figure 15 shows how the Super Admin manages client accounts within the system. It begins by displaying the client management interface with a table listing all clients and their details. When the Super Admin clicks "Add Client," the system opens a registration form where new client information can be entered, including name, email, password, and assigned role. If the "Edit" button is clicked, the system retrieves the selected client's data and displays it in an editable form. When changes are saved, the system updates the client information in the database. If the "Delete" button is clicked, the system displays a confirmation dialog to prevent accidental deletions. Upon confirmation, the client account is removed from the system. This function ensures efficient client management and maintains accurate account records.
 
-Function: Super Admin Manages User Accounts
+Function: Super Admin Manages Client Accounts
 Begin
-    Display "User Management" Interface
-    Load AllUsers FROM Database
+    Display "Client Management" Interface
+    Load AllClients FROM Database
     
-    WHEN "Add User" Clicked:
+    WHEN "Add Client" Clicked:
         IF InputValid THEN
-            Create NewUser
+            Create NewClient
             Assign Role
-            Display "User created successfully"
+            Assign PageAccessPermissions
+            Display "Client created successfully"
         END IF
     
     WHEN "Edit" Clicked:
         IF UpdateValid THEN
-            Update UserRecord
-            Display "User updated successfully"
+            Update ClientRecord
+            Display "Client updated successfully"
         END IF
     
     WHEN "Delete" Clicked:
         IF Confirmed THEN
-            Delete UserAccount
-            Display "User deleted successfully"
+            Delete ClientAccount
+            Display "Client deleted successfully"
         END IF
 END
-Figure 15. Pseudocode for Super Admin Module That Manages User Accounts
+Figure 15. Pseudocode for Super Admin Module That Manages Client Accounts
 
 
 Super Admin Module That Monitors System Logs
@@ -810,7 +797,7 @@ Figure 17. Pseudocode for Super Admin Module That Monitors System Logs
 Admin Module That Manages Plant Inventory
 
 
-This module allows the Administrator to manage the plant inventory effectively. Through this feature, the Admin can add new plant records, update existing plant information, delete plants from the inventory, and upload plant photos. The system maintains accurate stock levels, pricing information, and plant specifications, ensuring that the catalog remains up-to-date for clients and users.
+This module allows the Administrator to manage the plant inventory effectively. Through this feature, the Admin can add new plant records, update existing plant information, delete plants from the inventory, and upload plant photos. The system maintains accurate stock levels, pricing information, and plant specifications, ensuring that the catalog remains up-to-date for clients.
 Figure 18 shows the Plant Inventory Management interface where the Administrator can view all plants in the system. The interface displays a table with plant names, categories, stock quantities, prices, and action buttons for editing or deleting records. The Admin can also use the search and filter functions to quickly locate specific plants by name or category.
 
  
@@ -884,18 +871,18 @@ Admin Module That Manages Client Requests and Generates
 Quotations
 
 
-This module allows the Administrator to manage client requests for quotation (RFQ) and user plant inquiries through a comprehensive request management system that displays all submitted requests in a tabbed interface, separating client RFQs from user inquiries, where for client RFQs, the Admin can set pricing for each requested plant, generate professional PDF quotations with detailed specifications and calculations, and send them via email with automatic status updates, while for user inquiries, the Admin can set availability status for each plant (Available, Limited Stock, Out of Stock, Pre-order) and send detailed responses with personalized remarks and recommendations..
-Figure 22 shows the Request Management interface where the Administrator can view and process both client RFQs and user inquiries. The interface includes tabs for "Client Requests" and "User Inquiries," allowing the Admin to switch between request types easily. Each request displays the client or user name, email, request date, status, and action buttons for viewing details and sending responses. The interface also provides filtering and sorting capabilities to efficiently manage large volumes of requests.
+This module allows the Administrator to manage client requests for quotation (RFQ) and plant inquiries through a comprehensive request management system that displays all submitted requests, where the Admin can set pricing for each requested plant, generate professional PDF quotations with detailed specifications and calculations, and send them via email with automatic status updates. The system processes both simple plant availability inquiries and complex RFQ submissions from clients, providing flexible response options including availability status (Available, Limited Stock, Out of Stock, Pre-order) and detailed pricing quotations.
+Figure 22 shows the Request Management interface where the Administrator can view and process client RFQs and plant inquiries. The interface displays client requests with client name, email, request date, status, and action buttons for viewing details and sending responses. The interface also provides filtering and sorting capabilities to efficiently manage large volumes of requests.
 
  
 Figure 22. Graphical user Interface for Admin Module That Manages Client Requests
 
-The pseudocode in Figure 23 demonstrates how the request management function works. When the Admin opens the requests page, the system loads all requests from the database and separates them by type. For client RFQs, the Admin enters prices and the system calculates totals automatically, then generates PDF quotations and sends them via email to clients. For user inquiries, the Admin sets availability status (Available, Limited Stock, Out of Stock, Pre-order) and adds remarks for each plant, then sends responses that update the inquiry status and notify users via email. This function streamlines request processing and ensures timely communication with clients and users.
+The pseudocode in Figure 23 demonstrates how the request management function works. When the Admin opens the requests page, the system loads all client requests from the database. For complex client RFQs, the Admin enters prices and the system calculates totals automatically, then generates PDF quotations and sends them via email to clients. For simple plant inquiries, the Admin sets availability status (Available, Limited Stock, Out of Stock, Pre-order) and adds remarks for each plant, then sends responses that update the request status and notify clients via email. This function streamlines request processing and ensures timely communication with clients.
 
 Function: Admin Manages Requests and Generates Quotations
 BEGIN
     Display "Request Management" Interface
-    Load ClientRequests AND UserInquiries
+    Load ClientRequests
     
     WHEN "View Details" Clicked FOR ClientRequest:
         WHEN PricesEntered:
@@ -909,11 +896,10 @@ BEGIN
             Send Email WITH PDF
             Display "Email sent successfully"
     
-    WHEN "View Details" Clicked FOR UserInquiry:
-        WHEN "Send Response" Clicked:
-            Update InquiryStatus
-            Send Email
-            Display "Response sent successfully"
+    WHEN "Send Response" Clicked FOR PlantInquiry:
+        Update RequestStatus
+        Send Email
+        Display "Response sent successfully"
 END
 Figure 23. Pseudocode for Admin Module That Manages Client Requests
 Admin Module That Conducts and Records Site Visits
@@ -926,7 +912,7 @@ Figure 24 shows the Site Visit Management interface where the Administrator can 
 Figure 24. Graphical user Interface for Admin Module That Conducts Site Visits
 
 
-The pseudocode in Figure 25 illustrates how the site visit management function operates. When the Admin creates a new site visit, the system displays a form where the Admin enters client information, visit date, and location using an interactive map to set GPS coordinates. Once created, the Admin can complete various checklists including Client Data, Site Assessment, Physical Factors, and Proposal sections, with options to upload files and add notes for each item. Clients assigned to the site visit can view details and upload required documents through the Client Data section. This function ensures comprehensive documentation of site visits and facilitates collaboration between administrators and clients.
+The pseudocode in Figure 25 illustrates how the site visit management function operates. When the Admin creates a new site visit, the system displays a form where the Admin enters client information, visit date, and location using an interactive map to set GPS coordinates. Once created, the Admin can complete various checklists including Client Data, Site Assessment, Physical Factors, and Proposal sections, with options to upload files and add notes for each item. Clients assigned to the site visit can view details and upload required documents through the Site Data section. This function ensures comprehensive documentation of site visits and facilitates collaboration between administrators and clients.
 
 Function: Admin Conducts and Records Site Visits
 BEGIN
@@ -996,7 +982,7 @@ Figure 28 shows the RFQ submission interface where Clients can browse the plant 
 
  
 Figure 28. Graphical User Interface for Client Module That Submits RFQ
-The pseudocode in Figure 29 demonstrates how the RFQ submission function works. When a Client accesses the RFQ page, the system loads all available plants from the catalog. The Client browses plants and adds desired items to their RFQ cart. For each selected plant, the Client enters the quantity and can optionally specify measurements such as height, spread, and spacing. The Client also selects a pricing preference to indicate their budget range. Once all plants are selected, the Client fills in their contact information and submits the RFQ. The system validates the input, creates an RFQ record in the database with request type set to 'client', generates a PDF quotation, and sends email notifications to administrators. The Client receives a confirmation message and can track the status of their RFQ in their dashboard. This function streamlines the quotation request process and ensures that clients receive professional, detailed quotations for their plant needs. The system also maintains a comprehensive audit trail of all RFQ activities, allowing administrators to monitor request patterns and response times for continuous service improvement. Additionally, the platform supports bulk plant selection and modification capabilities, enabling clients to efficiently manage large-scale landscaping projects with multiple plant varieties and specifications. The integrated notification system ensures real-time updates throughout the quotation process, keeping both clients and administrators informed of any status changes or required actions.
+The pseudocode in Figure 29 demonstrates how the RFQ submission function works. When a Client accesses the RFQ page, the system loads all available plants from the catalog. The Client browses plants and adds desired items to their RFQ cart. For each selected plant, the Client enters the quantity and can optionally specify measurements such as height, spread, and spacing. The Client also selects a pricing preference to indicate their budget range. Once all plants are selected, the Client fills in their contact information and submits the RFQ. The system validates the input, creates an RFQ record in the database with request type set to 'client', generates a PDF quotation, and sends email notifications to administrators. The Client receives a confirmation message and can track the status of their RFQ on their requests page. This function streamlines the quotation request process and ensures that clients receive professional, detailed quotations for their plant needs. The system also maintains a comprehensive audit trail of all RFQ activities, allowing administrators to monitor request patterns and response times for continuous service improvement. Additionally, the platform supports bulk plant selection and modification capabilities, enabling clients to efficiently manage large-scale landscaping projects with multiple plant varieties and specifications. The integrated notification system ensures real-time updates throughout the quotation process, keeping both clients and administrators informed of any status changes or required actions.
 
 Function: Client Submits Request for Quotation
 BEGIN
@@ -1020,7 +1006,7 @@ Figure 29. Pseudocode for Client Module That Submits RFQ
 Client Module That Participates in Site Visits
 
 
-This module allows Clients to participate in assigned site visits by viewing visit details and uploading required documents. When an Administrator creates a site visit and assigns it to a client, the client receives access to view the visit information, checklists, and can upload necessary documents such as property information, site photos, and other required files. This collaboration feature ensures that all necessary information is collected efficiently before the site assessment.
+This module allows Clients to participate in assigned site visits by verifying access to site data and uploading required documents. When an Administrator creates a site visit and assigns it to a client, the system implements a secure verification process before granting the client access to view the visit information and checklists. Once verified, the client accesses site data and can upload necessary documents such as property information, site photos, and other required files. This collaboration feature ensures that all necessary information is collected efficiently and securely before the site assessment.
 Figure 30 shows the Client Site Visit interface where Clients can view their assigned site visits. The interface displays visit details including the scheduled date, location on a map, and checklist items that require client input. Clients can see which documents have been uploaded and which are still pending, making it easy to track their progress.
 
  
@@ -1035,7 +1021,11 @@ BEGIN
     Load AssignedSiteVisits
     
     WHEN "View Details" Clicked:
-        Display SiteVisitData WITH Checklists
+        IF ClientVerified THEN
+            Display SiteData WITH Checklists
+        ELSE
+            Display "Verification Required"
+        END IF
         
         WHEN "Upload File" Clicked:
             IF Valid THEN
@@ -1051,170 +1041,158 @@ END
 Figure 31. Pseudocode for Client Module That Participates in Site Visits
 
 
-User Module That Submits Plant Inquiries
+Client Module That Views Dashboard and Tracks Requests
 
 
-This module allows regular Users to submit plant inquiries for availability checks. Unlike client RFQs, user inquiries are simpler requests where users select plants they are interested in and submit an inquiry to check availability. The system sends the inquiry to administrators, who then respond with availability status and remarks for each plant. Users can view responses in their dashboard and receive email notifications when administrators reply.
-Figure 32 shows the Plant Inquiry interface where Users can browse the plant catalog and select plants for their inquiry. The interface displays plant cards with photos and basic information. When logged in, users see an "Add to Inquiry" button on each plant card. After selecting plants, users can click "View Inquiry" to open a modal where they can review their selections, adjust quantities and measurements, and submit the inquiry.
-
- 
-Figure 32: Graphical User Interface for User Module That Submits
-Plant Inquiries 
-
-The pseudocode in Figure 33 demonstrates how the plant inquiry submission function works. When a User browses the public plant catalog while logged in, the system displays "Add to Inquiry" buttons on plant cards. When a plant is added, the system stores it in a temporary inquiry list. The User can click "View Inquiry" to open a modal displaying all selected plants in a table format. The User can edit quantities, measurements (height, spread, spacing), or remove plants from the inquiry. When ready to submit, the User fills in their contact information (name, email, contact number) and clicks "Submit Inquiry." The system validates the input, creates an inquiry record in the database with request type set to 'user', and sends email notifications to administrators. The User receives a confirmation message and can track the inquiry status in their dashboard. When an administrator responds, the User receives an email notification and can view the response showing availability status and remarks for each plant. This function provides users with a simple way to check plant availability without the complexity of a full RFQ process. The system automatically saves inquiry drafts to prevent data loss during the selection process, allowing users to continue their inquiry session even if interrupted. Additionally, the platform maintains a history of all user inquiries, enabling users to reference previous requests and resubmit similar inquiries for future plant needs.
-Function: User Submits Plant Inquiry
-BEGIN
-    Display PlantCatalog
-    
-    IF UserLoggedIn THEN
-        Display "Add to Inquiry" Button
-    END IF
-    
-    WHEN "Add to Inquiry" Clicked:
-        Add Plant TO InquiryList
-    
-    WHEN "Submit Inquiry" Clicked:
-        IF FormValid THEN
-            Create InquiryRecord
-            Send EmailNotification
-            Display "Inquiry submitted successfully"
-        END IF
-END
-Figure 33. Pseudocode for User Module That Submits Plant Inquiries
-
-
-User Module That Views Inquiry Responses
-
-
-This module allows Users to view responses from administrators regarding their submitted plant inquiries. When an administrator responds to an inquiry, the system updates the inquiry status and creates a notification for the user. Users can access their dashboard to see all their inquiries and click on responded inquiries to view detailed responses including availability status and remarks for each requested plant.
-Figure 34 shows the User Dashboard where Users can view their recent inquiries. The interface displays a table with inquiry ID, inquiry date, status (Pending or Responded), and action buttons. For inquiries with "Responded" status, users can click "View Response" to see the administrator's reply.
+This module provides Clients with a comprehensive dashboard overview of their activities and a dedicated page to track their requests. The dashboard displays personalized summary cards showing the total number of plant requests, site visit requests, and active site visits. It also features a recent activity timeline, pending action alerts, and quick access buttons. Through the "My Requests" page, clients can view a detailed table of all their submitted plant inquiries and Requests for Quotation (RFQ), check their current status (Pending, Responded), view administrative responses, and download approved PDF quotations directly to their devices.
+Figure 32 shows the Client Dashboard and My Requests interface, where clients can easily navigate their personalized statistics, recent activities, and pending actions. The My Requests table provides clear status indicators and action buttons for viewing responses or downloading documents, ensuring a transparent and efficient communication channel between the client and Salenga Farm.
 
  
-Figure 34: Graphical User Interface for User Module That Views
-Inquiry Responses
+Figure 32. Graphical User Interface for Client Module That Views Dashboard and Tracks Requests
 
 
-The pseudocode in Figure 35 explains how the inquiry response viewing function works. When a User logs into their dashboard, the system retrieves all inquiries submitted by that user from the database. The inquiries are displayed in a table sorted by date, with the most recent inquiries shown first. Each inquiry shows its status using color-coded badges (yellow for pending, green for responded). When the User clicks "View Response" for a responded inquiry, the system retrieves the inquiry details including all requested plants with their availability status and administrator remarks. The system displays each plant with a color-coded availability badge: green for "Available," yellow for "Limited Stock," red for "Out of Stock," and purple for "Pre-order." The User can see the administrator's remarks for each plant, providing additional information about availability, estimated restock dates, or alternative suggestions. This function keeps users informed about their inquiry status and helps them make informed decisions about their plant purchases.
+The pseudocode in Figure 33 demonstrates how the dashboard and request tracking functions operate. Upon accessing the dashboard, the system loads the client's specific statistics and recent activities. When the client navigates to the "My Requests" page, the system retrieves all their submitted inquiries from the database. The client can view responses, delete old inquiries, and most importantly, download their approved PDF quotations once the administrator has processed them. This function perfectly aligns with providing clients a centralized hub to monitor their engagements with the farm.
 
-Function: User Views Inquiry Responses
+Function: Client Views Dashboard and Tracks Requests
 BEGIN
-    Display "User Dashboard" Interface
-    Load UserInquiries
+    Display "Client Dashboard" Interface
+    Load ClientStatistics
+    Display SummaryCards, RecentActivity, and PendingActions
     
-    FOR EACH Inquiry DO
-        IF Status = 'pending' THEN
-            Display "Pending" Badge
-        ELSE IF Status = 'responded' THEN
-            Display "Responded" Badge
-        END IF
-    END FOR
-    
-    WHEN "View Response" Clicked:
-        Display ResponsePage WITH PlantDetails
-        Display AvailabilityStatus
-        Display AdminRemarks
+    WHEN "My Requests" Clicked:
+        Display "Requests Table" Interface
+        Load UserPlantInquiries
+        
+        WHEN "View Response" Clicked:
+            Display ResponseDetails
+        
+        WHEN "Download RFQ" Clicked:
+            IF Status == "Responded" THEN
+                Download PDFQuotation TO UserDevice
+            END IF
+            
+        WHEN "Delete" Clicked:
+            IF Confirmed THEN
+                Delete InquiryRecord
+            END IF
 END
-Figure 35. Pseudocode for User Module That Views Inquiry Responses
+Figure 33. Pseudocode for Client Module That Views Dashboard and Tracks Requests
 
+
+Client Module That Browses Plant Catalog and Guide
+
+
+This module allows Clients to access a comprehensive library of plant care instructions and botanical information. The Plant Catalog and Guide serves as an educational resource where clients can learn about proper watering schedules, sunlight requirements, soil preferences, and maintenance tips for various plant species. This feature assists clients in making informed decisions before submitting quotation requests and ensures proper care for the plants after purchase.
+Figure 34 shows the Plant Catalog and Guide interface, featuring a clean and organized catalog of plant care instructions. Clients can browse through different plant categories and view detailed, easy-to-understand visual guides for plant maintenance.
+
+ 
+Figure 34. Graphical User Interface for Client Module That Browses Plant Catalog and Guide
+
+
+The pseudocode in Figure 35 explains how the Plant Guide module functions. When the client accesses the Plant Guide Library, the system retrieves care instructions from the database. Clients can apply search or filter criteria to find specific plant guides. Upon selecting a guide, the system displays detailed botanical information, including sunlight, water, and soil requirements, empowering the client with essential landscaping knowledge.
+
+Function: Client Browses Plant Catalog and Guide
+BEGIN
+    Display "Plant Guide Library" Interface
+    Load PlantCareInstructions FROM Database
+    
+    WHEN SearchOrFilterApplied:
+        Filter PlantGuides BY Criteria
+        Display FilteredGuides
+        
+    WHEN "View Guide" Clicked FOR PlantCategory:
+        Display DetailedCareInstructions
+        Show Sunlight, Water, and SoilRequirements
+END
+Figure 35. Pseudocode for Client Module That Browses Plant Catalog and Guide
 
 Evaluation Ratings of Respondents in Terms of Functional
 Suitability
 
 
-The evaluation ratings from the respondents in terms of Functional Suitability show how well the system performs its intended tasks. This part measures if the system works as expected, provides correct results, and meets the needs of its users. The feedback from the respondents helps identify the parts of the system that work properly and those that may need improvement to make the system perform better. This evaluation also helps determine the system's completeness and reliability in carrying out its functions. The evaluation ratings for the Super Administrator Module are shown in Table 5, the ratings for the Administrator Module are presented in Table 6, and the results for the User and Client Module are displayed in Table 7. Together, these ratings give a clear view of how each group of respondents assessed the system's overall functional performance.
+The evaluation ratings from the respondents in terms of Functional Suitability show how well the system performs its intended tasks. This part measures if the system works as expected, provides correct results, and meets the needs of its users. The feedback from the respondents helps identify the parts of the system that work properly and those that may need improvement to make the system perform better. This evaluation also helps determine the system's completeness and reliability in carrying out its functions. The evaluation ratings for the Super Administrator Module are shown in Table 5, the ratings for the Administrator Module are presented in Table 6, and the results for the Client Module are displayed in Table 7. Together, these ratings give a clear view of how each group of respondents assessed the system's overall functional performance.
 
 Table 5. Evaluation  Ratings  from  the  Respondents  Super Administrator and Advisory Committee in Terms of Functional Suitability for the Super Administrator Module
-Assessment Description	Mean	Verbal Interpretation
+Assessment Description	Super Admin	Advisory	Mean	Verbal Interpretation
 The system allows to efficiently manage user 
 accounts, including creating, updating, and 
-deleting user records.	4.40	Agree
+deleting user records.	4.00	4.50	4.40	Agree
 The system allows to accurately assign and 
-modify user roles (Admin, Client, User).	4.20	Agree
+modify user roles (Super Admin, Admin, Client).	4.00	4.25	4.20	Agree
 The system allows to effectively monitor 
 system logs for security and maintenance 
-purposes.	4.00	Agree
+purposes.	5.00	4.00	4.20	Agree
 The system allows to accurately view and filter 
-log entries by date, level, and keywords.   	4.40	Agree
+log entries by date, level, and keywords.   	4.00	4.75	4.60	Strongly Agree
 The system allows to access dashboard 
 analytics showing stock distribution and sales 
-  performance.	4.40	Agree
-OVERALL MEAN	4.28	Agree
+  performance.	4.00	4.75	4.60	Strongly Agree
+OVERALL MEAN	4.20	4.45	4.40	Agree
 
 
-Table 5 shows that respondents generally agreed with the functional suitability of the Super Admin module, as reflected in the overall mean of 4.28 (Agree). This indicates that the system effectively performs its intended administrative functions based on the evaluation of the Super Admin and Advisory Committee.
-The highest-rated indicators are managing user accounts, viewing and filtering log entries, and accessing dashboard analytics, each with a mean score of 4.40 (Agree). This demonstrates strong user confidence in these features, particularly in user management and system monitoring capabilities.
-The lowest-rated indicator is monitoring system logs, with a mean of 4.00 (Agree). Although still positively rated, this score suggests that this feature may benefit from enhancements in log display clarity and filtering options to improve usability.
-Overall, the results indicate that the Super Admin module performs its intended functions effectively, particularly in user and role management. The consistent positive ratings across all indicators reflect the module's reliability and effectiveness in supporting administrative operations. Furthermore, the relatively high scores demonstrate that the system successfully meets the expectations of Super Administrators in managing critical system functions and maintaining operational oversight.
+Table 5 shows that respondents agreed with the functional suitability of the Super Admin module, as reflected in the overall mean of 4.40 (Agree). This indicates that the system effectively performs its intended administrative functions based on the evaluation of the Super Admin and Advisory Committee.
+The highest-rated indicators are viewing and filtering log entries, and accessing dashboard analytics, each with a combined mean score of 4.60 (Strongly Agree). This demonstrates strong user confidence in these features, particularly in system monitoring capabilities and data visualization.
+The lowest-rated indicators are assigning user roles and monitoring system logs, both with a combined mean of 4.20 (Agree). Although still positively rated, this score suggests that these features may benefit from minor enhancements in log display clarity and role assignment workflows to further improve usability.
+Overall, the results indicate that the Super Admin module performs its intended functions effectively, particularly in client and role management. The consistent positive ratings across all indicators reflect the module's reliability and effectiveness in supporting administrative operations. Furthermore, the relatively high scores demonstrate that the system successfully meets the expectations of Super Administrators in managing critical system functions and maintaining operational oversight.
 
-Table 6.   Evaluation Ratings from the Respondents Administrator and Advisory Committee in Terms of Functional Suitability for the Super Administrator Module
-Assessment Description	Mean	Verbal Interpretation
+Table 6.   Evaluation Ratings from the Respondents Administrator and Advisory Committee in Terms of Functional Suitability for the Administrator Module
+Assessment Description	Admin	Advisory	Mean	Verbal Interpretation
 The system allows to efficiently manage plant 
 inventory, including adding, updating, and 
-deleting plant records with photo uploads.	4.80	Strongly Agree
+deleting plant records with photo uploads.	5.00	4.75	4.80	Strongly Agree
 The system allows to accurately process walk-
 in sales transactions with automatic 
-inventory deduction.	4.80	Strongly Agree
+inventory deduction.	5.00	4.75	4.80	Strongly Agree
 The system allows to effectively manage client 
-requests for quotation (RFQ) and user plant 
-inquiries.	4.60	Strongly Agree
+requests for quotation (RFQ) and plant 
+inquiries.	4.00	4.75	4.60	Strongly Agree
 The system allows to accurately generate PDF 
-quotations for client RFQ submissions.	4.20	Agree
+quotations for client RFQ submissions.	4.00	4.25	4.20	Agree
 The system allows to efficiently send email 
 notifications to clients and users regarding 
-their requests.	4.20 	Agree
+their requests.	5.00	4.25	4.40	Agree
 The system allows to effectively create and 
-manage site visits with GPS location mapping.
-	4.40	Agree
-The system allows to accurately complete site visit checklists and upload proposal documents.
-	4.40	Agree
+manage site visits with GPS location mapping.	5.00	4.25	4.40	Agree
+The system allows to accurately complete site visit checklists and upload proposal documents.	5.00	4.25	4.40	Agree
 
 
 The system allows to efficiently view
 dashboard analytics showing stock 
 distribution, low stock alerts, and sales 
-performance.	4.60	Strongly Agree
+performance.	5.00	4.50	4.60	Strongly Agree
 The system allows to accurately search and 
 filter plant records by name, category, and 
-stock level.	4.00	Agree
-OVERALL MEAN	4.06	Agree
+stock level.	4.00	4.00	4.00	Agree
+OVERALL MEAN	4.67	4.42	4.47	Agree
 
-Table 6 shows that respondents agreed with the functional suitability of the Administrator Module, as indicated by the overall mean of 4.33 (Agree). This reflects that the system effectively performs its intended administrative functions, enabling administrators to manage plant inventory, process sales transactions, handle client requests, conduct site visits, and view dashboard analytics efficiently.
-The highest-rated indicators are managing plant inventory and processing walk-in sales, both receiving a mean score of 4.80 (Strongly Agree). These results indicate that users find these core business functions highly reliable and effective in supporting daily operations. Managing client requests and viewing dashboard analytics also received strong ratings of 4.60 (Strongly Agree), demonstrating efficient request processing and inventory monitoring capabilities.
-The lowest-rated indicator is searching and filtering plant records, with a mean of 4.00 (Agree). Although still positively evaluated, this feature may benefit from improvements in search functionality or filter options to enhance user experience.   
+Table 6 shows that respondents agreed with the functional suitability of the Administrator Module, as indicated by the overall mean of 4.47 (Agree). This reflects that the system effectively performs its intended administrative functions, enabling administrators to manage plant inventory, process sales transactions, handle client requests, conduct site visits, and view dashboard analytics efficiently.
+The highest-rated indicators are managing plant inventory and processing walk-in sales, both receiving a combined mean score of 4.80 (Strongly Agree). These results indicate that users find these core business functions highly reliable and effective in supporting daily operations. Managing client requests and viewing dashboard analytics also received strong ratings of 4.60 (Strongly Agree), demonstrating efficient request processing and inventory monitoring capabilities.
+The lowest-rated indicator is searching and filtering plant records, with a combined mean of 4.00 (Agree). Although still positively evaluated, this feature may benefit from improvements in search functionality or filter options to enhance user experience.   
 Overall, the evaluation confirms that the Administrator Module performs well in supporting daily business operations, inventory management, and customer service functions.
-Table 7. Evaluation Ratings from the Respondents User, Client, and Advisory Committee in Terms of Functional Suitability for the User and Client Module
-Assessment Description	Mean	Verbal Interpretation
-The system allows to securely access and 
-browse the plant catalog, including viewing 
-plant details and specifications efficiently.	4.69	Strongly Agree
-The system enables to submit requests (plant inquiries or RFQs) accurately, specifying the required quantity, height, spread, spacing, pricing preferences, and type of plants.	4.65	Strongly Agree
-The system allows to view the status of their submitted requests in their dashboard 
-completely and accurately.	4.57	Strongly Agree
-The system allows to download approved 
-quotations in PDF format and view inquiry 
-responses with availability status and 
-remarks.	4.38	Agree
-The system allows to receive confirmations or 
-notifications regarding the status of their 
-requests and participate in assigned site 
-visits.	4.53 	Strongly Agree
-OVERALL MEAN	4.56	Strongly Agree
+Table 7. Evaluation Ratings from the Respondents Client and Advisory Committee in Terms of Functional Suitability for the Client Module
+Assessment Description	Client	Advisory	Mean	Verbal Interpretation
+The system allows clients to securely access and browse the plant catalog, including viewing plant details and specifications efficiently.	4.74	4.50	4.70	Strongly Agree
+The system enables clients to submit requests for quotation (RFQ) accurately, specifying the required quantity, height, spread, spacing, pricing preferences, and type of plants.	4.70	4.50	4.67	Strongly Agree
+The system allows clients to view the status of their RFQ submissions and download approved quotations in PDF format completely and accurately.	4.65	4.25	4.59	Strongly Agree
+The system allows clients to participate in assigned site visits effectively, including viewing site visit details, checklists, and uploading required documents.	4.39	4.25	4.37	Agree
+The system allows clients to receive confirmations or notifications regarding the status of their RFQ and site visit assignments.	4.43	4.50	4.44	Agree
+OVERALL MEAN	4.58	4.40	4.55	Strongly Agree
 
-Table 7 shows that respondents strongly agreed with the functional suitability of the User and Client Module, as reflected in the overall mean of 4.56 (Strongly Agree). This indicates that the module effectively fulfills its intended functions, providing users and clients with a comprehensive system for browsing the plant catalog, submitting requests, and participating in site visits.
-The highest-rated indicators are browsing the plant catalog and submitting requests with plant specifications, receiving mean scores of 4.69 and 4.65 respectively (both Strongly Agree). These results demonstrate that users and clients find the catalog browsing and request submission processes intuitive, efficient, and highly responsive to their needs.
-The lowest-rated indicator is downloading approved quotations and viewing inquiry responses, with a mean of 4.38 (Agree). Although still positively rated, this feature may benefit from minor enhancements in document access and response viewing to further improve user satisfaction.
-Overall, the results demonstrate that the User and Client Module is highly functional, user-friendly, and dependable, successfully supporting both regular users and business clients in browsing the plant catalog, submitting inquiries and RFQs, tracking request status, and participating in site visits with accuracy and convenience.
+Table 7 shows that respondents strongly agreed with the functional suitability of the Client Module, as reflected in the overall mean of 4.55 (Strongly Agree). This indicates that the module effectively fulfills its intended functions, providing clients with a comprehensive system for browsing the plant catalog, submitting requests, and participating in site visits.
+The highest-rated indicators are browsing the plant catalog and submitting requests with plant specifications, receiving combined mean scores of 4.70 and 4.67 respectively (both Strongly Agree). These results demonstrate that clients find the catalog browsing and request submission processes intuitive, efficient, and highly responsive to their needs.
+The lowest-rated indicator is participating in assigned site visits, with a combined mean of 4.37 (Agree). Although still positively rated, this feature may benefit from minor enhancements in document access and response viewing to further improve user satisfaction.
+Overall, the results demonstrate that the Client Module is highly functional, user-friendly, and dependable, successfully supporting clients in browsing the plant catalog, submitting RFQs, tracking request status, and participating in site visits with accuracy and convenience.
 
 Descriptive Rating of the Summary of Functionalities
 
 
-Table 8 presents the summary of the descriptive evaluation of the system's functional suitability, derived from the assessments of respondents, including the Super Administrator, Administrator, User/Client, and members of the Advisory Committee. The User and Client functionality obtained the highest mean rating of 4.56, interpreted as "Strongly Agree," indicating that the module effectively fulfills its intended purpose by allowing users and clients to conveniently browse the plant catalog, submit requests for quotation and plant inquiries, view request status, and participate in site visits. The Administrator functionality received a mean rating of 4.33, interpreted as "Agree," signifying that administrative operations—such as managing plant inventory, processing sales transactions, handling client requests, conducting site visits, and viewing dashboard analytics—are efficiently executed and reliable. Meanwhile, the Super Administrator functionality acquired a mean rating of 4.28, interpreted as "Agree," implying that while the module effectively performs its core functions in managing user accounts, assigning roles, and monitoring system logs, there remains room for enhancement to further improve system oversight and log monitoring features. The overall mean rating of 4.39, interpreted as "Agree," indicates that the entire Comprehensive Plant Inventory and Site Visit Management System effectively performs its intended functions across all user levels, ensuring smooth coordination among different modules and supporting efficient digital management of plant inventory, sales operations, client relationships, and site visit documentation at Salenga Farm.
+Table 8 presents the summary of the descriptive evaluation of the system's functional suitability, derived from the assessments of respondents, including the Super Administrator, Administrator, Client, and members of the Advisory Committee. The Client functionality obtained the highest mean rating of 4.55, interpreted as "Strongly Agree," indicating that the module effectively fulfills its intended purpose by allowing clients to conveniently browse the plant catalog, submit requests for quotation, view request status, and participate in site visits. The Administrator functionality received a mean rating of 4.47, interpreted as "Agree," signifying that administrative operations—such as managing plant inventory, processing sales transactions, handling client requests, conducting site visits, and viewing dashboard analytics—are efficiently executed and reliable. Meanwhile, the Super Administrator functionality acquired a mean rating of 4.40, interpreted as "Agree," implying that the module effectively performs its core functions in managing client accounts, assigning roles, and monitoring system logs. The overall mean rating of 4.47, interpreted as "Agree," indicates that the entire Comprehensive Plant Inventory and Site Visit Management System effectively performs its intended functions across all user levels, ensuring smooth coordination among different modules and supporting efficient digital management of plant inventory, sales operations, client relationships, and site visit documentation at Salenga Farm.
 Table 8. Descriptive Rating of the Summary of Functionalities
 Assessment Description	Mean	Verbal Interpretation
-Super Administrator Functionality	4.28	Agree
-Administrator Functionality	4.33	Agree
-User and Client Functionality	4.56	Strongly Agree
-OVERALL MEAN	4.39	Agree
+Super Administrator Functionality	4.40	Agree
+Administrator Functionality	4.47	Agree
+Client Functionality	4.55	Strongly Agree
+OVERALL MEAN	4.47	Agree
 
 
 Summary of User Rating based on ISO 25010 
@@ -1222,18 +1200,18 @@ Software Quality Framework
 
 
 The summary of user ratings based on the ISO 9126 Software Quality Framework presents how respondents evaluated the overall quality of the system according to internationally recognized software quality standards. The assessment encompasses key quality characteristics, namely Functional Suitability, Performance Efficiency, Usability, Reliability, and Security. Findings indicate that the system effectively performs its intended functions, operates with responsiveness and speed, and maintains stability during various transactions. Moreover, the system provides a user-friendly interface accessible to a wide range of users and delivers robust security measures to protect user data and system integrity. Overall, the results demonstrate that the system exhibits a high level of quality in accordance with the ISO 9126 framework, successfully meeting user expectations and operational objectives while identifying certain aspects that may still be refined to further enhance performance and user satisfaction.
-As presented in Table 9, the summary of user ratings based on the ISO 9126 Software Quality Framework shows that the system performed exceptionally well across all evaluated quality characteristics. Functional Suitability received a mean rating of 4.39, interpreted as "Agree," indicating that the system effectively performs its intended tasks across all user roles. Performance Efficiency received a mean rating of 4.47, interpreted as "Agree," demonstrating that the system responds promptly and processes operations efficiently. Usability, Reliability, and Security received mean ratings of 4.57, 4.55, and 4.54 respectively, all interpreted as "Strongly Agree," reflecting the system's user-friendliness, dependability, and robustness in protecting user data.
+As presented in Table 9, the summary of user ratings based on the ISO 25010 Software Quality Framework shows that the system performed exceptionally well across all evaluated quality characteristics. Reliability received the highest rating of 4.62, interpreted as "Strongly Agree," demonstrating exceptional dependability. Usability received a mean rating of 4.59, interpreted as "Strongly Agree," reflecting the system's user-friendliness. Security received a mean rating of 4.55, interpreted as "Strongly Agree," reflecting robust protection of user data. Performance Efficiency achieved a mean of 4.50, interpreted as "Strongly Agree," demonstrating that the system responds promptly and processes operations efficiently. Functional Suitability received a mean rating of 4.47, interpreted as "Agree," indicating that the system effectively performs its intended tasks across all user roles.
 
-The overall mean rating of 4.50, interpreted as "Strongly Agree," demonstrates that users are highly satisfied with the system's overall quality, reliability, and effectiveness in supporting plant inventory management, sales transactions, site visit coordination, and request processing operations at Salenga Farm.
+The overall mean rating of 4.55, interpreted as "Strongly Agree," demonstrates that users are highly satisfied with the system's overall quality, reliability, and effectiveness in supporting plant inventory management, sales transactions, site visit coordination, and request processing operations at Salenga Farm.
 Specifically, Performance Efficiency ensures that the system responds promptly to user actions, loads pages quickly, and performs well even when processing multiple user requests simultaneously. Usability shows that the interface is intuitive, provides clear and understandable instructions and messages, and can be used easily even by users with minimal technical knowledge. Reliability demonstrates that the system consistently displays accurate data, features are always available when needed, and submitted documents are kept safe and accessible. Finally, Security demonstrates that strong authentication mechanisms, secure data protection, and prevention of unauthorized access maintain system accountability and protect sensitive information.
 Table 9. Summary of Respondent’s Rating Based on ISO 25010 Software Quality Frameworks
 Quality Characteristics	Mean	Verbal Interpretation
-Functional Suitability	4.39	Agree
-Performance Efficiency	4.47	Agree
-Usability	4.57	Agree
-Reliability   	4.55	Agree
-Security  	4.54	Strongly Agree
-OVERALL MEAN	4.50	Agree
+Functional Suitability	4.47	Agree
+Performance Efficiency	4.50	Strongly Agree
+Usability	4.59	Strongly Agree
+Reliability   	4.62	Strongly Agree
+Security  	4.55	Strongly Agree
+OVERALL MEAN	4.55	Strongly Agree
  
 CHAPTER V
 
@@ -1243,40 +1221,39 @@ SUMMARY, CONCLUSION, AND RECOMMENDATION
 
 This chapter provides a comprehensive overview of the study's key findings, conclusions derived from the evaluation results, and recommendations for future development and enhancement. The summary emphasizes the major insights obtained from assessing the system using the ISO 9126 Software Quality Framework. The conclusions interpret these findings in relation to the study's objectives, while the recommendations outline potential improvements and future directions to further enhance the system's functionality, usability, and effectiveness in supporting plant inventory management and site visit operations at Salenga Farm.
 Summary
-The Comprehensive Plant Inventory and Site Visit Management System for Salenga Farm was developed to modernize and streamline plant inventory management, sales processing, client request handling, and site visit documentation. The system was designed to address the challenges of manual record-keeping and inefficient communication between the farm and its clients. Key features of the Super Admin module included managing user accounts, assigning roles, and monitoring system logs for security and maintenance purposes. The Admin module focused on managing plant inventory, processing walk-in sales transactions, handling client requests for quotation (RFQ) and user plant inquiries, conducting site visits with GPS location mapping, and viewing dashboard analytics for stock distribution and sales performance. The User and Client module enabled customers to browse the plant catalog, submit plant inquiries and RFQs with detailed specifications, view request status, download approved quotations, and participate in assigned site visits by uploading required documents.
-The system was evaluated using the ISO 9126 Software Quality Framework, which assessed Functional Suitability, Performance Efficiency, Usability, Reliability, and Security. A total of 28 respondents participated in the evaluation, including 1 Super Administrator, 1 Administrator, 19 Users, 3 Clients, and 4 Advisory Committee members who evaluated all modules. The evaluation results demonstrated strong user satisfaction across all quality characteristics. The Super Admin module achieved a consolidated mean of 4.28 (Agree), indicating effective performance in managing user accounts, assigning roles, and monitoring system logs. The Admin module received a consolidated mean of 4.33 (Agree), reflecting efficient management of plant inventory, sales transactions, client requests, and site visits. The User and Client module obtained the highest consolidated mean of 4.56 (Strongly Agree), demonstrating that users and clients found the system highly functional, intuitive, and responsive to their needs in browsing the catalog, submitting requests, and tracking request status.
-In terms of overall system quality based on the ISO 9126 framework, Functional Suitability achieved a mean of 4.39 (Agree), Performance Efficiency received 4.47 (Agree), Usability obtained 4.57 (Strongly Agree), Reliability achieved 4.55 (Strongly Agree), and Security received 4.54 (Strongly Agree). The overall mean rating of 4.50 (Strongly Agree) confirmed that the system successfully met user expectations and operational objectives. Feedback from respondents indicated that the system significantly improved efficiency, accuracy, and transparency in plant inventory management, sales operations, and client communication. However, suggestions for enhancement included improving search and filter functionality, refining log display clarity, and optimizing PDF generation speed. Overall, the system successfully modernized Salenga Farm's operations and provided a reliable, user-friendly platform for managing plant inventory, processing sales, handling client requests, and documenting site visits.
+The Comprehensive Plant Inventory and Site Visit Management System for Salenga Farm was developed to modernize and streamline plant inventory management, sales processing, client request handling, and site visit documentation. The system was designed to address the challenges of manual record-keeping and inefficient communication between the farm and its clients. Key features of the Super Admin module included managing client accounts, assigning roles, configuring page access permissions, and monitoring system logs for security and maintenance purposes. The Admin module focused on managing plant inventory, processing walk-in sales transactions, handling client requests for quotation (RFQ), conducting site visits with GPS location mapping, and viewing dashboard analytics for stock distribution and sales performance. The Client module enabled customers to browse the plant catalog, submit RFQs with detailed specifications, view request status, download approved quotations, and participate in assigned site visits by verifying access to site data and uploading required documents.
+The system was evaluated using the ISO 25010 Software Quality Framework, which assessed Functional Suitability, Performance Efficiency, Usability, Reliability, and Security. A total of 29 respondents participated in the evaluation, including 1 Super Administrator, 1 Administrator, 23 Clients, and 4 Advisory Committee members. The evaluation results demonstrated strong user satisfaction across all quality characteristics. The Super Admin module achieved a consolidated mean of 4.40 (Agree), indicating effective performance in managing client accounts, assigning roles, and monitoring system logs. The Admin module received a consolidated mean of 4.47 (Agree), reflecting efficient management of plant inventory, sales transactions, client requests, and site visits. The Client module obtained the highest consolidated mean of 4.55 (Strongly Agree), demonstrating that clients found the system highly functional, intuitive, and responsive to their needs in browsing the catalog, submitting requests, and tracking request status.
+In terms of overall system quality based on the ISO 25010 framework, Functional Suitability achieved a mean of 4.47 (Agree), Performance Efficiency received 4.50 (Strongly Agree), Security received 4.55 (Strongly Agree), Usability obtained 4.59 (Strongly Agree), and Reliability achieved the highest score of 4.62 (Strongly Agree). The overall mean rating of 4.55 (Strongly Agree) confirmed that the system successfully met user expectations and operational objectives. Feedback from respondents indicated that the system significantly improved efficiency, accuracy, and transparency in plant inventory management, sales operations, and client communication. However, suggestions for enhancement included improving search and filter functionality, refining log display clarity, and optimizing PDF generation speed. Overall, the system was successfully deployed to a live production environment, officially securing an agreement of utilization from Salenga Farm management to modernize their ongoing daily operations.
 
 
 
 Conclusion
 
-
 As a result of the research, the following conclusions were drawn:
-1.	The Super Admin module achieved a consolidated mean rating of 4.28, interpreted as "Agree." This indicates that respondents found the module effective in managing administrative tasks. The module was particularly strong in managing user accounts (mean = 4.40), assigning and modifying user roles (mean = 4.40), viewing and filtering log entries (mean = 4.40), and accessing dashboard analytics (mean = 4.40). These features demonstrated reliability in supporting administrative control and system oversight. However, monitoring system logs received a slightly lower rating (mean = 4.00), suggesting that this feature may benefit from enhancements in log display clarity and filtering options to improve usability and make it easier for administrators to identify and troubleshoot issues.
-2.	The Admin module achieved a consolidated mean rating of 4.33, interpreted as "Agree." Respondents highly rated its capability to manage plant inventory, process sales transactions, handle client requests, conduct site visits, and view dashboard analytics. The highest-rated features were managing plant inventory (mean = 4.80) and processing walk-in sales transactions (mean = 4.80), both interpreted as "Strongly Agree," demonstrating that these core business functions are highly reliable and effective in supporting daily operations. Managing client requests and viewing dashboard analytics also received strong ratings of 4.60 (Strongly Agree), indicating efficient request processing and inventory monitoring capabilities. However, searching and filtering plant records received the lowest rating (mean = 4.00), suggesting that improvements in search functionality or filter options would enhance user experience and make it easier for administrators to locate specific plants quickly.
-3.	The User and Client module achieved a consolidated mean rating of 4.56, interpreted as "Strongly Agree." Users and clients reported high satisfaction with the module's functionalities, including browsing the plant catalog (mean = 4.69), submitting requests with detailed specifications (mean = 4.65), viewing request status (mean = 4.57), and receiving notifications (mean = 4.53). These results reflect the system's user-friendliness and effectiveness in facilitating customer engagement with Salenga Farm's services. The lowest-rated feature was downloading approved quotations and viewing inquiry responses (mean = 4.38), which, although still positively rated, may benefit from minor enhancements in document access and response viewing to further improve user satisfaction.
-4.	The system achieved an overall mean of 4.39 for Functional Suitability, interpreted as "Agree," indicating general satisfaction with the system's ability to perform its intended functions across all user levels. According to the ISO 9126 Software Quality Framework, the system also performed exceptionally well in other quality characteristics: Performance Efficiency (mean = 4.47, "Agree"), Usability (mean = 4.57, "Strongly Agree"), Reliability (mean = 4.55, "Strongly Agree"), and Security (mean = 4.54, "Strongly Agree"). The overall mean of 4.50, interpreted as "Strongly Agree," demonstrates that the system not only meets functional requirements but also provides a reliable, secure, efficient, and user-friendly experience. These results confirm that the system successfully fulfills its intended purpose by efficiently supporting the tasks of Super Administrators, Administrators, Users, and Clients through accurate, accessible, and intuitive features.
-The findings suggest that the Comprehensive Plant Inventory and Site Visit Management System successfully fulfills its intended purpose. It efficiently supports plant inventory management, sales processing, client request handling, and site visit documentation at Salenga Farm. While minor improvements can be made in search functionality, log monitoring, and document access features, the overall system is considered effective, reliable, secure, and aligned with the study objectives.
+1. The Super Admin module efficiently manages client accounts and monitors system logs. It received an overall consolidated mean of 4.40, indicating that users found the module effective, reliable, and easy to use for administrative oversight and access control.
+2. The Admin module accurately manages plant inventory and processes walk-in sales transactions, receiving an outstanding consolidated mean of 4.80 for both features. This demonstrates that the system's core business functions are highly practical and essential for daily farm operations.
+3. The Admin module efficiently handles client requests for quotation (RFQ) and generates PDF quotations. These features received means of 4.60 and 4.20, respectively, showing that the system successfully streamlines client communication and document generation.
+4. The Admin module effectively manages site visits with GPS location mapping and digital checklists. Receiving a consolidated mean of 4.40, this indicates that the users found the site inspection tools to be helpful and accurate for field documentation.
+5. The Client module successfully allows clients to securely access and browse the plant catalog, receiving a high consolidated mean of 4.70. This positive feedback reflects that clients find the interface intuitive and highly responsive to their browsing needs.
+6. The Client module enables users to easily submit detailed requests for quotation and view their request status. It received a consolidated mean of 4.67, demonstrating high satisfaction with the system's ability to facilitate seamless customer engagement.
+7. Across all user levels, the system performed exceptionally well in the ISO 25010 Software Quality Framework. Reliability received the highest rating of 4.62, while Usability received 4.59. This indicates that the system consistently provides accurate data, dependable service, and is easy to navigate.
+
+Despite these strong results, the evaluation identified minor limitations in the current system. The architecture relies on standard security protocols and lacks automated cloud backups and immutable audit trails for long-term accountability. Furthermore, the system lacks raw data extraction features (Excel/CSV) and relies on manual administrative responses for common client inquiries. These specific limitations directly inform the proposed recommendations to ensure the system's continued security and scalability.
+
+In light of the conclusions above, the Comprehensive Plant Inventory and Site Visit Management System performs its functions efficiently and reliably, particularly in modernizing plant inventory tracking and sales processing. The core features, including inventory management and sales transactions, received a strong approval rating of 4.80 from respondents. Additionally, clients found the catalog browsing feature highly practical, receiving a mean rating of 4.70. All modules were commended for making administrative tasks easier and improving data transparency. Overall, the system successfully met its objectives by providing a reliable, secure, and user-friendly platform that has been formally approved for utilization at Salenga Farm.
 
 Recommendation
 
 
-Based on the conducted assessment and feedback gathered from the 28 respondents during the system evaluation, the following recommendations are proposed to further enhance the Comprehensive Plant Inventory and Site Visit Management System for Salenga Farm:
-1.	Implement multi-factor authentication (MFA) for user login to prevent unauthorized access to user accounts even if passwords are compromised. The system should support multiple authentication methods such as SMS codes, email codes, or authenticator apps, with Super Admin control over which user roles require MFA.
-2.	Develop a comprehensive audit trail system that logs all critical system changes and activities, including password changes, inventory updates, user account modifications, and confidential document access. The system should create immutable log entries with timestamps and user IDs, automatically archive monthly logs, and retain records for at least 12 months to support accountability and security investigations.
-3.	Establish an automated backup system with monthly scheduling to ensure data can be recovered in case of system failure or data corruption. The backup system should create complete database backups on the first day of each month, verify backup integrity, retain the most recent 6 monthly backups, and notify administrators of any backup failures or storage issues.
-4.	Implement file encryption for confidential documents to protect sensitive information even if storage is compromised. The system should use industry-standard encryption algorithms (AES-256) to encrypt site visit documents, client documents, and other confidential files at rest, with secure key management separate from encrypted files.
-5.	Stabilize the hosting environment to ensure all system modules function correctly in production. The system should successfully send email notifications, store uploaded files with proper permissions, and generate valid PDF reports without errors in the production hosting environment, with detailed error logging for troubleshooting.
-6.	Develop a flexible role management system that allows dynamic permission assignment without code changes. Super Admins should be able to create custom roles, assign granular permissions for each system module, and modify role permissions with immediate effect on all users, while maintaining an audit trail of all role configuration changes.
-7.	Enhance data validation and accuracy checks throughout the system to maintain data quality and catch errors before they affect reports. The system should validate all required fields, enforce value constraints, check for logical consistency, detect duplicates, and provide clear error messages when validation fails.
-8.	Improve the comprehensive reporting system to ensure all reports reflect current system data accurately. The system should support exporting reports in multiple formats (PDF, Excel, CSV), properly format PDF reports in production, and allow filtering and customization of report parameters before generation.
-9.	Integrate AI-based plant recommendations that analyze site conditions (soil type, climate, available space) and user preferences to suggest suitable plants. The AI module should provide at least 3 ranked recommendations with explanations, track recommendation outcomes for future learning, and update algorithms based on historical success rates.
-10.	Implement AI-based disease detection that allows users to upload plant photos and receive automated analysis for signs of disease or pest damage. The AI module should identify specific diseases with confidence scores, provide treatment recommendations, and store analysis results for future reference.
-11.	Develop automated inventory forecasting using AI to predict future stock needs based on historical consumption patterns, seasonal variations, and trends. The system should forecast inventory needs for 30, 60, and 90 days ahead, alert administrators when stock is predicted to fall below minimum levels, and display forecast accuracy metrics.
-12.	Create smart site visit scheduling using AI to optimize visit timing and resource allocation. The AI module should analyze historical visit patterns, recommend optimal visit dates based on plant growth stages, suggest efficient routing for multiple visits, and consider weather forecasts when recommending outdoor site visit dates.
+Based on the conducted assessment and feedback gathered from the 29 respondents during the system evaluation, the following recommendations are proposed to further enhance the Comprehensive Plant Inventory and Site Visit Management System for Salenga Farm:
+1.	Implement multi-factor authentication (MFA) for client login to prevent unauthorized access to client accounts even if passwords are compromised. The system should support multiple authentication methods such as SMS codes, email codes, or authenticator apps, with Super Admin control over which client roles require MFA.
+2.	Develop an immutable audit trail system that automatically archives monthly logs. While the system currently tracks activity logs, an advanced system that retains records in an unalterable state for at least 12 months would further support accountability and high-level security investigations.
+3.	Establish an automated cloud backup system with monthly scheduling to ensure data can be recovered in case of server failure. The backup system should create complete database backups on the first day of each month and notify administrators of any backup failures or storage issues.
+4.	Implement file encryption for confidential documents to protect sensitive information at rest. The system should use industry-standard encryption algorithms (AES-256) to encrypt site visit documents and other confidential PDF files when stored on the server.
+5.	Improve the comprehensive reporting system to allow data extraction. The system should support exporting inventory and sales reports into raw data formats (Excel, CSV) to allow administrators to perform advanced data analysis outside of the system.
+6.	Integrate an AI-powered Virtual Assistant or Chatbot to provide 24/7 automated support for clients. The AI could be trained on the farm's plant catalog and FAQs to instantly answer common inquiries regarding plant care, pricing, availability, and site visit requirements. This would significantly reduce the administrative workload on the staff and improve client response times.
 
-These recommendations aim to enhance the system's security, reliability, efficiency, and intelligence. By implementing these improvements, particularly the high-priority security enhancements (MFA, audit trails, backups, encryption) and operational improvements (flexible roles, data validation, reporting), Super Administrators, Administrators, Users, and Clients would experience a more secure, robust, and intelligent system. The future AI-based features (plant recommendations, disease detection, inventory forecasting, smart scheduling) would further enhance decision-making capabilities and operational efficiency at Salenga Farm.
+These recommendations aim to enhance the system's security, reliability, efficiency, and intelligence. By implementing these improvements, particularly the high-priority security enhancements (MFA, immutable audit trails, cloud backups, encryption) and operational improvements (Excel reporting), users would experience a more secure and robust system. Finally, the integration of an AI virtual assistant would further modernize client communication and operational efficiency at Salenga Farm.
 
 
  
@@ -1397,15 +1374,15 @@ Administrator Account:
 2.2 Monitor POS activities and generate receipts.					
 3. The system can conduct and record site visits effectively, including:					
 3.1 Create, record, and review site visits with GPS mapping and assessment forms; and					
-3.2 Review client data submissions and upload proposal documents.					
+3.2 Review site data submissions and upload proposal documents.					
 4. The system manage user and client requests efficiently, including:					
 4.1 Review and approve plant requests;					
 4.2 Send email notifications and status updates; and					
 4.3 Generating PDF quotations.					
-User and Client Account:
+Client Account:
 1. The system can access and browse the plant catalog effectively.					
 2. The system submits plant requests or requests for quotation (RFQ) efficiently.					
-3. The system can request status and download approved quotations accurately and completely.					
+3. The system allows clients to view request status and download approved quotations accurately and completely.					
 4. The system collaborates in assigned site visits effectively, including:					
 4.1 Uploading required documents.					
 PERFORMANCE EFFICIENCY					
@@ -1480,9 +1457,9 @@ RELIABILITY
 2. All features and analytics are available when needed.					
 3. The system keeps data correct even after multiple updates.					
 SECURITY					
-1. Only authorized super administrators can access user management functions.					
+1. Only authorized super administrators can access client management functions.					
 2. The system uses secure login to protect sensitive information.					
-3. The system prevents unauthorized changes to user accounts and system data.					
+3. The system prevents unauthorized changes to client accounts and system data.					
 
 
 
@@ -1529,7 +1506,7 @@ Administrator Account:
 2.2 Monitor POS activities and generate receipts.					
 3. The system can conduct and record site visits effectively, including:					
 3.1 Create, record, and review site visits with GPS mapping and assessment forms; and					
-3.2 Review client data submissions and upload proposal documents.					
+3.2 Review site data submissions and upload proposal documents.					
 4. The system manage user and client requests efficiently, including:					
 4.1 Review and approve plant requests;					
 4.2 Send email notifications and status updates; and					
@@ -1547,7 +1524,7 @@ RELIABILITY
 2. Site visit data and client documents are stored and can be retrieved anytime.					
 3. The system keeps all historical records, receipts, and quotations safe.					
 SECURITY					
-1. Only authorized administrators can access and change plant records and client data.					
+1. Only authorized administrators can access and change plant records and site data.					
 2. Client documents and proposal files are securely stored and protected.					
 3. The system prevents unauthorized changes to sales records and site visit information.					
 
@@ -1564,7 +1541,7 @@ ________________________________________________________________________________
 _______________________
 Signature over printed name
  
-EVALUATION FORM (User)
+EVALUATION FORM (Client)
 
 
 
@@ -1585,28 +1562,28 @@ Rating	Description
 	
 
 FUNCTIONAL SUITABILITY	5	4	3	2	1
-User and Client Account:
-1. The system can access and browse the plant catalog, including viewing plant details, availability, and specifications efficiently:					
-2. The system can submit plant requests accurately, specifying the required quantity and type of plants.					
-3. The system can view the status of their requests and download approved documents completely and accurately.					
-4. The system cancels or modify their submitted requests when necessary.					
-5. The system can receive confirmations or notifications regarding the status of their requests.					
+Client Account:
+1. The system allows clients to securely access and browse the plant catalog, including viewing plant details and specifications efficiently.					
+2. The system enables clients to submit requests for quotation (RFQ) accurately, specifying the required quantity, height, spread, spacing, pricing preferences, and type of plants.					
+3. The system allows clients to view the status of their RFQ submissions and download approved quotations in PDF format completely and accurately.					
+4. The system allows clients to participate in assigned site visits effectively, including viewing site visit details, checklists, and uploading required documents.					
+5. The system allows clients to receive confirmations or notifications regarding the status of their RFQ and site visit assignments.					
 PERFORMANCE EFFICIENCY					
-1. The system loads pages and user request data quickly.					
+1. The system loads pages and client request data quickly.					
 2. The system responds smoothly when submitting forms or downloading files.					
-3. The system performs well even when processing multiple user requests.					
+3. The system performs well even when processing multiple client requests.					
 USABILITY					
-1. The system interface for users is easy to navigate.					
+1. The system interface for clients is easy to navigate.					
 2. The system provides clear and understandable instructions and messages.					
-3. The system can be used easily even by users with minimal technical knowledge.					
+3. The system can be used easily even by clients with minimal technical knowledge.					
 RELIABILITY					
-1. The system consistently displays accurate user request data.					
+1. The system consistently displays accurate client request data.					
 2. The system features are always available when needed.					
 3. The system keeps submitted documents safe and accessible.					
 SECURITY					
-1. The system securely authenticates user accounts.					
-2. The system protects user-submitted documents and request information.					
-3. The system prevents unauthorized access to user data.					
+1. The system securely authenticates client accounts.					
+2. The system protects client-submitted documents and request information.					
+3. The system prevents unauthorized access to client data.					
 
 
 

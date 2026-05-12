@@ -13,6 +13,13 @@ class PlantCareController extends Controller
      */
     public function index()
     {
+        $user = Auth::user();
+        
+        // Check if user has page access permission for plant_guide (clients only, admins and guests can access)
+        if ($user && !$user->hasAdminAccess() && !$user->hasPageAccess('plant_guide')) {
+            abort(403, 'Access denied. You do not have permission to access the Plant Guide.');
+        }
+        
         $plants = DisplayPlant::orderBy('name')->get();
         
         return view('plant-care.index', compact('plants'));
@@ -23,8 +30,8 @@ class PlantCareController extends Controller
      */
     public function adminIndex()
     {
-        // Check if user is admin
-        if (!Auth::check() || Auth::user()->role !== 'admin') {
+        // Check if user has admin access
+        if (!Auth::check() || !Auth::user()->hasAdminAccess()) {
             return redirect()->route('public.plants')->with('error', 'Unauthorized access.');
         }
         
@@ -64,8 +71,8 @@ class PlantCareController extends Controller
      */
     public function edit($id)
     {
-        // Check if user is admin
-        if (!Auth::check() || Auth::user()->role !== 'admin') {
+        // Check if user has admin access
+        if (!Auth::check() || !Auth::user()->hasAdminAccess()) {
             abort(403, 'Unauthorized action.');
         }
         
@@ -79,8 +86,8 @@ class PlantCareController extends Controller
      */
     public function update(Request $request, $id)
     {
-        // Check if user is admin
-        if (!Auth::check() || Auth::user()->role !== 'admin') {
+        // Check if user has admin access
+        if (!Auth::check() || !Auth::user()->hasAdminAccess()) {
             abort(403, 'Unauthorized action.');
         }
         

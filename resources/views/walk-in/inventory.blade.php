@@ -149,16 +149,9 @@
                         <i class="fas fa-boxes me-2" style="color: #4caf50;"></i>Point of Sale Inventory Management
                     </h2>
                     <div class="btn-group">
-                        @if(auth()->user()->role !== 'super_admin')
                         <a href="{{ route('walk-in.index') }}" class="btn btn-primary" style="background: linear-gradient(135deg, #66bb6a 0%, #4caf50 100%); border: none; box-shadow: 0 2px 4px rgba(76, 175, 80, 0.3);">
                             <i class="fas fa-arrow-left"></i><span class="btn-text ms-1">Back to Sales</span>
                         </a>
-                        @endif
-                        @if(auth()->user()->role === 'super_admin')
-                        <button id="records-btn" class="btn btn-success" style="background: linear-gradient(135deg, #66bb6a 0%, #4caf50 100%); border: none; box-shadow: 0 2px 4px rgba(76, 175, 80, 0.3);" data-bs-toggle="modal" data-bs-target="#salesRecordsModal">
-                            <i class="fas fa-list"></i><span class="btn-text ms-1">Records</span>
-                        </button>
-                        @endif
                         <button id="refresh-btn" class="btn btn-success ms-2" style="background: linear-gradient(135deg, #81c784 0%, #66bb6a 100%); border: none; box-shadow: 0 2px 4px rgba(102, 187, 106, 0.3);">
                             <i class="fas fa-sync-alt"></i><span class="btn-text ms-1">Refresh Data</span>
                         </button>
@@ -263,9 +256,7 @@
                                         <th>Price</th>
                                         <th>Stock</th>
                                         <th>Status</th>
-                                        @if(auth()->user()->role !== 'super_admin')
                                         <th>Actions</th>
-                                        @endif
                                     </tr>
                                 </thead>
                                 <tbody id="inventory-table-body">
@@ -274,21 +265,13 @@
                                             <td class="align-middle">{{ $plant->name }}</td>
                                             <td class="align-middle">{{ $plant->code }}</td>
                                             <td class="align-middle">
-                                                @if(auth()->user()->role === 'super_admin')
-                                                    <span class="fw-semibold">₱{{ number_format($plant->price, 2) }}</span>
-                                                @else
-                                                    <div class="input-group input-group-sm" style="width: 120px;">
-                                                        <span class="input-group-text">₱</span>
-                                                        <input type="number" class="form-control form-control-sm editable-price" value="{{ $plant->price }}" min="0" step="0.01">
-                                                    </div>
-                                                @endif
+                                                <div class="input-group input-group-sm" style="width: 120px;">
+                                                    <span class="input-group-text">₱</span>
+                                                    <input type="number" class="form-control form-control-sm editable-price" value="{{ $plant->price }}" min="0" step="0.01">
+                                                </div>
                                             </td>
                                             <td class="align-middle">
-                                                @if(auth()->user()->role === 'super_admin')
-                                                    <span class="fw-semibold">{{ $plant->quantity }}</span>
-                                                @else
-                                                    <input type="number" class="form-control form-control-sm editable-quantity" value="{{ $plant->quantity }}" min="0" style="width: 80px;">
-                                                @endif
+                                                <input type="number" class="form-control form-control-sm editable-quantity" value="{{ $plant->quantity }}" min="0" style="width: 80px;">
                                             </td>
                                             <td class="align-middle">
                                                 @if($plant->quantity < 5)
@@ -305,13 +288,11 @@
                                                     </span>
                                                 @endif
                                             </td>
-                                            @if(auth()->user()->role !== 'super_admin')
                                             <td class="align-middle">
                                                 <button class="btn btn-sm btn-success save-btn" data-id="{{ $plant->id }}">
                                                     <i class="fas fa-save"></i> Save
                                                 </button>
                                             </td>
-                                            @endif
                                         </tr>
                                     @endforeach
                                 </tbody>

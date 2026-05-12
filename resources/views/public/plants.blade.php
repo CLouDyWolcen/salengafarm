@@ -35,15 +35,15 @@
         
         /* View Inquiry button color states */
         #viewRequestBtn {
-            background-color: #6c757d;
-            border-color: #6c757d;
+            background-color: #198754;
+            border-color: #198754;
             color: white;
             transition: background-color 0.3s ease, border-color 0.3s ease;
         }
         
         #viewRequestBtn:hover {
-            background-color: #5a6268;
-            border-color: #545b62;
+            background-color: #157347;
+            border-color: #146c43;
         }
         
         #viewRequestBtn.has-plants {
@@ -132,6 +132,516 @@
             setTimeout(() => {
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             }, 300); // Small delay to let the animation start
+        }
+
+        // Function to start Plant Inquiry (works like RFQ but skips email modal)
+        function startPlantInquiry() {
+            console.log('Starting Plant Inquiry selection mode');
+            
+            // Set a flag to indicate this is Plant Inquiry, not RFQ
+            document.body.setAttribute('data-selection-type', 'plant-inquiry');
+            
+            // Enter selection mode immediately (no email modal needed)
+            document.body.classList.add('plant-selection-mode');
+            
+            // Create Plant Inquiry interface (similar to RFQ but for inquiry)
+            setupPlantInquiryInterface();
+            
+            // Create checkboxes manually since we prevented RFQ system from doing it
+            setTimeout(function() {
+                console.log('Creating selection checkboxes for Plant Inquiry');
+                
+                // Create checkboxes on all plant cards
+                document.querySelectorAll('.admin-plant-card, .user-plant-card').forEach(function(card) {
+                    // Check if checkbox already exists to avoid duplicates
+                    let checkbox = card.querySelector('.selection-checkbox');
+                    if (!checkbox) {
+                        // Create checkboxes on all cards for selection mode
+                        checkbox = document.createElement('div');
+                        checkbox.classList.add('selection-checkbox');
+                        checkbox.style.position = 'absolute';
+                        checkbox.style.top = '10px';
+                        checkbox.style.right = '10px';
+                        checkbox.style.width = '34px';
+                        checkbox.style.height = '34px';
+                        checkbox.style.borderRadius = '50%';
+                        checkbox.style.background = 'white';
+                        checkbox.style.border = '2px solid #ddd';
+                        checkbox.style.display = 'flex';
+                        checkbox.style.alignItems = 'center';
+                        checkbox.style.justifyContent = 'center';
+                        checkbox.style.zIndex = '1000';
+                        checkbox.style.pointerEvents = 'auto';
+                        checkbox.style.cursor = 'pointer';
+                        checkbox.style.boxShadow = '0 2px 5px rgba(0,0,0,0.1)';
+                        checkbox.innerHTML = '<i class="fas fa-check" style="color: transparent; font-size: 18px;"></i>';
+                        card.appendChild(checkbox);
+
+                        // Add click handler to checkbox - ONLY for Plant Inquiry
+                        checkbox.addEventListener('click', function(e) {
+                            if (!document.body.classList.contains('plant-selection-mode')) return;
+                            if (document.body.getAttribute('data-selection-type') !== 'plant-inquiry') return;
+
+                            // Toggle selection of parent card
+                            card.classList.toggle('selected');
+                            
+                            // Update checkbox appearance
+                            if (card.classList.contains('selected')) {
+                                checkbox.style.backgroundColor = '#198754';
+                                checkbox.querySelector('i').style.color = 'white';
+                            } else {
+                                checkbox.style.backgroundColor = 'white';
+                                checkbox.querySelector('i').style.color = 'transparent';
+                            }
+                            
+                            // Update Plant Inquiry selection counter
+                            updatePlantInquiryCounter();
+                            
+                            e.stopPropagation();
+                            console.log('Plant Inquiry checkbox clicked, selection toggled');
+                        });
+                    }
+                    
+                    // Show the checkbox ONLY for Plant Inquiry mode
+                    if (document.body.getAttribute('data-selection-type') === 'plant-inquiry') {
+                        checkbox.style.display = 'flex';
+                    }
+                });
+                
+                // Update counter
+                updatePlantInquiryCounter();
+            }, 100);
+            
+            // Show selection instructions
+            Swal.fire({
+                title: 'Select Plants for Inquiry',
+                text: 'Click on the plants you want to inquire about. Check circles will appear on selected plants.',
+                icon: 'info',
+                confirmButtonText: 'Got it!',
+                confirmButtonColor: '#198754'
+            });
+            
+            console.log('Plant Inquiry selection mode activated');
+        }
+
+        // Setup Plant Inquiry interface (similar to RFQ)
+        function setupPlantInquiryInterface() {
+            // Store original search controls
+            const searchControlsContainer = document.querySelector('.search-controls-container');
+            if (searchControlsContainer) {
+                searchControlsContainer.setAttribute('data-original-content', searchControlsContainer.innerHTML);
+            }
+            
+            // Replace with Plant Inquiry selection controls
+            const topControls = `
+                <button id="submitInquiryBtn" class="btn btn-secondary me-2" disabled>
+                    <i class="fas fa-paper-plane me-1"></i>Submit Inquiry (0)
+                </button>
+                <button id="cancelInquiryBtn" class="btn btn-secondary">
+                    <i class="fas fa-times me-1"></i>Cancel
+                </button>
+            `;
+            
+            if (searchControlsContainer) {
+                searchControlsContainer.innerHTML = topControls;
+            }
+            
+            // Create selection bar for Plant Inquiry
+            const searchRow = searchControlsContainer.closest('.row');
+            if (searchRow) {
+                const selectionBar = document.createElement('div');
+                selectionBar.id = 'plantInquiryBar';
+                selectionBar.className = 'selection-bar mt-3 mb-4';
+                selectionBar.innerHTML = `
+                    <div class="selection-header">
+                        <h2><i class="fas fa-clipboard-list me-2"></i>Select Plants for Your Inquiry</h2>
+                        <p>Click on plants to select them for your plant inquiry</p>
+                    </div>
+                `;
+                
+                // Insert after the search row
+                searchRow.parentNode.insertBefore(selectionBar, searchRow.nextSibling);
+            }
+            
+            // Setup cancel button
+            const cancelBtn = document.getElementById('cancelInquiryBtn');
+            if (cancelBtn) {
+                cancelBtn.addEventListener('click', cancelPlantInquiry);
+            }
+            
+            // Setup submit button
+            const submitBtn = document.getElementById('submitInquiryBtn');
+            if (submitBtn) {
+                submitBtn.addEventListener('click', submitPlantInquiry);
+                submitBtn.disabled = true;
+            }
+        }
+
+        // Update Plant Inquiry selection counter
+        function updatePlantInquiryCounter() {
+            const selectedCards = document.querySelectorAll('.admin-plant-card.selected, .user-plant-card.selected');
+            const count = selectedCards.length;
+            
+            const submitBtn = document.getElementById('submitInquiryBtn');
+            if (submitBtn) {
+                submitBtn.innerHTML = `<i class="fas fa-paper-plane me-1"></i>Submit Inquiry (${count})`;
+                
+                if (count > 0) {
+                    submitBtn.disabled = false;
+                    submitBtn.classList.remove('btn-secondary');
+                    submitBtn.classList.add('btn-success');
+                } else {
+                    submitBtn.disabled = true;
+                    submitBtn.classList.remove('btn-success');
+                    submitBtn.classList.add('btn-secondary');
+                }
+            }
+        }
+
+        // Cancel Plant Inquiry
+        function cancelPlantInquiry() {
+            // Only cancel if we're in Plant Inquiry mode
+            if (document.body.getAttribute('data-selection-type') !== 'plant-inquiry') {
+                return;
+            }
+            
+            // Exit selection mode
+            document.body.classList.remove('plant-selection-mode');
+            document.body.removeAttribute('data-selection-type');
+            
+            // Remove Plant Inquiry bar
+            const inquiryBar = document.getElementById('plantInquiryBar');
+            if (inquiryBar) {
+                inquiryBar.remove();
+            }
+            
+            // Restore original search controls
+            const searchControlsContainer = document.querySelector('.search-controls-container');
+            if (searchControlsContainer) {
+                const originalContent = searchControlsContainer.getAttribute('data-original-content');
+                if (originalContent) {
+                    searchControlsContainer.innerHTML = originalContent;
+                    
+                    // Re-attach event listener to the Request Plants button (RFQ)
+                    const requestPlantsBtn = document.getElementById('requestPlantsBtn');
+                    if (requestPlantsBtn) {
+                        requestPlantsBtn.addEventListener('click', function() {
+                            const modal = document.getElementById('requestPlantsModal');
+                            if (modal) {
+                                const modalInstance = new bootstrap.Modal(modal);
+                                modalInstance.show();
+                            }
+                        });
+                    }
+                }
+            }
+            
+            // Hide all checkboxes and clear selections - ONLY for Plant Inquiry
+            document.querySelectorAll('.selection-checkbox').forEach(function(checkbox) {
+                checkbox.style.display = 'none';
+            });
+            
+            document.querySelectorAll('.admin-plant-card.selected, .user-plant-card.selected').forEach(card => {
+                card.classList.remove('selected');
+            });
+        }
+
+        // Add viewSelectedPlants function for Plant Inquiry
+        function viewSelectedPlants() {
+            // Check if we're already in selection mode
+            if (document.body.classList.contains('plant-selection-mode')) {
+                // We're in selection mode, so this is the "Submit Inquiry" action
+                submitPlantInquiry();
+                return;
+            }
+            
+            // This shouldn't happen anymore, but fallback to startPlantInquiry
+            startPlantInquiry();
+        }
+
+        // Function to submit Plant Inquiry (similar to RFQ but simpler)
+        function submitPlantInquiry() {
+            console.log('submitPlantInquiry called');
+            
+            // Get selected plants
+            const selectedCards = document.querySelectorAll('.admin-plant-card.selected, .user-plant-card.selected');
+            console.log('Found selected cards:', selectedCards.length);
+            
+            if (selectedCards.length === 0) {
+                Swal.fire({
+                    title: 'No Plants Selected',
+                    text: 'Please select at least one plant to submit an inquiry.',
+                    icon: 'warning',
+                    confirmButtonColor: '#198754'
+                });
+                return;
+            }
+            
+            // Build plants array with proper plant data extraction
+            const selectedPlants = [];
+            selectedCards.forEach(function(card) {
+                console.log('=== Processing card ===');
+                console.log('Card element:', card);
+                console.log('Card classes:', card.className);
+                
+                const plantName = card.querySelector('.card-title')?.textContent?.trim() || 'Unknown Plant';
+                console.log('Plant name:', plantName);
+                
+                // Extract plant ID and code from the card data attributes
+                let plantId = card.getAttribute('data-plant-id');
+                let plantCode = card.getAttribute('data-plant-code');
+                
+                console.log('Initial extraction from card:');
+                console.log('  - data-plant-id:', plantId);
+                console.log('  - data-plant-code:', plantCode);
+                console.log('  - plantCode type:', typeof plantCode);
+                console.log('  - plantCode === "":', plantCode === '');
+                console.log('  - plantCode === null:', plantCode === null);
+                
+                // Fallback: try to get from edit button if data attributes not available
+                if (!plantId || !plantCode || plantCode === '') {
+                    console.log('Trying edit button fallback...');
+                    const editBtn = card.querySelector('.edit-plant-btn');
+                    console.log('Edit button found:', editBtn);
+                    if (editBtn) {
+                        const editBtnId = editBtn.getAttribute('data-plant-id');
+                        const editBtnCode = editBtn.getAttribute('data-code');
+                        console.log('  - edit btn data-plant-id:', editBtnId);
+                        console.log('  - edit btn data-code:', editBtnCode);
+                        plantId = plantId || editBtnId;
+                        plantCode = plantCode || editBtnCode;
+                    }
+                }
+                
+                console.log('After edit button fallback:');
+                console.log('  - plantId:', plantId);
+                console.log('  - plantCode:', plantCode);
+                
+                // Try to extract code from the details panel if still not found
+                if (!plantCode || plantCode === '' || plantCode === 'null') {
+                    console.log('Trying details panel fallback...');
+                    const detailsPanel = card.querySelector('.plant-details-panel');
+                    console.log('Details panel found:', detailsPanel);
+                    if (detailsPanel) {
+                        // Look for the "Code:" label and extract the value next to it
+                        const codeElements = detailsPanel.querySelectorAll('p');
+                        console.log('Found paragraphs in details panel:', codeElements.length);
+                        for (let p of codeElements) {
+                            const text = p.textContent;
+                            console.log('  - Checking paragraph text:', text);
+                            if (text.includes('Code:')) {
+                                console.log('  - Found Code: in text!');
+                                // Extract the code value after "Code:"
+                                const codeMatch = text.match(/Code:\s*(.+?)(?:\s|$)/);
+                                console.log('  - Regex match result:', codeMatch);
+                                if (codeMatch && codeMatch[1] && codeMatch[1] !== 'N/A') {
+                                    plantCode = codeMatch[1].trim();
+                                    console.log('  - Extracted code from details:', plantCode);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                console.log('After details panel fallback:');
+                console.log('  - plantCode:', plantCode);
+                
+                // Fallback if still no ID found
+                if (!plantId) {
+                    plantId = 'plant_' + Math.random().toString(36).substr(2, 9);
+                }
+                
+                // Final fallback: use 'N/A' if no code found (DO NOT convert plant name)
+                if (!plantCode || plantCode === '' || plantCode === 'null') {
+                    console.log('Using final fallback: N/A');
+                    plantCode = 'N/A';
+                }
+                
+                console.log('FINAL extracted plant data:', { id: plantId, name: plantName, code: plantCode });
+                console.log('=== End card processing ===\n');
+                
+                selectedPlants.push({
+                    id: plantId,
+                    name: plantName,
+                    code: plantCode,
+                    quantity: 1
+                });
+            });
+            
+            console.log('Final selectedPlants array:', selectedPlants);
+            
+            // Store selected plants globally for the modal
+            window.selectedPlantsForInquiry = selectedPlants;
+            console.log('Stored in window.selectedPlantsForInquiry:', window.selectedPlantsForInquiry);
+            
+            // Show the Plant Inquiry modal
+            const modal = document.getElementById('requestFormModal');
+            if (modal) {
+                // Populate the modal with selected plants
+                populateInquiryModal();
+                
+                const modalInstance = new bootstrap.Modal(modal);
+                modalInstance.show();
+            }
+        }
+        
+        // TEST FUNCTION - to debug what's in the modal table
+        function testModalTable() {
+            console.log('=== TESTING MODAL TABLE ===');
+            
+            const modalTableBody = document.getElementById('modalPlantsTableBody');
+            console.log('Modal table body element:', modalTableBody);
+            
+            if (modalTableBody) {
+                console.log('Table body HTML:', modalTableBody.innerHTML);
+                console.log('Table body children count:', modalTableBody.children.length);
+                
+                const rows = modalTableBody.querySelectorAll('tr');
+                console.log('Rows found:', rows.length);
+                
+                rows.forEach((row, index) => {
+                    console.log(`Row ${index}:`, row);
+                    console.log(`Row ${index} cells:`, row.cells);
+                    if (row.cells.length > 0) {
+                        console.log(`Row ${index} cell 0:`, row.cells[0].textContent);
+                        console.log(`Row ${index} cell 1:`, row.cells[1] ? row.cells[1].textContent : 'N/A');
+                    }
+                });
+            } else {
+                console.log('Modal table body NOT FOUND!');
+            }
+            
+            // Also check global variable
+            console.log('window.selectedPlantsForInquiry:', window.selectedPlantsForInquiry);
+            
+            alert('Check console for modal table debug info');
+        }
+        
+        // Make it globally available
+        window.testModalTable = testModalTable;
+
+        // Function to populate the Plant Inquiry modal
+        function populateInquiryModal() {
+            console.log('populateInquiryModal called');
+            console.log('window.selectedPlantsForInquiry:', window.selectedPlantsForInquiry);
+            
+            const tableBody = document.getElementById('modalPlantsTableBody');
+            const emptySelection = document.getElementById('modalEmptySelection');
+            
+            console.log('tableBody element:', tableBody);
+            console.log('emptySelection element:', emptySelection);
+            
+            if (!window.selectedPlantsForInquiry || window.selectedPlantsForInquiry.length === 0) {
+                console.log('No plants in selectedPlantsForInquiry, showing empty selection');
+                tableBody.innerHTML = '';
+                emptySelection.classList.remove('d-none');
+                return;
+            }
+            
+            console.log('Populating modal with plants:', window.selectedPlantsForInquiry);
+            emptySelection.classList.add('d-none');
+            tableBody.innerHTML = '';
+            
+            window.selectedPlantsForInquiry.forEach(function(plant, index) {
+                console.log(`Adding plant ${index}:`, plant);
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="align-middle">${plant.name}</td>
+                    <td class="align-middle">${plant.code || 'N/A'}</td>
+                    <td>
+                        <input type="number" class="form-control" name="plants[${index}][quantity]" 
+                               value="${plant.quantity}" min="1" required>
+                    </td>
+                    <td>
+                        <input type="number" class="form-control" name="plants[${index}][height]" 
+                               placeholder="Height in mm">
+                    </td>
+                    <td>
+                        <input type="number" class="form-control" name="plants[${index}][spread]" 
+                               placeholder="Spread in mm">
+                    </td>
+                    <td>
+                        <input type="number" class="form-control" name="plants[${index}][spacing]" 
+                               placeholder="Spacing in mm">
+                    </td>
+                    <td class="text-center">
+                        <button type="button" class="btn btn-sm btn-outline-danger" 
+                                onclick="removeInquiryPlant(this, ${index})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+                console.log(`Added row for ${plant.name}`);
+            });
+            
+            console.log('Final tableBody HTML:', tableBody.innerHTML);
+        }
+
+        // Function to remove plant from inquiry
+        function removeInquiryPlant(button, index) {
+            // Remove from array
+            window.selectedPlantsForInquiry.splice(index, 1);
+            
+            // Re-populate modal
+            populateInquiryModal();
+            
+            // If no plants left, close modal
+            if (window.selectedPlantsForInquiry.length === 0) {
+                const modal = bootstrap.Modal.getInstance(document.getElementById('requestFormModal'));
+                if (modal) {
+                    modal.hide();
+                }
+                
+                // Exit selection mode
+                document.body.classList.remove('plant-selection-mode');
+                document.body.removeAttribute('data-selection-type');
+                
+                // Remove Plant Inquiry bar
+                const inquiryBar = document.getElementById('plantInquiryBar');
+                if (inquiryBar) {
+                    inquiryBar.remove();
+                }
+                
+                // Restore original search controls
+                const searchControlsContainer = document.querySelector('.search-controls-container');
+                if (searchControlsContainer) {
+                    const originalContent = searchControlsContainer.getAttribute('data-original-content');
+                    if (originalContent) {
+                        searchControlsContainer.innerHTML = originalContent;
+                        
+                        // Re-attach event listener to the Request Plants button (RFQ)
+                        const requestPlantsBtn = document.getElementById('requestPlantsBtn');
+                        if (requestPlantsBtn) {
+                            requestPlantsBtn.addEventListener('click', function() {
+                                const modal = document.getElementById('requestPlantsModal');
+                                if (modal) {
+                                    const modalInstance = new bootstrap.Modal(modal);
+                                    modalInstance.show();
+                                }
+                            });
+                        }
+                    }
+                }
+                
+                // Hide all checkboxes and clear selections
+                document.querySelectorAll('.selection-checkbox').forEach(function(checkbox) {
+                    checkbox.style.display = 'none';
+                });
+                
+                document.querySelectorAll('.admin-plant-card.selected, .user-plant-card.selected').forEach(card => {
+                    card.classList.remove('selected');
+                    const checkbox = card.querySelector('.selection-checkbox');
+                    if (checkbox) {
+                        checkbox.style.backgroundColor = 'white';
+                        checkbox.querySelector('i').style.color = 'transparent';
+                    }
+                });
+                
+                // Update counter
+                updateSelectionCounter();
+            }
         }
     </script>
     <style >
@@ -925,27 +1435,43 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarMain">
                 @if(Auth::check() && !Auth::user()->hasAdminAccess())
-                <!-- Authenticated non-admin users: show centered nav links -->
+                <!-- Authenticated non-admin users: show centered nav links with page access control -->
                 <ul class="navbar-nav mx-auto">
                     <li class="nav-item">
                         <a class="nav-link text-white {{ request()->routeIs('public.plants') ? 'active' : '' }}" href="{{ route('public.plants') }}">
                             <i class="fas fa-home me-1"></i> Home
                         </a>
                     </li>
+                    @if(Auth::user()->hasPageAccess('dashboard'))
                     <li class="nav-item">
                         <a class="nav-link text-white {{ request()->routeIs('dashboard.user') ? 'active' : '' }}" href="{{ route('dashboard.user') }}">
                             <i class="fas fa-gauge me-1"></i> Dashboard
                         </a>
                     </li>
+                    @endif
+                    @if(Auth::user()->hasPageAccess('dashboard'))
+                    <li class="nav-item">
+                        <a class="nav-link text-white {{ request()->routeIs('my-requests.index') ? 'active' : '' }}" href="{{ route('my-requests.index') }}">
+                            <i class="fas fa-list-check me-1"></i> My Requests
+                        </a>
+                    </li>
+                    @endif
+                    @if(Auth::user()->hasPageAccess('plant_guide'))
                     <li class="nav-item">
                         <a class="nav-link text-white {{ request()->routeIs('plant-care.*') ? 'active' : '' }}" href="{{ route('plant-care.index') }}">
                             <i class="fas fa-leaf me-1"></i> Plant Guide
                         </a>
                     </li>
-                    @if(Auth::user()->isClient())
+                    @endif
+                    @if(Auth::user()->isClient() && Auth::user()->hasPageAccess('site_data'))
                     <li class="nav-item">
                         <a class="nav-link text-white {{ request()->routeIs('client-data.*') ? 'active' : '' }}" href="{{ route('client-data.index') }}">
-                            <i class="fas fa-folder-open me-1"></i> Client Data
+                            @if(!Auth::user()->isProfileComplete())
+                                <i class="fas fa-lock me-1"></i>
+                            @else
+                                <i class="fas fa-folder-open me-1"></i>
+                            @endif
+                            Site Data
                         </a>
                     </li>
                     @endif
@@ -1040,10 +1566,22 @@
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="menuDropdownMobile">
                                     <li><a class="dropdown-item" href="{{ route('public.plants') }}"><i class="fas fa-home me-2"></i>Home</a></li>
+                                    @if(Auth::user()->hasPageAccess('dashboard'))
                                     <li><a class="dropdown-item" href="{{ route('dashboard.user') }}"><i class="fas fa-gauge me-2"></i>Dashboard</a></li>
+                                    <li><a class="dropdown-item" href="{{ route('my-requests.index') }}"><i class="fas fa-list-check me-2"></i>My Requests</a></li>
+                                    @endif
+                                    @if(Auth::user()->hasPageAccess('plant_guide'))
                                     <li><a class="dropdown-item" href="{{ route('plant-care.index') }}"><i class="fas fa-leaf me-2"></i>Plant Guide</a></li>
-                                    @if(Auth::user()->isClient())
-                                        <li><a class="dropdown-item" href="{{ route('client-data.index') }}"><i class="fas fa-folder-open me-2"></i>Client Data</a></li>
+                                    @endif
+                                    @if(Auth::user()->isClient() && Auth::user()->hasPageAccess('site_data'))
+                                        <li><a class="dropdown-item" href="{{ route('client-data.index') }}">
+                                            @if(!Auth::user()->isProfileComplete())
+                                                <i class="fas fa-lock me-2"></i>
+                                            @else
+                                                <i class="fas fa-folder-open me-2"></i>
+                                            @endif
+                                            Site Data
+                                        </a></li>
                                     @endif
                                 </ul>
                             </div>
@@ -1059,17 +1597,59 @@
                             @endif
                                 <span style="font-size: 0.98rem;">{{ auth()->user() ? auth()->user()->name : 'Profile' }}</span>
                         </button>
-                            <ul class="dropdown-menu dropdown-menu-end compact-dropdown" style="min-width: 150px;">
-                            <li>
-                                    <a class="dropdown-item" href="{{ route('profile.edit') }}" style="font-size: 0.95rem; padding: 6px 14px;">
-                                    <i class="fas fa-user me-2"></i>Profile
+                            <ul class="dropdown-menu dropdown-menu-end user-dropdown-enhanced">
+                            <!-- User Info Header -->
+                            <li class="dropdown-header user-info-header">
+                                <div class="user-name">
+                                    <i class="fas fa-user-circle me-2"></i>{{ auth()->user()->first_name }} {{ auth()->user()->last_name }}
+                                </div>
+                                <div class="user-email">{{ auth()->user()->email }}</div>
+                                <div class="user-account-type">
+                                    <span class="badge bg-{{ auth()->user()->account_type === 'company' ? 'primary' : 'info' }}">
+                                        <i class="fas fa-{{ auth()->user()->account_type === 'company' ? 'building' : 'user' }} me-1"></i>
+                                        {{ ucfirst(auth()->user()->account_type ?? 'Individual') }} Account
+                                    </span>
+                                </div>
+                            </li>
+                            
+                            <!-- Profile Completion Section -->
+                            @if(!auth()->user()->isProfileComplete())
+                            <li class="dropdown-item-text profile-completion-section">
+                                <div class="completion-warning">
+                                    <i class="fas fa-exclamation-triangle text-warning me-2"></i>
+                                    <span class="completion-text">Profile {{ auth()->user()->getProfileCompletionPercentage() }}% Complete</span>
+                                </div>
+                                <div class="progress mt-2 mb-2" style="height: 6px;">
+                                    <div class="progress-bar bg-warning" role="progressbar" 
+                                         style="width: {{ auth()->user()->getProfileCompletionPercentage() }}%">
+                                    </div>
+                                </div>
+                                <a href="{{ route('profile.edit') }}" class="btn btn-sm btn-warning w-100">
+                                    <i class="fas fa-edit me-1"></i>Complete Profile
                                 </a>
                             </li>
-                                <li><hr class="dropdown-divider" style="margin: 4px 0;"></li>
+                            @else
+                            <li class="dropdown-item-text profile-completion-section">
+                                <div class="completion-success">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    <span class="completion-text">Profile Complete</span>
+                                </div>
+                            </li>
+                            @endif
+                            
+                            <li><hr class="dropdown-divider"></li>
+                            
+                            <!-- Menu Items -->
                             <li>
-                                    <form action="{{ route('logout') }}" method="POST" style="margin: 0;">
+                                    <a class="dropdown-item" href="{{ route('profile.edit') }}">
+                                    <i class="fas fa-user-edit me-2"></i>Edit Profile
+                                </a>
+                            </li>
+                                <li><hr class="dropdown-divider"></li>
+                            <li>
+                                    <form id="plants-logout-form" action="{{ route('logout') }}" method="POST" style="margin: 0;">
                                     @csrf
-                                        <button type="submit" class="dropdown-item" style="font-size: 0.95rem; padding: 6px 14px;">
+                                        <button type="button" class="dropdown-item text-danger" id="plants-logout-btn">
                                         <i class="fas fa-sign-out-alt me-2"></i>Logout
                                     </button>
                                 </form>
@@ -1246,16 +1826,16 @@
                 </button>
                     @endif
 
-                    @if(Auth::check() && Auth::user()->isClient())
-                        <!-- Client RFQ button -->
-                        <button class="btn btn-success" id="requestPlantsBtn">
-                            <i class="fas fa-file-invoice me-1"></i>Request for Quotation (RFQ)
-                        </button>
-                    @elseif(Auth::check() && Auth::user()->role === 'user' && !Auth::user()->is_client)
-                        <!-- Regular User ONLY - View Inquiry button -->
-                        <button class="btn" id="viewRequestBtn" onclick="viewSelectedPlants()">
-                            <i class="fas fa-clipboard-list me-1"></i>View Inquiry (<span id="requestCount">0</span>)
-                        </button>
+                    @if(Auth::check() && Auth::user()->isClient() && !Auth::user()->hasAdminAccess())
+                        <!-- Client users only - Show both options -->
+                        <div class="d-flex gap-2 justify-content-end">
+                            <button class="btn btn-success" id="viewRequestBtn" onclick="startPlantInquiry()">
+                                <i class="fas fa-clipboard-list me-1"></i>Request Inquiry
+                            </button>
+                            <button class="btn btn-success" id="requestPlantsBtn">
+                                <i class="fas fa-file-invoice me-1"></i>Request for Quotation (RFQ)
+                            </button>
+                        </div>
                     @endif
             </div>
         </div>
@@ -1333,7 +1913,7 @@
             <div class="col plant-item" data-category="{{ $plant->category }}" data-name="{{ $plant->name }}">
                         @if(Auth::check() && Auth::user()->hasAdminAccess())
                             <!-- Admin/Super Admin View -->
-                            <div class="card admin-plant-card">
+                            <div class="card admin-plant-card" data-plant-id="{{ $plant->id }}" data-plant-code="{{ $plant->code }}">
                                 <div class="card-body p-0">
                                     <!-- Main View (Always Visible) -->
                                     <div class="plant-main-view">
@@ -1431,7 +2011,7 @@
                             </div>
                         @else
                             <!-- User View -->
-                            <div class="card user-plant-card">
+                            <div class="card user-plant-card" data-plant-id="{{ $plant->id }}" data-plant-code="{{ $plant->code }}">
                                 <div class="card-body p-0">
                                     <!-- Main View (Always Visible) -->
                                     <div class="plant-main-view">
@@ -1457,29 +2037,16 @@
 
                                     <!-- Sliding Details Panel -->
                                     <div class="plant-details-panel">
-                                        <!-- Header with Add to Inquiry Button -->
+                                        <!-- Header -->
                                         <div class="details-header d-flex justify-content-between align-items-center p-2 text-white">
                                             <button type="button" class="btn btn-sm btn-link back-to-main text-white p-1" onclick="toggleUserDetails(this)">
                                                 <i class="fas fa-chevron-left"></i>
                                             </button>
-                                            @if(Auth::check() && Auth::user()->role === 'user' && !Auth::user()->is_client)
-                                                <div class="d-flex gap-2 align-items-center">
-                                                    <button type="button" class="btn btn-sm btn-success plant-action-btn"
-                                                            data-plant-id="{{ $plant->id }}"
-                                                            data-plant-name="{{ $plant->name }}"
-                                                            data-plant-code="{{ $plant->code }}"
-                                                            data-height="{{ $plant->height_mm }}"
-                                                            data-spread="{{ $plant->spread_mm }}"
-                                                            data-spacing="{{ $plant->spacing_mm }}"
-                                                            data-action="add"
-                                                            style="font-size: 0.7rem; padding: 0.2rem 0.35rem; white-space: nowrap;">
-                                                        <i class="fas fa-plus"></i> Add to Inquiry
-                                                    </button>
-                                                    <span class="text-white" style="font-size: 0.85rem; white-space: nowrap; cursor: default;">
-                                                        Plant Details
-                                                    </span>
-                                                </div>
-                                            @endif
+                                            <div class="d-flex align-items-center">
+                                                <span class="text-white" style="font-size: 0.85rem; white-space: nowrap; cursor: default;">
+                                                    Plant Details
+                                                </span>
+                                            </div>
                                         </div>
 
                                         <!-- Plant Information -->
@@ -2135,10 +2702,35 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="{{ asset('js/alerts.js') }}?v={{ time() }}"></script>
     <script src="{{ asset('js/loading.js') }}"></script>
     <script src="{{ asset('js/push-notifications.js') }}?v={{ time() }}"></script>
     <script src="{{ asset('js/rfq.js') }}"></script>
     <script src="{{ asset('js/home.js') }}"></script>
+    
+    <!-- Plants Page Logout Confirmation Script -->
+    @auth
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const plantsLogoutBtn = document.getElementById('plants-logout-btn');
+        if (plantsLogoutBtn) {
+            plantsLogoutBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                AlertSystem.confirm({
+                    title: 'Logout?',
+                    message: 'Are you sure you want to log out?',
+                    confirmText: 'Yes, Logout',
+                    cancelText: 'Cancel',
+                    onConfirm: function() {
+                        document.getElementById('plants-logout-form').submit();
+                    }
+                });
+            });
+        }
+    });
+    </script>
+    @endauth
+    
 <script>
 // UX improvement for modalRequestForm submission
 console.log('Loading modal form submission handler');
@@ -2417,7 +3009,9 @@ console.log('Loading modal form submission handler');
 
                 console.log('Selection counter update - Found ' + count + ' selected plants');
 
-                // Find send plants button
+                // Only handle RFQ system counters - Plant Inquiry has its own system now
+                
+                // Find send plants button (RFQ system)
                 const sendBtn = document.getElementById('sendPlantsBtn');
                 if (sendBtn) {
                     // Update button text and style
@@ -2433,7 +3027,12 @@ console.log('Loading modal form submission handler');
                         sendBtn.classList.add('btn-secondary');
                     }
 
-                    console.log('Updated button:', sendBtn.innerHTML);
+                    console.log('Updated RFQ button:', sendBtn.innerHTML);
+                }
+                
+                // Update Plant Inquiry counter if in Plant Inquiry mode
+                if (document.body.getAttribute('data-selection-type') === 'plant-inquiry') {
+                    updatePlantInquiryCounter();
                 }
             }
 
@@ -2891,6 +3490,291 @@ console.log('Loading modal form submission handler');
             }, 1000);
         });
     </script>
+
+    <!-- Plant Inquiry Form Submission Handler -->
+    <script>
+        // Refresh CSRF token periodically to prevent expiration
+        function refreshCsrfToken() {
+            fetch('/refresh-csrf', {
+                method: 'GET',
+                credentials: 'same-origin'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.token) {
+                    const csrfMeta = document.querySelector('meta[name="csrf-token"]');
+                    if (csrfMeta) {
+                        csrfMeta.content = data.token;
+                        console.log('CSRF token refreshed');
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Failed to refresh CSRF token:', error);
+            });
+        }
+        
+        // Refresh CSRF token every 30 minutes
+        setInterval(refreshCsrfToken, 30 * 60 * 1000);
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Plant Inquiry form submission handler loaded');
+            
+            // Add event listener for Plant Inquiry form submission
+            const modalSubmitButton = document.getElementById('modalSubmitButton');
+            if (modalSubmitButton) {
+                // Remove any existing listeners by cloning the button
+                const newButton = modalSubmitButton.cloneNode(true);
+                modalSubmitButton.parentNode.replaceChild(newButton, modalSubmitButton);
+                
+                // Now add our handler to the clean button
+                newButton.addEventListener('click', function() {
+                    console.log('=== PLANT INQUIRY SUBMIT CLICKED ===');
+                    
+                    // Validate required fields FIRST
+                    const name = document.getElementById('modal_name').value.trim();
+                    const email = document.getElementById('modal_email').value.trim();
+                    const contactNumber = document.getElementById('modal_contact_number').value.trim();
+                    
+                    if (!name || !email || !contactNumber) {
+                        Swal.fire({
+                            title: 'Missing Information',
+                            text: 'Please fill in all required fields (Name, Email, Contact Number).',
+                            icon: 'warning',
+                            confirmButtonColor: '#198754'
+                        });
+                        return;
+                    }
+                    
+                    // Get plants from the modal table
+                    const modalTableBody = document.getElementById('modalPlantsTableBody');
+                    console.log('Modal table body:', modalTableBody);
+                    
+                    if (!modalTableBody) {
+                        console.error('Modal table body not found!');
+                        Swal.fire({
+                            title: 'Error',
+                            text: 'Modal table not found. Please try again.',
+                            icon: 'error',
+                            confirmButtonColor: '#198754'
+                        });
+                        return;
+                    }
+                    
+                    // Get all rows from the table
+                    const rows = modalTableBody.querySelectorAll('tr');
+                    console.log('Found rows in modal table:', rows.length);
+                    
+                    if (rows.length === 0) {
+                        console.error('No rows found in modal table');
+                        Swal.fire({
+                            title: 'No Plants Selected',
+                            text: 'Please select at least one plant for your inquiry.',
+                            icon: 'warning',
+                            confirmButtonColor: '#198754'
+                        });
+                        return;
+                    }
+                    
+                    // Extract plant data from table rows
+                    const plantsToSubmit = [];
+                    rows.forEach((row, index) => {
+                        const cells = row.cells;
+                        if (cells && cells.length >= 3) {
+                            const plantName = cells[0].textContent.trim();
+                            const plantCode = cells[1].textContent.trim();
+                            const quantityInput = cells[2].querySelector('input[type="number"]');
+                            const quantity = quantityInput ? parseInt(quantityInput.value) || 1 : 1;
+                            
+                            console.log(`Row ${index}: name="${plantName}", code="${plantCode}", qty=${quantity}`);
+                            
+                            if (plantName && plantName !== '') {
+                                plantsToSubmit.push({
+                                    name: plantName,
+                                    code: plantCode,
+                                    quantity: quantity,
+                                    id: plantCode || plantName.replace(/\s+/g, '_').toUpperCase()
+                                });
+                            }
+                        }
+                    });
+                    
+                    console.log('Plants to submit:', plantsToSubmit);
+                    
+                    if (plantsToSubmit.length === 0) {
+                        console.error('No valid plants extracted from table');
+                        Swal.fire({
+                            title: 'No Plants Found',
+                            text: 'Could not extract plant data from the table. Please try again.',
+                            icon: 'error',
+                            confirmButtonColor: '#198754'
+                        });
+                        return;
+                    }
+                    
+                    // Show loading state
+                    const originalText = this.innerHTML;
+                    this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+                    this.disabled = true;
+                    
+                    // Prepare request data
+                    const requestData = {
+                        name: name,
+                        email: email,
+                        phone: contactNumber,
+                        address: '', // Optional field
+                        message: '', // Optional field
+                        items_json: JSON.stringify(plantsToSubmit.map(plant => ({
+                            name: plant.name,
+                            code: plant.code || plant.id,
+                            quantity: plant.quantity || 1,
+                            id: plant.id
+                        }))),
+                        preferred_delivery_date: null, // Optional
+                        agree_to_terms: 1  // Use 1 instead of true for Laravel's accepted validation
+                    };
+                    
+                    console.log('Submitting request data:', requestData);
+                    
+                    // Get fresh CSRF token
+                    const csrfToken = document.querySelector('meta[name="csrf-token"]');
+                    if (!csrfToken || !csrfToken.content) {
+                        console.error('CSRF token not found in page');
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Session Error',
+                            text: 'Your session may have expired. Please refresh the page and try again.',
+                            confirmButtonColor: '#198754'
+                        });
+                        this.innerHTML = originalText;
+                        this.disabled = false;
+                        return;
+                    }
+                    
+                    console.log('Using CSRF token:', csrfToken.content.substring(0, 10) + '...');
+                    
+                    // Submit the inquiry
+                    fetch('/user-plant-request', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': csrfToken.content,
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        credentials: 'same-origin',
+                        body: JSON.stringify(requestData)
+                    })
+                    .then(response => {
+                        console.log('Response status:', response.status);
+                        console.log('Response type:', response.headers.get('content-type'));
+                        
+                        // Check if response is JSON
+                        const contentType = response.headers.get('content-type');
+                        if (!contentType || !contentType.includes('application/json')) {
+                            console.error('Response is not JSON, content-type:', contentType);
+                            // Try to get the HTML response for debugging
+                            return response.text().then(html => {
+                                console.error('HTML response:', html.substring(0, 500));
+                                throw new Error('Server returned HTML instead of JSON. Check server logs for errors.');
+                            });
+                        }
+                        
+                        if (!response.ok) {
+                            // Try to get error message from response
+                            return response.json().then(errorData => {
+                                console.error('Error data:', errorData);
+                                
+                                // Handle 419 CSRF token mismatch specifically
+                                if (response.status === 419) {
+                                    throw new Error('Your session has expired. Please refresh the page and try again.');
+                                }
+                                
+                                throw new Error(errorData.message || `HTTP ${response.status}: ${response.statusText}`);
+                            }).catch(err => {
+                                if (err.message.includes('Server returned HTML') || err.message.includes('session has expired')) {
+                                    throw err;
+                                }
+                                
+                                // Handle 419 even if JSON parsing fails
+                                if (response.status === 419) {
+                                    throw new Error('Your session has expired. Please refresh the page and try again.');
+                                }
+                                
+                                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                            });
+                        }
+                        
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('Success response:', data);
+                        
+                        if (data.message) {
+                            // Close the modal
+                            const modal = bootstrap.Modal.getInstance(document.getElementById('requestFormModal'));
+                            if (modal) {
+                                modal.hide();
+                            }
+                            
+                            // Show success message
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Inquiry Submitted!',
+                                html: `
+                                    <div class="text-center mb-3">
+                                        <p>Your plant inquiry has been submitted successfully!</p>
+                                        <p>Request ID: <strong>${data.request_id}</strong></p>
+                                        <p>We'll review your inquiry and get back to you soon.</p>
+                                    </div>
+                                `,
+                                confirmButtonText: 'Continue Browsing',
+                                confirmButtonColor: '#198754'
+                            });
+                            
+                            // Exit selection mode and clean up
+                            cancelPlantInquiry();
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error submitting plant inquiry:', error);
+                        console.error('Error details:', error.message);
+                        
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Submission Error',
+                            text: error.message || 'An error occurred while submitting your inquiry. Please try again.',
+                            confirmButtonColor: '#198754'
+                        });
+                    })
+                    .finally(() => {
+                        // Reset button state
+                        this.innerHTML = originalText;
+                        this.disabled = false;
+                    });
+                });
+            }
+        });
+    </script>
+                            // Close the modal
+                            const modal = bootstrap.Modal.getInstance(document.getElementById('requestFormModal'));
+                            if (modal) {
+                                modal.hide();
+                            }
+                            
+                            // Show success message
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Inquiry Submitted!',
+                                html: `
+                                    <div class="text-center mb-3">
+                                        <p>Your plant inquiry has been submitted successfully!</p>
+                                        <p>Request ID: <strong>${data.request_id}</strong></p>
+                                        <p>We'll review your inquiry and get back to you soon.</p>
+                                    </div>
+                                `,
+                                confirmButtonText: 'Continue Browsing',
+                                confirmButtonColor: '#198754'
 
     <!-- Hidden auth check element for JavaScript -->
     @auth

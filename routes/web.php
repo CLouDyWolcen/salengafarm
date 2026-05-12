@@ -140,13 +140,22 @@ Route::delete('/display-plants/{plant}', [PublicController::class, 'destroy'])->
 Route::post('/display-plants/photo/upload', [PublicController::class, 'uploadPhoto'])->name('display-plants.upload.photo');
 Route::delete('/display-plants/photo/remove/{plant}', [PublicController::class, 'removePhoto'])->name('display-plants.remove.photo');
 
-// Client-only plant request routes
+// Client access to both RFQ and simple inquiry routes
 Route::middleware(['auth', 'can:client-access'])->prefix('user/plant-request')->name('user.plant-request.')->group(function () {
     Route::get('/', [UserPlantRequestController::class, 'create'])->name('create');
     Route::get('/select-plants', [UserPlantRequestController::class, 'selectPlants'])->name('select-plants');
     Route::post('/store', [UserPlantRequestController::class, 'store'])->name('store');
     Route::get('/success/{id}', [UserPlantRequestController::class, 'success'])->name('success');
     Route::get('/download-pdf/{id}', [UserPlantRequestController::class, 'downloadPdf'])->name('download-pdf');
+    Route::delete('/{id}', [UserPlantRequestController::class, 'destroy'])->name('destroy');
+});
+
+// Plant Inquiry route (for the new selection-based inquiry system)
+Route::post('/user-plant-request', [UserPlantRequestController::class, 'store'])->name('user-plant-request.store');
+
+// CSRF token refresh route
+Route::get('/refresh-csrf', function () {
+    return response()->json(['token' => csrf_token()]);
 });
 
 // Client RFQ routes - for clients only
@@ -168,8 +177,16 @@ Route::middleware(['auth'])->group(function () {
     // Regular user routes
     Route::get('/home', [PublicController::class, 'index'])->name('home');
 
-    // User/Client Dashboard (Request Center)
-    Route::get('/dashboard/user', [UserDashboardController::class, 'index'])->name('dashboard.user');
+    // User/Client Dashboard (Overview with stats)
+    Route::get('/client-dashboard', [UserDashboardController::class, 'dashboard'])->name('dashboard.user');
+    
+    // My Requests (Plant inquiries list)
+    Route::get('/my-requests', [UserDashboardController::class, 'inquiries'])->name('my-requests.index');
+    
+    // Backward compatibility - redirect old dashboard route
+    Route::get('/dashboard/user', function() {
+        return redirect()->route('dashboard.user');
+    });
     
     // User inquiry response view
     Route::get('/user/inquiries/{id}/response', [UserDashboardController::class, 'viewResponse'])->name('user.inquiry.response');
@@ -266,6 +283,12 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/site-visits/{siteVisit}/data', [SiteVisitController::class, 'getVisitData'])->name('site-visits.get-data');
         Route::delete('/site-visits/{siteVisit}/media/{file_index}', [SiteVisitController::class, 'deleteMediaFile'])->name('site-visits.delete-media');
 
+        // Site Visit Requests (admin only)
+        Route::get('/site-visit-requests', [SiteVisitController::class, 'requestsIndex'])->name('site-visit-requests.index');
+        Route::patch('/site-visit-requests/{siteVisitRequest}/approve', [SiteVisitController::class, 'approveRequest'])->name('site-visit-requests.approve');
+        Route::patch('/site-visit-requests/{siteVisitRequest}/reject', [SiteVisitController::class, 'rejectRequest'])->name('site-visit-requests.reject');
+        Route::delete('/site-visit-requests/{siteVisitRequest}', [SiteVisitController::class, 'destroyRequest'])->name('site-visit-requests.destroy');
+
         // Site Visit Checklists endpoints moved to general auth below
 
         // Move these routes inside the admin middleware group
@@ -300,6 +323,11 @@ Route::middleware(['auth'])->group(function () {
     // Client Data (client-only focused pages)
     Route::get('/client-data', [SiteVisitController::class, 'clientDataIndex'])->name('client-data.index');
     Route::get('/client-data/{siteVisit}', [SiteVisitController::class, 'clientDataShow'])->name('client-data.show');
+    
+    // Site Visit Requests (client only)
+    Route::get('/site-visit-requests/create', [SiteVisitController::class, 'createRequest'])->name('site-visit-requests.create');
+    Route::post('/site-visit-requests', [SiteVisitController::class, 'storeRequest'])->name('site-visit-requests.store');
+    Route::delete('/site-visit-requests/{siteVisitRequest}/client', [SiteVisitController::class, 'destroyClientRequest'])->name('site-visit-requests.destroy.client');
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');

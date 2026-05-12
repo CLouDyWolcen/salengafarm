@@ -4,7 +4,6 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use App\Http\Middleware\AdminMiddleware;
-use App\Http\Middleware\UserMiddleware;
 
 class MiddlewareServiceProvider extends ServiceProvider
 {
@@ -14,7 +13,6 @@ class MiddlewareServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->singleton(AdminMiddleware::class);
-        $this->app->singleton(UserMiddleware::class);
     }
 
     /**
@@ -23,6 +21,5 @@ class MiddlewareServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->app['router']->aliasMiddleware('admin', AdminMiddleware::class);
-        $this->app['router']->aliasMiddleware('user', UserMiddleware::class);
     }
 } 

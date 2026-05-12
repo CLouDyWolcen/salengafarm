@@ -37,10 +37,34 @@
             z-index: 99999 !important;
         }
         
+        /* Smooth tile loading - hide loading tiles */
+        .leaflet-tile-container img {
+            transition: opacity 0.2s ease-in-out;
+        }
+        
+        .leaflet-tile {
+            opacity: 0;
+            transition: opacity 0.2s ease-in-out;
+        }
+        
+        .leaflet-tile-loaded {
+            opacity: 1 !important;
+        }
+        
+        /* Hide the gray loading background */
+        .leaflet-tile-container {
+            background: transparent !important;
+        }
+        
+        /* Smooth zoom animation */
+        .leaflet-zoom-animated {
+            transition: transform 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        
         /* FORCE map height on desktop - override any global styles */
         #map {
-            height: 500px !important;
-            min-height: 500px !important;
+            height: 350px !important;
+            min-height: 350px !important;
             width: 100% !important;
         }
         
@@ -59,7 +83,7 @@
         #map-card-body {
             padding: 0 !important;
             height: auto !important;
-            min-height: 500px !important;
+            min-height: 350px !important;
         }
         
         /* Responsive map height - smaller on mobile ONLY */
@@ -94,12 +118,22 @@
     </div>
     
     <div class="row mb-4">
-        <div class="col-12 d-flex justify-content-end">
-            @if(auth()->user()->role !== 'super_admin')
+        <div class="col-12 d-flex justify-content-end gap-2">
+            <a href="{{ route('site-visit-requests.index') }}" class="btn btn-info position-relative">
+                <i class="fas fa-inbox me-2"></i>Site Visit Requests
+                @php
+                    $pendingCount = \App\Models\SiteVisitRequest::where('status', 'pending')->count();
+                @endphp
+                @if($pendingCount > 0)
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                        {{ $pendingCount }}
+                        <span class="visually-hidden">pending requests</span>
+                    </span>
+                @endif
+            </a>
             <a href="{{ route('site-visits.create') }}" class="btn btn-success">
                 <i class="fas fa-plus me-2"></i>Add New Site Visit
             </a>
-            @endif
         </div>
     </div>
 
@@ -111,17 +145,21 @@
                     <h5 class="mb-0">
                         <i class="fas fa-map-marked-alt me-2 text-success"></i>Site Visits Map
                     </h5>
-                    <div class="btn-group">
-                        <button id="toggleMapTypeBtn" class="btn btn-sm btn-outline-success" title="Toggle Satellite View">
-                            <i class="fas fa-satellite"></i>
-                        </button>
+                    <div class="d-flex gap-2">
+                        <select id="mapStyleSelector" class="form-select form-select-sm" style="min-width: 180px;">
+                            <option value="esri">Street - Esri (Fast)</option>
+                            <option value="openstreetmap">Street - OpenStreetMap</option>
+                            <option value="cartoVoyager">Street - Carto Voyager</option>
+                            <option value="openTopoMap">Street - Topographic</option>
+                            <option value="satellite">Satellite View</option>
+                        </select>
                         <button id="fullscreenMapBtn" class="btn btn-sm btn-outline-success" title="Fullscreen">
                             <i class="fas fa-expand"></i>
                         </button>
                     </div>
                 </div>
                 <div id="map-card-body" class="card-body p-0" style="position: relative;">
-                    <div id="map" style="height: 500px; width: 100%; display: flex; align-items: center; justify-content: center; background-color: #f8f9fa;">
+                    <div id="map" style="height: 350px; width: 100%; display: flex; align-items: center; justify-content: center; background-color: #f8f9fa;">
                         <div class="text-center text-muted">
                             <i class="fas fa-map-marked-alt" style="font-size: 3rem; margin-bottom: 1rem;"></i>
                             <h5>Google Maps Integration</h5>
@@ -140,83 +178,64 @@
             <div class="card shadow-sm">
                 <div class="card-header bg-light">
                     <h5 class="mb-0">
-                        <i class="fas fa-list me-2 text-success"></i>All Site Visits
+                        <i class="fas fa-list me-2 text-success"></i>Site Visits
                     </h5>
                 </div>
                 <div class="card-body">
-                    @if($siteVisits->count() > 0)
-                        <div class="table-responsive">
-                            <table class="table table-hover">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th>Client</th>
-                                        <th>Location</th>
-                                        <th>Visit Date</th>
-                                        <th>Status</th>
-                                        <th>Inspector</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach($siteVisits as $visit)
-                                    <tr>
-                                        <td>
-                                            <strong>{{ $visit->client }}</strong><br>
-                                            <small class="text-muted">{{ $visit->email }}</small>
-                                        </td>
-                                        <td>
-                                            <i class="fas fa-map-marker-alt text-success me-1"></i>
-                                            {{ \Illuminate\Support\Str::limit($visit->location, 30) }}
-                                        </td>
-                                        <td>{{ \Carbon\Carbon::parse($visit->visit_date)->format('M d, Y') }}</td>
-                                        <td>
-                                            @if($visit->status === 'completed')
-                                                <span class="badge bg-success">Completed</span>
-                                            @elseif($visit->status === 'pending')
-                                                <span class="badge bg-warning">Pending</span>
-                                            @else
-                                                <span class="badge bg-info">Follow Up</span>
-                                            @endif
-                                        </td>
-                                        <td>{{ $visit->site_inspector }}</td>
-                                        <td>
-                                            <div class="btn-group btn-group-sm" role="group">
-                                                <a href="{{ route('site-visits.show', $visit) }}" 
-                                                   class="btn btn-outline-info btn-sm" title="View">
-                                                    <i class="fas fa-eye"></i>
-                                                </a>
-                                                @if(auth()->user()->role !== 'super_admin')
-                                                <a href="{{ route('site-visits.edit', $visit) }}" 
-                                                   class="btn btn-outline-primary btn-sm" title="Edit">
-                                                    <i class="fas fa-edit"></i>
-                                                </a>
-                                                <button type="button" 
-                                                        class="btn btn-outline-danger btn-sm delete-visit" 
-                                                        data-visit-id="{{ $visit->id }}"
-                                                        data-client="{{ $visit->client }}"
-                                                        title="Delete">
-                                                    <i class="fas fa-trash"></i>
-                                                </button>
-                                                @endif
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
+                    <!-- Filter Tabs -->
+                    <ul class="nav nav-tabs mb-4" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="all-tab" data-bs-toggle="tab" 
+                                    data-bs-target="#all" type="button" role="tab">
+                                All 
+                                <span class="badge bg-secondary ms-1">{{ $allSiteVisits->count() }}</span>
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="pending-tab" data-bs-toggle="tab" 
+                                    data-bs-target="#pending" type="button" role="tab">
+                                Pending 
+                                <span class="badge bg-warning text-dark ms-1">{{ $pendingSiteVisits->count() }}</span>
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="followup-tab" data-bs-toggle="tab" 
+                                    data-bs-target="#followup" type="button" role="tab">
+                                Follow-Up 
+                                <span class="badge bg-info ms-1">{{ $followUpSiteVisits->count() }}</span>
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="completed-tab" data-bs-toggle="tab" 
+                                    data-bs-target="#completed" type="button" role="tab">
+                                Completed 
+                                <span class="badge bg-success ms-1">{{ $completedSiteVisits->count() }}</span>
+                            </button>
+                        </li>
+                    </ul>
+
+                    <!-- Tab Content -->
+                    <div class="tab-content">
+                        <!-- All Site Visits -->
+                        <div class="tab-pane fade show active" id="all" role="tabpanel">
+                            @include('site-visits.partials.visits-table', ['siteVisits' => $allSiteVisits, 'emptyMessage' => 'No site visits yet'])
                         </div>
-                    @else
-                        <div class="text-center py-5">
-                            <i class="fas fa-map-marked-alt text-muted" style="font-size: 3rem;"></i>
-                            <h4 class="mt-3 text-muted">No Site Visits Yet</h4>
-                            <p class="text-muted">Start by adding your first site visit!</p>
-                            @if(auth()->user()->role !== 'super_admin')
-                            <a href="{{ route('site-visits.create') }}" class="btn btn-success">
-                                <i class="fas fa-plus me-2"></i>Add Site Visit
-                            </a>
-                            @endif
+
+                        <!-- Pending Site Visits -->
+                        <div class="tab-pane fade" id="pending" role="tabpanel">
+                            @include('site-visits.partials.visits-table', ['siteVisits' => $pendingSiteVisits, 'emptyMessage' => 'No pending site visits'])
                         </div>
-                    @endif
+
+                        <!-- Follow-Up Site Visits -->
+                        <div class="tab-pane fade" id="followup" role="tabpanel">
+                            @include('site-visits.partials.visits-table', ['siteVisits' => $followUpSiteVisits, 'emptyMessage' => 'No follow-up site visits'])
+                        </div>
+
+                        <!-- Completed Site Visits -->
+                        <div class="tab-pane fade" id="completed" role="tabpanel">
+                            @include('site-visits.partials.visits-table', ['siteVisits' => $completedSiteVisits, 'emptyMessage' => 'No completed site visits'])
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -258,6 +277,7 @@ let streetLayer;
 let satelliteLayer;
 let labelsLayer;
 let currentLayer = 'street';
+let streetLayers = {}; // Make it global
 
 // Initialize the map when the page loads
 document.addEventListener('DOMContentLoaded', function() {
@@ -286,45 +306,118 @@ function initMap() {
         minZoom: 6,  // Prevent zooming out too far
         maxZoom: 18, // Allow detailed zoom
         maxBounds: philippinesBounds, // Restrict panning to Philippines
-        maxBoundsViscosity: 1.0 // Make bounds solid (can't drag outside)
+        maxBoundsViscosity: 1.0, // Make bounds solid (can't drag outside)
+        fadeAnimation: true,
+        zoomAnimation: true,
+        zoomAnimationThreshold: 4,
+        markerZoomAnimation: true
     });
 
-    // Define street layer (OpenStreetMap)
-    streetLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 18,
-        attribution: '© OpenStreetMap contributors'
-    });
+    // Define multiple street layer options
+    streetLayers = {
+        esri: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+            maxZoom: 19,
+            attribution: '© Esri, HERE, Garmin',
+            keepBuffer: 4,
+            updateWhenIdle: false,
+            updateWhenZooming: false,
+            updateInterval: 150
+        }),
+        openstreetmap: L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '© OpenStreetMap contributors',
+            subdomains: 'abc',
+            keepBuffer: 4,
+            updateWhenIdle: false,
+            updateWhenZooming: false,
+            updateInterval: 150
+        }),
+        cartoVoyager: L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+            maxZoom: 19,
+            attribution: '© OpenStreetMap, © CARTO',
+            subdomains: 'abcd',
+            keepBuffer: 4,
+            updateWhenIdle: false,
+            updateWhenZooming: false,
+            updateInterval: 150
+        }),
+        openTopoMap: L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+            maxZoom: 17,
+            attribution: '© OpenStreetMap, © OpenTopoMap',
+            subdomains: 'abc',
+            keepBuffer: 4,
+            updateWhenIdle: false,
+            updateWhenZooming: false,
+            updateInterval: 150
+        })
+    };
+    
+    // Set default street layer (Esri)
+    streetLayer = streetLayers.esri;
 
     // Define satellite layer (Esri World Imagery)
     satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
         maxZoom: 18,
-        attribution: '© Esri, Maxar, Earthstar Geographics'
+        attribution: '© Esri, Maxar, Earthstar Geographics',
+        keepBuffer: 4,
+        updateWhenIdle: false,
+        updateWhenZooming: false,
+        updateInterval: 150
     });
 
-    // Define labels layer (transparent overlay with place names, roads, etc.)
-    // Same as street map labels but will be inverted for satellite view
-    labelsLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}.png', {
-        maxZoom: 18,
-        attribution: '© CartoDB',
-        pane: 'labels'
+    // Define labels layer (for satellite view)
+    labelsLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', {
+        maxZoom: 19,
+        attribution: '© Esri',
+        pane: 'labels',
+        keepBuffer: 4,
+        updateWhenIdle: false,
+        updateWhenZooming: false,
+        updateInterval: 150
     });
     
     // Create a custom pane for labels with higher z-index
     map.createPane('labels');
     map.getPane('labels').style.zIndex = 650;
     map.getPane('labels').style.pointerEvents = 'none';
-    
-    // Add custom CSS to invert label colors (black to white) with thin black outline
-    const style = document.createElement('style');
-    style.textContent = `
-        .leaflet-labels-pane {
-            filter: invert(1) drop-shadow(0.5px 0.5px 0px black) drop-shadow(-0.5px -0.5px 0px black);
-        }
-    `;
-    document.head.appendChild(style);
 
     // Add default street layer
     streetLayer.addTo(map);
+    
+    // Add subtle loading indicator
+    let loadingTiles = 0;
+    const loadingIndicator = document.createElement('div');
+    loadingIndicator.style.cssText = `
+        position: absolute;
+        top: 10px;
+        right: 50px;
+        background: rgba(40, 167, 69, 0.9);
+        color: white;
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-size: 12px;
+        z-index: 1000;
+        display: none;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    `;
+    loadingIndicator.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Loading map...';
+    document.getElementById('map').appendChild(loadingIndicator);
+    
+    // Track tile loading
+    map.on('tileloadstart', function() {
+        loadingTiles++;
+        if (loadingTiles > 0) {
+            loadingIndicator.style.display = 'block';
+        }
+    });
+    
+    map.on('tileload tileerror', function() {
+        loadingTiles--;
+        if (loadingTiles <= 0) {
+            loadingTiles = 0;
+            loadingIndicator.style.display = 'none';
+        }
+    });
 
     // Load site visits data
     loadSiteVisits();
@@ -494,6 +587,11 @@ document.getElementById('fullscreenMapBtn').addEventListener('click', function()
         }
         icon.classList.remove('fa-expand');
         icon.classList.add('fa-compress');
+        
+        // Fix map rendering in fullscreen
+        setTimeout(() => {
+            map.invalidateSize();
+        }, 100);
     } else {
         // Exit fullscreen
         if (document.exitFullscreen) {
@@ -505,36 +603,52 @@ document.getElementById('fullscreenMapBtn').addEventListener('click', function()
         }
         icon.classList.remove('fa-compress');
         icon.classList.add('fa-expand');
+        
+        // Fix map rendering after exiting fullscreen
+        setTimeout(() => {
+            map.invalidateSize();
+        }, 100);
     }
 });
 
-// Toggle between street and satellite view
-document.getElementById('toggleMapTypeBtn').addEventListener('click', function() {
-    const btn = this;
-    const icon = btn.querySelector('i');
+// Map style selector (includes satellite view)
+document.getElementById('mapStyleSelector').addEventListener('change', function() {
+    const selectedStyle = this.value;
     
-    if (currentLayer === 'street') {
-        // Switch to satellite with labels
-        map.removeLayer(streetLayer);
+    // Show loading indicator
+    const loadingIndicator = document.querySelector('#map div[style*="Loading map"]');
+    if (loadingIndicator) {
+        loadingIndicator.style.display = 'block';
+    }
+    
+    if (selectedStyle === 'satellite') {
+        // Switch to satellite view
+        if (currentLayer === 'street') {
+            map.removeLayer(streetLayer);
+        }
         satelliteLayer.addTo(map);
-        labelsLayer.addTo(map); // Add labels on top of satellite
+        labelsLayer.addTo(map);
         currentLayer = 'satellite';
-        icon.classList.remove('fa-satellite');
-        icon.classList.add('fa-map');
-        btn.setAttribute('title', 'Toggle Street View');
     } else {
-        // Switch to street
-        map.removeLayer(satelliteLayer);
-        map.removeLayer(labelsLayer); // Remove labels layer
+        // Switch to street view with selected style
+        if (currentLayer === 'satellite') {
+            map.removeLayer(satelliteLayer);
+            map.removeLayer(labelsLayer);
+        } else {
+            map.removeLayer(streetLayer);
+        }
+        streetLayer = streetLayers[selectedStyle];
         streetLayer.addTo(map);
         currentLayer = 'street';
-        icon.classList.remove('fa-map');
-        icon.classList.add('fa-satellite');
-        btn.setAttribute('title', 'Toggle Satellite View');
     }
+    
+    // Force map to refresh
+    setTimeout(() => {
+        map.invalidateSize();
+    }, 100);
 });
 
-// Listen for fullscreen changes to update button icon
+// Listen for fullscreen changes to update button icon and fix map rendering
 document.addEventListener('fullscreenchange', function() {
     const btn = document.getElementById('fullscreenMapBtn');
     const icon = btn.querySelector('i');
@@ -542,6 +656,10 @@ document.addEventListener('fullscreenchange', function() {
         icon.classList.remove('fa-compress');
         icon.classList.add('fa-expand');
     }
+    // Fix map rendering on fullscreen change
+    setTimeout(() => {
+        map.invalidateSize();
+    }, 100);
 });
 
 // Add CSS for fullscreen map
@@ -551,13 +669,24 @@ style.textContent = `
         display: flex;
         flex-direction: column;
         background: white;
+        width: 100vw !important;
+        height: 100vh !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    .card:fullscreen .card-header {
+        flex-shrink: 0;
     }
     .card:fullscreen .card-body {
         flex: 1;
         display: flex;
+        width: 100% !important;
+        height: 100% !important;
+        padding: 0 !important;
     }
     .card:fullscreen #map {
         height: 100% !important;
+        width: 100% !important;
         flex: 1;
     }
 `;

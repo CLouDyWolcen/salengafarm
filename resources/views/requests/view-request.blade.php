@@ -329,42 +329,37 @@
                             <a href="{{ route('requests.index') }}" class="btn btn-outline-secondary">
                                 <i class="fas fa-arrow-left me-1"></i>Back to List
                             </a>
-                            @if(auth()->user()->role !== 'super_admin')
                             <button id="printRequestBtn" class="btn btn-outline-primary">
                                 <i class="fas fa-print me-1"></i>Print
                             </button>
-                            @endif
                         </div>
                     </div>
 
-                        <!-- Notification Container with Push Animation -->
-                        <div class="notification-container">
-                            @if(session('success'))
-                            <div class="alert alert-success alert-dismissible push-notification" role="alert">
-                                <i class="fas fa-check-circle me-2"></i>{{ session('success') }}
-                                <button type="button" class="btn-close notification-close" aria-label="Close"></button>
-                            </div>
-                            @endif
-                            
-                            @if(session('error'))
-                            <div class="alert alert-danger alert-dismissible push-notification" role="alert">
-                                <i class="fas fa-exclamation-circle me-2"></i>{{ session('error') }}
-                                <button type="button" class="btn-close notification-close" aria-label="Close"></button>
-                            </div>
-                            @endif
-
-                            @if($errors->any())
-                            <div class="alert alert-danger alert-dismissible push-notification" role="alert">
-                                <i class="fas fa-exclamation-triangle me-2"></i>
-                                <ul class="mb-0">
-                                    @foreach($errors->all() as $error)
-                                        <li>{{ $error }}</li>
-                                    @endforeach
-                                </ul>
-                                <button type="button" class="btn-close notification-close" aria-label="Close"></button>
-                            </div>
-                            @endif
-                        </div>
+                        @if(session('success') || session('error') || $errors->any())
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function() {
+                                @if(session('success'))
+                                    if (window.PushNotifications) {
+                                        window.PushNotifications.show('success', '{{ session('success') }}', true);
+                                    }
+                                @endif
+                                
+                                @if(session('error'))
+                                    if (window.PushNotifications) {
+                                        window.PushNotifications.show('danger', '{{ session('error') }}', false);
+                                    }
+                                @endif
+                                
+                                @if($errors->any())
+                                    if (window.PushNotifications) {
+                                        @foreach($errors->all() as $error)
+                                            window.PushNotifications.show('danger', '{{ $error }}', false);
+                                        @endforeach
+                                    }
+                                @endif
+                            });
+                        </script>
+                        @endif
 
                         <!-- Pricing Options - Only for Client Requests -->
                         @if($request->request_type == 'client')
@@ -384,11 +379,9 @@
                             <div class="custom-card">
                                 <div class="custom-card-header">
                                     <h5>Request Information</h5>
-                                    @if(auth()->user()->role !== 'super_admin')
                                     <button class="edit-btn edit-request-info-btn" title="Edit Request Information">
                                         <i class="fas fa-edit"></i>
                                     </button>
-                                    @endif
                                 </div>
                                 <div style="padding: 0;">
                                     <div class="info-row">
@@ -422,11 +415,9 @@
                             <div class="custom-card">
                                 <div class="custom-card-header">
                                     <h5>@if($request->request_type == 'user')User Information @else Client Information @endif</h5>
-                                    @if(auth()->user()->role !== 'super_admin')
                                     <button class="edit-btn edit-client-info-btn" title="@if($request->request_type == 'user')Edit User Information @else Edit Client Information @endif">
                                         <i class="fas fa-edit"></i>
                                     </button>
-                                    @endif
                                 </div>
                                 <div class="custom-card-body">
                                     <div style="margin-bottom: 15px;">
@@ -438,7 +429,6 @@
                                         <div class="info-value">{{ htmlspecialchars($request->email) }}</div>
                                     </div>
                                 </div>
-                                @if(auth()->user()->role !== 'super_admin')
                                     @if($request->status == 'pending')
                                         <div class="action-buttons">
                                             <form action="{{ route('requests.send-email', $request->id) }}" method="POST" style="flex: 1; margin: 0;">
@@ -491,7 +481,6 @@
                                             Response sent on {{ $request->response_sent_at ? \Carbon\Carbon::parse($request->response_sent_at)->format('M d, Y') : 'N/A' }}
                                         </div>
                                         
-                                        @if(auth()->user()->role !== 'super_admin')
                                         <div class="action-buttons mt-3">
                                             <form action="{{ route('requests.send-email', $request->id) }}" method="POST" style="flex: 1; margin: 0;">
                                                 @csrf
@@ -514,9 +503,7 @@
                                                 @endif
                                             </button>
                                         </div>
-                                        @endif
                                     @endif
-                                @endif
                             </div>
                         </div>
 
@@ -525,11 +512,9 @@
                             <div class="custom-card">
                                 <div class="custom-card-header">
                                     <h5><i class="fas fa-leaf me-2"></i>Requested Items</h5>
-                                    @if(auth()->user()->role !== 'super_admin')
                                     <button class="edit-btn edit-items-btn" title="Edit Items">
                                         <i class="fas fa-edit"></i>
                                     </button>
-                                    @endif
                                 </div>
                                 <div style="padding: 0;">
                                     <div class="items-table-container">
@@ -824,37 +809,9 @@
     <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="{{ asset('js/push-notifications-global.js') }}?v={{ time() }}"></script>
+    <script src="{{ asset('js/push-notifications-global.js') }}?v=fadefix{{ time() }}"></script>
     <!-- Add your JavaScript for print functionality and other interactions here -->
     <script>
-        // Handle push notification auto-dismiss and close button
-        document.addEventListener('DOMContentLoaded', function() {
-            const notifications = document.querySelectorAll('.push-notification');
-            
-            notifications.forEach(notification => {
-                // Auto-dismiss after 5 seconds
-                setTimeout(() => {
-                    notification.classList.remove('show');
-                    notification.classList.add('fade');
-                    setTimeout(() => {
-                        notification.remove();
-                    }, 300);
-                }, 5000);
-                
-                // Handle close button click
-                const closeBtn = notification.querySelector('.notification-close');
-                if (closeBtn) {
-                    closeBtn.addEventListener('click', function() {
-                        notification.classList.remove('show');
-                        notification.classList.add('fade');
-                        setTimeout(() => {
-                            notification.remove();
-                        }, 300);
-                    });
-                }
-            });
-        });
-        
         $(document).ready(function() {
             // Edit button functionality - show modal forms
             $('.edit-request-info-btn').on('click', function(e) {
@@ -936,8 +893,8 @@
                             // Show success notification
                             if (window.PushNotifications) {
                                 const message = isResend 
-                                    ? `<i class="fas fa-check-circle me-2"></i>Email resent successfully to ${recipientName} (${recipientEmail})!`
-                                    : `<i class="fas fa-check-circle me-2"></i>Email sent successfully to ${recipientName} (${recipientEmail})!`;
+                                    ? `Email resent successfully to ${recipientName} (${recipientEmail})!`
+                                    : `Email sent successfully to ${recipientName} (${recipientEmail})!`;
                                 window.PushNotifications.show('success', message, true);
                             }
                             
@@ -959,7 +916,7 @@
                         }
                         
                         if (window.PushNotifications) {
-                            window.PushNotifications.show('danger', `<i class="fas fa-exclamation-circle me-2"></i>${errorMessage}`, false);
+                            window.PushNotifications.show('danger', errorMessage, false);
                         }
                     }
                 },
@@ -978,7 +935,7 @@
                 $('#emailLoadingModal').modal('hide');
                 
                 if (window.PushNotifications) {
-                    window.PushNotifications.show('warning', '<i class="fas fa-info-circle me-2"></i>Email sending cancelled.', true);
+                    window.PushNotifications.show('warning', 'Email sending cancelled.', true);
                 }
             });
             

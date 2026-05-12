@@ -54,7 +54,7 @@ body {
 /* Profile Container */
 .profile-container {
   max-width: 1000px; /* Slightly increased width */
-  margin: 2rem auto;
+  margin: 1rem auto; /* Reduced from 2rem */
   padding: 0 1rem;
 }
 
@@ -65,7 +65,7 @@ body {
   box-shadow: var(--card-shadow);
   border: none;
   transition: all 0.3s ease;
-  margin-bottom: 1.5rem; /* Reduced spacing */
+  margin-bottom: 1rem; /* Reduced from 1.5rem */
   overflow: hidden;
 }
 
@@ -77,21 +77,21 @@ body {
   background: linear-gradient(145deg, var(--primary-color), var(--secondary-color));
   color: white;
   border-bottom: none;
-  padding: 1rem 1.25rem;
+  padding: 0.75rem 1rem; /* Reduced from 1rem 1.25rem */
   font-weight: 600;
-  font-size: 1.1rem;
+  font-size: 1rem; /* Reduced from 1.1rem */
 }
 
 .card-body {
-  padding: 1.5rem;
+  padding: 1rem; /* Reduced from 1.5rem */
 }
 
 /* Profile Picture Section */
 .profile-pic-container {
-  width: 220px; /* Increased size from 180px */
-  height: 220px; /* Increased size from 180px */
+  width: 160px; /* Reduced from 220px */
+  height: 160px; /* Reduced from 220px */
   position: relative;
-  margin: 0 auto 2rem;
+  margin: 0 auto 1.5rem; /* Reduced bottom margin from 2rem */
   border-radius: 50%;
   transition: all 0.3s ease;
   cursor: pointer;
@@ -118,7 +118,7 @@ body {
   left: 50%;
   transform: translate(-50%, -50%);
   color: white;
-  font-size: 2.5rem;
+  font-size: 2rem; /* Reduced from 2.5rem */
   opacity: 0.9;
   z-index: 2;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
@@ -129,8 +129,8 @@ body {
   height: 100%;
   border-radius: 50%;
   object-fit: cover;
-  border: 5px solid white; /* Increased from 4px */
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15); /* Enhanced shadow */
+  border: 3px solid white; /* Reduced from 5px */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Reduced shadow */
 }
 
 .profile-pic-placeholder {
@@ -142,10 +142,10 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 5rem; /* Increased from 4rem */
+  font-size: 3.5rem; /* Reduced from 5rem */
   font-weight: 600;
-  border: 5px solid white; /* Increased from 4px */
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15); /* Enhanced shadow */
+  border: 3px solid white; /* Reduced from 5px */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Reduced shadow */
 }
 
 /* File upload container and styling */
@@ -153,12 +153,12 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 1.5rem; /* Increased spacing */
+  margin-top: 1rem; /* Reduced from 1.5rem */
   width: 100%;
 }
 
 .upload-btn-wrapper {
-  margin-bottom: 1.25rem;
+  margin-bottom: 1rem; /* Reduced from 1.25rem */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -184,13 +184,14 @@ body {
   font-weight: 500;
   color: var(--text-medium);
   border: 1px solid #dee2e6;
-  padding: 0.85rem 1.5rem;
+  padding: 0.6rem 1.2rem; /* Reduced from 0.85rem 1.5rem */
   border-radius: var(--button-radius);
   transition: all 0.3s ease;
   text-align: center;
   background-color: white;
-  width: 220px; /* Matching the profile pic width */
-  margin-bottom: 0.5rem;
+  width: 160px; /* Reduced to match new profile pic width */
+  margin-bottom: 0.4rem; /* Reduced from 0.5rem */
+  font-size: 0.9rem; /* Added smaller font size */
 }
 
 .btn-upload:hover {
@@ -207,8 +208,8 @@ body {
 
 #file-chosen {
   display: block;
-  font-size: 0.85rem;
-  max-width: 220px;
+  font-size: 0.8rem; /* Reduced from 0.85rem */
+  max-width: 160px; /* Reduced to match new width */
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -220,16 +221,16 @@ body {
 .form-label {
   font-weight: 600;
   color: var(--text-dark);
-  margin-bottom: 0.5rem;
-  font-size: 0.95rem;
+  margin-bottom: 0.4rem; /* Reduced from 0.5rem */
+  font-size: 0.9rem; /* Reduced from 0.95rem */
 }
 
 .form-control {
-  height: 3rem; /* Increased height */
+  height: 2.5rem; /* Reduced from 3rem */
   border-radius: var(--input-radius);
   border: 1px solid #dee2e6;
-  padding: 0.75rem 1rem;
-  font-size: 1rem;
+  padding: 0.6rem 0.8rem; /* Reduced from 0.75rem 1rem */
+  font-size: 0.9rem; /* Reduced from 1rem */
   transition: all 0.2s ease;
 }
 
@@ -245,16 +246,16 @@ body {
 }
 
 .form-group {
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem; /* Reduced from 1.5rem */
 }
 
 /* Buttons */
 .btn {
-  padding: 0.75rem 1.5rem;
+  padding: 0.6rem 1.2rem; /* Reduced from 0.75rem 1.5rem */
   font-weight: 600;
   border-radius: var(--button-radius);
   transition: all 0.3s ease;
-  font-size: 0.95rem;
+  font-size: 0.9rem; /* Reduced from 0.95rem */
 }
 
 .btn-primary {
@@ -302,19 +303,26 @@ body {
   color: white;
   border: none;
   width: 100%;
-  max-width: 220px; /* Matching other elements */
-  padding: 0.85rem 1.5rem; /* Increased padding */
+  max-width: 160px; /* Reduced to match new profile pic width */
+  padding: 0.6rem 1.2rem; /* Reduced from 0.85rem 1.5rem */
   font-weight: 600;
-  font-size: 1rem;
+  font-size: 0.9rem; /* Reduced from 1rem */
   letter-spacing: 0.5px;
-  margin-top: 0.5rem;
+  margin-top: 0.4rem; /* Reduced from 0.5rem */
 }
 
-.btn-update-picture:hover {
+.btn-update-picture:hover:not(:disabled) {
   background: linear-gradient(145deg, var(--primary-hover), var(--primary-color));
   transform: translateY(-2px);
   color: white;
   box-shadow: 0 6px 12px rgba(42, 157, 78, 0.25);
+}
+
+.btn-update-picture:disabled {
+  background: #a9d7b9 !important;
+  cursor: not-allowed !important;
+  transform: none !important;
+  box-shadow: none !important;
 }
 
 /* Password Visibility Toggle */
@@ -347,8 +355,8 @@ body {
 /* Success & Error Messages */
 .alert {
   border-radius: var(--border-radius);
-  padding: 1rem 1.25rem;
-  margin-bottom: 1.5rem;
+  padding: 0.8rem 1rem; /* Reduced from 1rem 1.25rem */
+  margin-bottom: 1rem; /* Reduced from 1.5rem */
   border: none;
   font-weight: 500;
 }
@@ -390,60 +398,60 @@ body {
   }
   
   .profile-pic-container {
-    width: 150px;
-    height: 150px;
+    width: 120px; /* Reduced from 150px */
+    height: 120px; /* Reduced from 150px */
   }
   
   .card-body {
-    padding: 1.25rem;
+    padding: 0.8rem; /* Reduced from 1.25rem */
   }
 }
 
 /* Ensure profile picture maintains size on all screens above mobile */
 @media (min-width: 768px) {
   .profile-pic-container {
-    width: 220px !important;
-    height: 220px !important;
+    width: 160px !important; /* Updated to new size */
+    height: 160px !important; /* Updated to new size */
   }
   
   .profile-pic,
   .profile-pic-placeholder {
-    width: 220px !important;
-    height: 220px !important;
+    width: 160px !important; /* Updated to new size */
+    height: 160px !important; /* Updated to new size */
   }
 }
   .form-control {
-    height: 2.75rem;
+    height: 2.4rem; /* Reduced from 2.75rem */
   }
 }
 
 @media (max-width: 575.98px) {
   .profile-pic-container {
-    width: 120px;
-    height: 120px;
+    width: 100px; /* Reduced from 120px */
+    height: 100px; /* Reduced from 120px */
   }
   
   .profile-pic-placeholder {
-    font-size: 3rem;
+    font-size: 2.5rem; /* Reduced from 3rem */
   }
   
   .card-header {
-    padding: 0.75rem 1rem;
-    font-size: 1rem;
+    padding: 0.6rem 0.8rem; /* Reduced from 0.75rem 1rem */
+    font-size: 0.9rem; /* Reduced from 1rem */
   }
   
   .card-body {
-    padding: 1rem;
+    padding: 0.8rem; /* Reduced from 1rem */
   }
   
   .form-control {
-    height: 2.5rem;
-    font-size: 0.9rem;
+    height: 2.2rem; /* Reduced from 2.5rem */
+    font-size: 0.85rem; /* Reduced from 0.9rem */
   }
   
   .btn {
-    padding: 0.6rem 1.25rem;
-    font-size: 0.9rem;
+    padding: 0.5rem 1rem; /* Reduced from 0.6rem 1.25rem */
+    font-size: 0.85rem; /* Reduced from 0.9rem */
   }
 }
 

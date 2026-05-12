@@ -9,7 +9,7 @@
         </div>
         <div>
             <a href="{{ route('user-requests.index') }}" class="btn btn-outline-secondary">
-                <i class="fas fa-arrow-left me-1"></i> Back to User Requests
+                <i class="fas fa-arrow-left me-1"></i> Back to Client Inquiry
             </a>
             @if($request->pdf_path)
             <a href="{{ route('user-requests.download-pdf', $request->id) }}" class="btn btn-success ms-2">

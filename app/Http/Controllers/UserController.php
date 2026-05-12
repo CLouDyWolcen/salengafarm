@@ -31,7 +31,7 @@ class UserController extends Controller
             'contact_number' => 'required|string|max:255',
             'company_name' => 'required|string|max:255',
             'password' => 'required|string|min:8|confirmed',
-            'role' => 'required|in:user,admin',
+            'role' => 'required|in:client,admin',
         ]);
 
         $validated['is_client'] = $request->has('is_client');
@@ -45,7 +45,7 @@ class UserController extends Controller
     public function updateRole(User $user, Request $request)
     {
         $request->validate([
-            'role' => 'required|in:user,admin',
+            'role' => 'required|in:client,admin',
             'is_client' => 'boolean'
         ]);
 
@@ -91,7 +91,8 @@ class UserController extends Controller
         Log::info('User update request:', [
             'user_id' => $user->id,
             'request_data' => $request->all(),
-            'has_is_client' => $request->has('is_client'),
+            'has_page_access' => $request->has('page_access'),
+            'page_access_value' => $request->input('page_access'),
         ]);
 
         $validated = $request->validate([
@@ -99,13 +100,28 @@ class UserController extends Controller
             'last_name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $user->id,
             'contact_number' => 'nullable|string|max:255',
-            'role' => 'required|in:user,admin',
+            'role' => 'required|in:client,admin',
             'account_type' => 'nullable|in:individual,company',
             'address' => 'nullable|string|max:255',
             'gender' => 'nullable|in:male,female,other',
             'company_name' => 'nullable|string|max:255',
             'company_address' => 'nullable|string|max:255',
+            'page_access' => 'nullable|array',
         ]);
+
+        // Handle page access permissions - CRITICAL FIX
+        // When no checkboxes are checked, the browser doesn't send page_access at all
+        // So we need to explicitly check and set it
+        if ($request->has('page_access') && is_array($request->input('page_access'))) {
+            // Filter out 'home' since it's always accessible and disabled in form
+            $pageAccess = array_filter($request->input('page_access'), function($page) {
+                return $page !== 'home';
+            });
+            $validated['page_access'] = json_encode(array_values($pageAccess));
+        } else {
+            // No checkboxes were checked (or all were unchecked)
+            $validated['page_access'] = json_encode([]);
+        }
 
         // Handle the is_client checkbox explicitly
         $validated['is_client'] = $request->has('is_client');
@@ -132,13 +148,14 @@ class UserController extends Controller
         Log::info('About to update user with data:', [
             'user_id' => $user->id,
             'validated_data' => $validated,
+            'page_access_json' => $validated['page_access'],
         ]);
 
         $user->update($validated);
 
         // Log the user after update
         Log::info('User after update:', [
-            'user' => $user->toArray()
+            'user' => $user->fresh()->toArray()
         ]);
 
         return redirect()->route('users.index')->with('success', 'User updated successfully');

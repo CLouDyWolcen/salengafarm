@@ -32,30 +32,30 @@
         </div>
     </div>
 
-    <!-- Notification Container with Push Animation -->
+    <!-- Notification Container -->
     <div class="notification-container">
-        @if(session('success'))
-        <div class="alert alert-success alert-dismissible push-notification" role="alert">
-            <i class="fas fa-check-circle me-2"></i>{{ session('success') }}
-            <button type="button" class="btn-close notification-close" aria-label="Close"></button>
-            <div class="alert-countdown-bar"></div>
-        </div>
-        @endif
-
-        @if(session('error'))
-        <div class="alert alert-danger alert-dismissible push-notification" role="alert">
-            <i class="fas fa-exclamation-circle me-2"></i>{{ session('error') }}
-            <button type="button" class="btn-close notification-close" aria-label="Close"></button>
-            <div class="alert-countdown-bar"></div>
-        </div>
-        @endif
-
-        @if(session('warning'))
-        <div class="alert alert-warning alert-dismissible push-notification" role="alert">
-            <i class="fas fa-info-circle me-2"></i>{{ session('warning') }}
-            <button type="button" class="btn-close notification-close" aria-label="Close"></button>
-            <div class="alert-countdown-bar"></div>
-        </div>
+        @if(session('success') || session('error') || session('warning'))
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                @if(session('success'))
+                    if (window.PushNotifications) {
+                        window.PushNotifications.show('success', '{{ session('success') }}', true);
+                    }
+                @endif
+                
+                @if(session('error'))
+                    if (window.PushNotifications) {
+                        window.PushNotifications.show('danger', '{{ session('error') }}', false);
+                    }
+                @endif
+                
+                @if(session('warning'))
+                    if (window.PushNotifications) {
+                        window.PushNotifications.show('warning', '{{ session('warning') }}', true);
+                    }
+                @endif
+            });
+        </script>
         @endif
     </div>
 
@@ -71,7 +71,7 @@
         <li class="nav-item" role="presentation">
             <button class="nav-link" id="user-tab" data-bs-toggle="tab" data-bs-target="#user-requests"
                     type="button" role="tab" aria-controls="user-requests" aria-selected="false">
-                <i class="fas fa-users me-2"></i>User Requests
+                <i class="fas fa-users me-2"></i>Client Inquiry
                 <span class="badge bg-primary ms-2">{{ count($userRequests) }}</span>
             </button>
         </li>
@@ -132,27 +132,25 @@
                                             <a href="{{ route('requests.view', $request->id) }}" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="View request details">
                                                 <i class="fas fa-eye"></i>
                                             </a>
-                                            @if(auth()->user()->role !== 'super_admin')
-                                                @if($request->status == 'pending')
-                                                <form action="{{ route('requests.send-email', $request->id) }}" method="POST" style="display:inline-block;" class="email-form" data-recipient-name="{{ $request->name }}" data-recipient-email="{{ $request->email }}" data-recipient-type="Client">
-                                                    @csrf
-                                                    <button type="submit" class="btn btn-sm btn-success email-btn" data-bs-toggle="tooltip" data-bs-placement="top" title="Send Email to Client">
-                                                        <i class="fas fa-envelope"></i>
-                                                    </button>
-                                                </form>
-                                                @elseif(($request->status == 'sent' || $request->status == 'responded') && $request->pdf_path)
-                                                <a href="{{ route('requests.download-pdf', $request->id) }}" class="btn btn-sm btn-info" data-bs-toggle="tooltip" data-bs-placement="top" title="Download PDF">
-                                                    <i class="fas fa-download"></i>
-                                                </a>
-                                                @endif
-                                                <form action="{{ route('requests.destroy', $request->id) }}" method="POST" style="display:inline-block;">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="button" class="btn btn-sm btn-danger delete-request-btn" data-request-id="{{ $request->id }}" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete this request">
-                                                        <i class="fas fa-trash"></i>
-                                                    </button>
-                                                </form>
+                                            @if($request->status == 'pending')
+                                            <form action="{{ route('requests.send-email', $request->id) }}" method="POST" style="display:inline-block;" class="email-form" data-recipient-name="{{ $request->name }}" data-recipient-email="{{ $request->email }}" data-recipient-type="Client">
+                                                @csrf
+                                                <button type="submit" class="btn btn-sm btn-success email-btn" data-bs-toggle="tooltip" data-bs-placement="top" title="Send Email to Client">
+                                                    <i class="fas fa-envelope"></i>
+                                                </button>
+                                            </form>
+                                            @elseif(($request->status == 'sent' || $request->status == 'responded') && $request->pdf_path)
+                                            <a href="{{ route('requests.download-pdf', $request->id) }}" class="btn btn-sm btn-info" data-bs-toggle="tooltip" data-bs-placement="top" title="Download PDF">
+                                                <i class="fas fa-download"></i>
+                                            </a>
                                             @endif
+                                            <form action="{{ route('requests.destroy', $request->id) }}" method="POST" style="display:inline-block;">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="button" class="btn btn-sm btn-danger delete-request-btn" data-request-id="{{ $request->id }}" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete this request">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
                                         </td>
                                     </tr>
                                 @empty
@@ -167,7 +165,7 @@
             </div>
         </div>
 
-        <!-- User Requests Tab -->
+        <!-- Client Inquiry Tab -->
         <div class="tab-pane fade" id="user-requests" role="tabpanel" aria-labelledby="user-tab">
             <div class="card">
                 <div class="card-body">
@@ -207,32 +205,30 @@
                                             <a href="{{ route('requests.view', $request->id) }}" class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="View request details">
                                                 <i class="fas fa-eye"></i>
                                             </a>
-                                            @if(auth()->user()->role !== 'super_admin')
-                                                @if($request->status == 'pending')
-                                                <form action="{{ route('requests.send-email', $request->id) }}" method="POST" style="display:inline-block;" class="email-form" data-recipient-name="{{ $request->name }}" data-recipient-email="{{ $request->email }}" data-recipient-type="User">
-                                                    @csrf
-                                                    <button type="submit" class="btn btn-sm btn-success email-btn" data-bs-toggle="tooltip" data-bs-placement="top" title="Send Email to User">
-                                                        <i class="fas fa-envelope"></i>
-                                                    </button>
-                                                </form>
-                                                @elseif(($request->status == 'sent' || $request->status == 'responded') && $request->pdf_path)
-                                                <a href="{{ route('requests.download-pdf', $request->id) }}" class="btn btn-sm btn-info" data-bs-toggle="tooltip" data-bs-placement="top" title="Download PDF">
-                                                    <i class="fas fa-download"></i>
-                                                </a>
-                                                @endif
-                                                <form action="{{ route('requests.destroy', $request->id) }}" method="POST" style="display:inline-block;">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="button" class="btn btn-sm btn-danger delete-request-btn" data-request-id="{{ $request->id }}" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete this request">
-                                                        <i class="fas fa-trash"></i>
-                                                    </button>
-                                                </form>
+                                            @if($request->status == 'pending')
+                                            <form action="{{ route('requests.send-email', $request->id) }}" method="POST" style="display:inline-block;" class="email-form" data-recipient-name="{{ $request->name }}" data-recipient-email="{{ $request->email }}" data-recipient-type="User">
+                                                @csrf
+                                                <button type="submit" class="btn btn-sm btn-success email-btn" data-bs-toggle="tooltip" data-bs-placement="top" title="Send Email to User">
+                                                    <i class="fas fa-envelope"></i>
+                                                </button>
+                                            </form>
+                                            @elseif(($request->status == 'sent' || $request->status == 'responded') && $request->pdf_path)
+                                            <a href="{{ route('requests.download-pdf', $request->id) }}" class="btn btn-sm btn-info" data-bs-toggle="tooltip" data-bs-placement="top" title="Download PDF">
+                                                <i class="fas fa-download"></i>
+                                            </a>
                                             @endif
+                                            <form action="{{ route('requests.destroy', $request->id) }}" method="POST" style="display:inline-block;">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="button" class="btn btn-sm btn-danger delete-request-btn" data-request-id="{{ $request->id }}" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete this request">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
                                         </td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="8" class="text-center py-4">No user requests found</td>
+                                        <td colspan="8" class="text-center py-4">No client inquiries found</td>
                                     </tr>
                                 @endforelse
                             </tbody>
@@ -289,6 +285,7 @@
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="{{ asset('js/push-notifications-global.js') }}?v=fadefix{{ time() }}"></script>
 <script src="{{ asset('js/alerts.js') }}?v={{ time() }}"></script>
 <script src="{{ asset('js/push-notifications.js') }}?v={{ time() }}"></script>
 
@@ -303,33 +300,6 @@
             $('#client-tab').tab('show');
         }
         @endif
-        
-        // Auto-dismiss alerts after 5 seconds with countdown animation
-        const alerts = document.querySelectorAll('.alert.push-notification');
-        alerts.forEach(function(alert) {
-            const countdownBar = alert.querySelector('.alert-countdown-bar');
-            
-            // Start countdown animation
-            if (countdownBar) {
-                countdownBar.style.animation = 'countdown 5s linear forwards';
-            }
-            
-            // Auto-dismiss after 5 seconds
-            const dismissTimer = setTimeout(function() {
-                const bsAlert = new bootstrap.Alert(alert);
-                bsAlert.close();
-            }, 5000);
-            
-            // Manual close button - clear timer if manually closed
-            const closeBtn = alert.querySelector('.notification-close');
-            if (closeBtn) {
-                closeBtn.addEventListener('click', function() {
-                    clearTimeout(dismissTimer);
-                    const bsAlert = new bootstrap.Alert(alert);
-                    bsAlert.close();
-                });
-            }
-        });
         
         // Check if a specific tab should be shown based on URL parameter
         const urlParams = new URLSearchParams(window.location.search);
@@ -357,7 +327,7 @@
             const swipeThreshold = 100; // minimum distance to trigger swipe
 
             if (touchEndX + swipeThreshold < touchStartX) {
-                // Swipe left - go to user requests
+                // Swipe left - go to client inquiry
                 $('#user-tab').tab('show');
             } else if (touchEndX > touchStartX + swipeThreshold) {
                 // Swipe right - go to client requests
@@ -735,26 +705,6 @@ document.addEventListener('DOMContentLoaded', function() {
     opacity: 0;
     margin-bottom: 0;
     pointer-events: none;
-}
-
-/* Countdown bar animation */
-.alert-countdown-bar {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    height: 4px;
-    width: 100%;
-    background: rgba(0, 0, 0, 0.2);
-    transform-origin: left;
-}
-
-@keyframes countdown {
-    from {
-        transform: scaleX(1);
-    }
-    to {
-        transform: scaleX(0);
-    }
 }
 
 /* Content push effect */

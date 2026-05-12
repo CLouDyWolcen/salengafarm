@@ -19,8 +19,8 @@
                     <i class="fas fa-download"></i>Download RFQ
                 </a>
             @endif
-            <a href="{{ route('dashboard.user') }}" class="back-btn">
-                <i class="fas fa-arrow-left"></i>Back to Dashboard
+            <a href="{{ route('my-requests.index') }}" class="back-btn">
+                <i class="fas fa-arrow-left"></i>Back to My Requests
             </a>
         </div>
     </div>

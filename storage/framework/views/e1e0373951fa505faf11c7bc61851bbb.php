@@ -249,23 +249,37 @@
                             <i class="fas fa-home me-1"></i> Home
                         </a>
                     </li>
+                    <?php if(auth()->user()->hasPageAccess('dashboard')): ?>
                     <li class="nav-item">
                         <a class="nav-link text-white <?php echo e(request()->routeIs('dashboard.user') ? 'active' : ''); ?>" href="<?php echo e(route('dashboard.user')); ?>">
                             <i class="fas fa-gauge me-1"></i> Dashboard
                         </a>
                     </li>
+                    <?php endif; ?>
+                    <?php if(auth()->user()->hasPageAccess('dashboard')): ?>
+                    <li class="nav-item">
+                        <a class="nav-link text-white <?php echo e(request()->routeIs('my-requests.index') ? 'active' : ''); ?>" href="<?php echo e(route('my-requests.index')); ?>">
+                            <i class="fas fa-list-check me-1"></i> My Requests
+                        </a>
+                    </li>
+                    <?php endif; ?>
+                    <?php if(auth()->user()->hasPageAccess('plant_guide')): ?>
                     <li class="nav-item">
                         <a class="nav-link text-white <?php echo e(request()->routeIs('plant-care.*') ? 'active' : ''); ?>" href="<?php echo e(route('plant-care.index')); ?>">
                             <i class="fas fa-leaf me-1"></i> Plant Guide
                         </a>
                     </li>
-                    <?php if(auth()->user()->isClient()): ?>
+                    <?php endif; ?>
                     <li class="nav-item">
                         <a class="nav-link text-white <?php echo e(request()->routeIs('client-data.*') ? 'active' : ''); ?>" href="<?php echo e(route('client-data.index')); ?>">
-                            <i class="fas fa-folder-open me-1"></i> Client Data
+                            <?php if(!auth()->user()->isProfileComplete()): ?>
+                                <i class="fas fa-lock me-1"></i>
+                            <?php else: ?>
+                                <i class="fas fa-folder-open me-1"></i>
+                            <?php endif; ?>
+                            Site Data
                         </a>
                     </li>
-                    <?php endif; ?>
                 </ul>
                 <?php elseif(auth()->check() && auth()->user()->hasAdminAccess()): ?>
                 <!-- Admin users: show Home and Plant Care nav links -->
@@ -365,11 +379,21 @@
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="menuDropdownMobile">
                             <li><a class="dropdown-item" href="<?php echo e(route('public.plants')); ?>"><i class="fas fa-home me-2"></i>Home</a></li>
+                            <?php if(auth()->user()->hasPageAccess('dashboard')): ?>
                             <li><a class="dropdown-item" href="<?php echo e(route('dashboard.user')); ?>"><i class="fas fa-gauge me-2"></i>Dashboard</a></li>
-                            <li><a class="dropdown-item" href="<?php echo e(route('plant-care.index')); ?>"><i class="fas fa-leaf me-2"></i>Plant Guide</a></li>
-                            <?php if(auth()->user()->isClient()): ?>
-                                <li><a class="dropdown-item" href="<?php echo e(route('client-data.index')); ?>"><i class="fas fa-folder-open me-2"></i>Client Data</a></li>
+                            <li><a class="dropdown-item" href="<?php echo e(route('my-requests.index')); ?>"><i class="fas fa-list-check me-2"></i>My Requests</a></li>
                             <?php endif; ?>
+                            <?php if(auth()->user()->hasPageAccess('plant_guide')): ?>
+                            <li><a class="dropdown-item" href="<?php echo e(route('plant-care.index')); ?>"><i class="fas fa-leaf me-2"></i>Plant Guide</a></li>
+                            <?php endif; ?>
+                            <li><a class="dropdown-item" href="<?php echo e(route('client-data.index')); ?>">
+                                <?php if(!auth()->user()->isProfileComplete()): ?>
+                                    <i class="fas fa-lock me-2"></i>
+                                <?php else: ?>
+                                    <i class="fas fa-folder-open me-2"></i>
+                                <?php endif; ?>
+                                Site Data
+                            </a></li>
                         </ul>
                     </div>
                     <?php endif; ?>
@@ -386,17 +410,60 @@
                             <?php endif; ?>
                                 <span><?php echo e(auth()->user()->name); ?></span>
                         </button>
-                        <ul class="dropdown-menu dropdown-menu-end">
+                        <ul class="dropdown-menu dropdown-menu-end user-dropdown-enhanced">
+                            <!-- User Info Header -->
+                            <li class="dropdown-header user-info-header">
+                                <div class="user-name">
+                                    <i class="fas fa-user-circle me-2"></i><?php echo e(auth()->user()->first_name); ?> <?php echo e(auth()->user()->last_name); ?>
+
+                                </div>
+                                <div class="user-email"><?php echo e(auth()->user()->email); ?></div>
+                                <div class="user-account-type">
+                                    <span class="badge bg-<?php echo e(auth()->user()->account_type === 'company' ? 'primary' : 'info'); ?>">
+                                        <i class="fas fa-<?php echo e(auth()->user()->account_type === 'company' ? 'building' : 'user'); ?> me-1"></i>
+                                        <?php echo e(ucfirst(auth()->user()->account_type ?? 'Individual')); ?> Account
+                                    </span>
+                                </div>
+                            </li>
+                            
+                            <!-- Profile Completion Section -->
+                            <?php if(!auth()->user()->isProfileComplete()): ?>
+                            <li class="dropdown-item-text profile-completion-section">
+                                <div class="completion-warning">
+                                    <i class="fas fa-exclamation-triangle text-warning me-2"></i>
+                                    <span class="completion-text">Profile <?php echo e(auth()->user()->getProfileCompletionPercentage()); ?>% Complete</span>
+                                </div>
+                                <div class="progress mt-2 mb-2" style="height: 6px;">
+                                    <div class="progress-bar bg-warning" role="progressbar" 
+                                         style="width: <?php echo e(auth()->user()->getProfileCompletionPercentage()); ?>%">
+                                    </div>
+                                </div>
+                                <a href="<?php echo e(route('profile.edit')); ?>" class="btn btn-sm btn-warning w-100">
+                                    <i class="fas fa-edit me-1"></i>Complete Profile
+                                </a>
+                            </li>
+                            <?php else: ?>
+                            <li class="dropdown-item-text profile-completion-section">
+                                <div class="completion-success">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    <span class="completion-text">Profile Complete</span>
+                                </div>
+                            </li>
+                            <?php endif; ?>
+                            
+                            <li><hr class="dropdown-divider"></li>
+                            
+                            <!-- Menu Items -->
                             <li>
                                 <a class="dropdown-item" href="<?php echo e(route('profile.edit')); ?>">
-                                    <i class="fas fa-user me-2"></i>Profile
+                                    <i class="fas fa-user-edit me-2"></i>Edit Profile
                                 </a>
                             </li>
                             <li><hr class="dropdown-divider"></li>
                             <li>
-                                <form action="<?php echo e(route('logout')); ?>" method="POST">
+                                <form id="public-logout-form" action="<?php echo e(route('logout')); ?>" method="POST">
                                     <?php echo csrf_field(); ?>
-                                    <button type="submit" class="dropdown-item">
+                                    <button type="button" class="dropdown-item text-danger" id="public-logout-btn">
                                         <i class="fas fa-sign-out-alt me-2"></i>Logout
                                     </button>
                                 </form>
@@ -450,6 +517,30 @@
     <?php if(request()->routeIs('requests.*') || request()->is('*/plants')): ?>
     <script src="<?php echo e(asset('js/rfq.js')); ?>?v=<?php echo e(time()); ?>"></script>
     <?php endif; ?>
+    
+    <!-- Public Logout Confirmation Script -->
+    <?php if(auth()->guard()->check()): ?>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const publicLogoutBtn = document.getElementById('public-logout-btn');
+        if (publicLogoutBtn) {
+            publicLogoutBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                AlertSystem.confirm({
+                    title: 'Logout?',
+                    message: 'Are you sure you want to log out?',
+                    confirmText: 'Yes, Logout',
+                    cancelText: 'Cancel',
+                    onConfirm: function() {
+                        document.getElementById('public-logout-form').submit();
+                    }
+                });
+            });
+        }
+    });
+    </script>
+    <?php endif; ?>
+    
     <?php echo $__env->yieldContent('scripts'); ?>
 </body>
 </html><?php /**PATH C:\CODING\my_Inventory\resources\views/layouts/public.blade.php ENDPATH**/ ?>

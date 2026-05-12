@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\SiteVisit;
+use App\Models\SiteVisitRequest;
 use App\Models\User;
+use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -16,8 +18,13 @@ class SiteVisitController extends Controller
      */
     public function index()
     {
-        $siteVisits = SiteVisit::orderBy('visit_date', 'desc')->get();
-        return view('site-visits.index', compact('siteVisits'));
+        // Get all site visits grouped by status
+        $allSiteVisits = SiteVisit::orderBy('visit_date', 'desc')->get();
+        $pendingSiteVisits = SiteVisit::where('status', 'pending')->orderBy('visit_date', 'desc')->get();
+        $followUpSiteVisits = SiteVisit::where('status', 'follow_up')->orderBy('visit_date', 'desc')->get();
+        $completedSiteVisits = SiteVisit::where('status', 'completed')->orderBy('visit_date', 'desc')->get();
+        
+        return view('site-visits.index', compact('allSiteVisits', 'pendingSiteVisits', 'followUpSiteVisits', 'completedSiteVisits'));
     }
 
     /**
@@ -656,6 +663,11 @@ class SiteVisitController extends Controller
             abort(403, 'Access denied. This page is only available for clients.');
         }
         
+        // Check if profile is complete - redirect to teaser if not
+        if (!$user->isProfileComplete()) {
+            return view('site-visit-teaser');
+        }
+        
         $siteVisits = SiteVisit::where('user_id', $user->id)
             ->where(function($q){
                 $q->where('status', 'completed')
@@ -1012,5 +1024,278 @@ class SiteVisitController extends Controller
                 'message' => 'Error deleting file: ' . $e->getMessage()
             ], 500);
         }
+    }
+
+    /**
+     * Display site visit requests (admin only)
+     */
+    public function requestsIndex()
+    {
+        if (!Auth::user()->hasAdminAccess()) {
+            abort(403);
+        }
+
+        $pendingRequests = SiteVisitRequest::with(['user', 'reviewer'])
+            ->where('status', 'pending')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $approvedRequests = SiteVisitRequest::with(['user', 'reviewer'])
+            ->where('status', 'approved')
+            ->orderBy('reviewed_at', 'desc')
+            ->get();
+
+        $rejectedRequests = SiteVisitRequest::with(['user', 'reviewer'])
+            ->where('status', 'rejected')
+            ->orderBy('reviewed_at', 'desc')
+            ->get();
+
+        return view('site-visit-requests.index', compact('pendingRequests', 'approvedRequests', 'rejectedRequests'));
+    }
+
+    /**
+     * Show the form for creating a new site visit request (client only)
+     */
+    public function createRequest()
+    {
+        $user = Auth::user();
+        
+        if (!$user->isClient()) {
+            abort(403, 'Only clients can request site visits.');
+        }
+
+        // Check if profile is complete - redirect to teaser if not
+        if (!$user->isProfileComplete()) {
+            return view('site-visit-teaser');
+        }
+
+        return view('site-visit-requests.create');
+    }
+
+    /**
+     * Store a new site visit request (client only)
+     */
+    public function storeRequest(Request $request)
+    {
+        $user = Auth::user();
+        
+        if (!$user->isClient()) {
+            abort(403, 'Only clients can request site visits.');
+        }
+
+        try {
+            $validated = $request->validate([
+                'preferred_date' => 'required|date|after_or_equal:today',
+                'preferred_time' => 'nullable',
+                'property_address' => 'required|string|max:500',
+                'property_size' => 'nullable|string|max:100',
+                'current_condition' => 'nullable|string|max:100',
+                'project_description' => 'required|string|max:2000',
+                'special_requirements' => 'nullable|string|max:1000',
+                'photos.*' => 'nullable|image|mimes:jpg,jpeg,png|max:5120', // 5MB
+            ]);
+
+            // Handle photo uploads
+            $photos = [];
+            if ($request->hasFile('photos')) {
+                $uploadedPhotos = $request->file('photos');
+                
+                // Limit to 5 photos
+                if (count($uploadedPhotos) > 5) {
+                    return back()->withInput()->with('error', 'You can only upload a maximum of 5 photos.');
+                }
+
+                foreach ($uploadedPhotos as $photo) {
+                    $path = $photo->store('site-visit-requests', 'public');
+                    $photos[] = $path;
+                }
+            }
+
+            $validated['user_id'] = $user->id;
+            $validated['photos'] = $photos;
+            $validated['status'] = 'pending';
+
+            $siteVisitRequest = SiteVisitRequest::create($validated);
+
+            // Create notification for all admins
+            $admins = User::where('role', 'admin')
+                ->orWhere('role', 'super_admin')
+                ->get();
+            
+            foreach ($admins as $admin) {
+                Notification::create([
+                    'user_id' => $admin->id,
+                    'type' => 'site_visit_request',
+                    'title' => 'New Site Visit Request',
+                    'message' => $user->first_name . ' ' . $user->last_name . ' has submitted a new site visit request.',
+                    'link' => route('site-visit-requests.index'),
+                    'is_read' => false,
+                ]);
+            }
+
+            return redirect()->route('client-data.index')
+                ->with('success', 'Your site visit request has been submitted successfully. We will review it and get back to you soon.');
+
+        } catch (\Exception $e) {
+            Log::error('Error creating site visit request: ' . $e->getMessage());
+            
+            return back()->withInput()
+                ->with('error', 'Error submitting request. Please try again.');
+        }
+    }
+
+    /**
+     * Approve a site visit request (admin only)
+     */
+    public function approveRequest(Request $request, SiteVisitRequest $siteVisitRequest)
+    {
+        if (!Auth::user()->hasAdminAccess()) {
+            abort(403);
+        }
+
+        $validated = $request->validate([
+            'admin_notes' => 'nullable|string|max:1000',
+        ]);
+
+        // Update the request status
+        $siteVisitRequest->update([
+            'status' => 'approved',
+            'admin_notes' => $validated['admin_notes'] ?? null,
+            'reviewed_by' => Auth::id(),
+            'reviewed_at' => now(),
+        ]);
+
+        // Automatically create a Site Visit from the approved request
+        $siteVisit = SiteVisit::create([
+            'user_id' => $siteVisitRequest->user_id, // Link to client account
+            'location_address' => $siteVisitRequest->property_address,
+            'client' => $siteVisitRequest->user ? $siteVisitRequest->user->first_name . ' ' . $siteVisitRequest->user->last_name : 'Guest',
+            'contact_number' => $siteVisitRequest->user ? $siteVisitRequest->user->contact_number : null,
+            'email' => $siteVisitRequest->user ? $siteVisitRequest->user->email : null,
+            'visit_date' => $siteVisitRequest->preferred_date,
+            'status' => 'pending', // Set to pending so it appears in Pending tab
+            'client_data_open' => true, // Open for client uploads immediately
+            'notes' => 'Created from Site Visit Request #' . $siteVisitRequest->id . "\n\n" . 
+                       'Project Description: ' . $siteVisitRequest->project_description . "\n" .
+                       'Property Size: ' . $siteVisitRequest->property_size . "\n" .
+                       'Current Condition: ' . $siteVisitRequest->current_condition . "\n" .
+                       'Special Requirements: ' . $siteVisitRequest->special_requirements,
+        ]);
+
+        // Link the site visit back to the request
+        $siteVisitRequest->update([
+            'site_visit_id' => $siteVisit->id,
+        ]);
+
+        // Create notification for the client
+        if ($siteVisitRequest->user_id) {
+            Notification::create([
+                'user_id' => $siteVisitRequest->user_id,
+                'type' => 'site_visit_approved',
+                'title' => 'Site Visit Request Approved',
+                'message' => 'Your site visit request has been approved! You can now view the site data and upload your documents.',
+                'link' => route('client-data.show', $siteVisit->id),
+                'is_read' => false,
+            ]);
+        }
+
+        return redirect()->route('site-visit-requests.index')
+            ->with('success', 'Site visit request approved and site visit created successfully. The site visit is now in the Pending tab.');
+    }
+
+    /**
+     * Reject a site visit request (admin only)
+     */
+    public function rejectRequest(Request $request, SiteVisitRequest $siteVisitRequest)
+    {
+        if (!Auth::user()->hasAdminAccess()) {
+            abort(403);
+        }
+
+        $validated = $request->validate([
+            'rejection_reason' => 'required|string|max:1000',
+        ]);
+
+        $siteVisitRequest->update([
+            'status' => 'rejected',
+            'rejection_reason' => $validated['rejection_reason'],
+            'reviewed_by' => Auth::id(),
+            'reviewed_at' => now(),
+        ]);
+
+        return redirect()->route('site-visit-requests.index')
+            ->with('success', 'Site visit request rejected. The client has been notified.');
+    }
+
+    /**
+     * Delete a site visit request (admin only)
+     */
+    public function destroyRequest(SiteVisitRequest $siteVisitRequest)
+    {
+        if (!Auth::user()->hasAdminAccess()) {
+            abort(403);
+        }
+
+        // Delete associated photos from storage
+        if ($siteVisitRequest->photos && is_array($siteVisitRequest->photos)) {
+            foreach ($siteVisitRequest->photos as $photo) {
+                if (Storage::disk('public')->exists($photo)) {
+                    Storage::disk('public')->delete($photo);
+                }
+            }
+        }
+
+        // Store client name for success message
+        $clientName = $siteVisitRequest->user->first_name . ' ' . $siteVisitRequest->user->last_name;
+
+        // IMPORTANT: Do NOT delete the associated site visit
+        // Only unlink the request from the site visit
+        if ($siteVisitRequest->site_visit_id) {
+            $siteVisit = SiteVisit::find($siteVisitRequest->site_visit_id);
+            if ($siteVisit) {
+                // The site visit remains, we just delete the request record
+                // This allows admins to clean up requests without affecting actual site visits
+            }
+        }
+
+        // Delete the request
+        $siteVisitRequest->delete();
+
+        return redirect()->route('site-visit-requests.index')
+            ->with('success', 'Site visit request from ' . $clientName . ' has been deleted successfully. The associated site visit (if any) was preserved.');
+    }
+
+    /**
+     * Delete a site visit request (client can delete their own)
+     */
+    public function destroyClientRequest(SiteVisitRequest $siteVisitRequest)
+    {
+        $user = Auth::user();
+        
+        // Check if this request belongs to the user
+        if ($siteVisitRequest->user_id !== $user->id) {
+            abort(403, 'You can only delete your own requests.');
+        }
+
+        // Clients can only delete pending or rejected requests
+        if ($siteVisitRequest->status === 'approved') {
+            return redirect()->route('my-requests.index')
+                ->with('error', 'You cannot delete an approved request. Please contact admin if you need assistance.');
+        }
+
+        // Delete associated photos from storage
+        if ($siteVisitRequest->photos && is_array($siteVisitRequest->photos)) {
+            foreach ($siteVisitRequest->photos as $photo) {
+                if (Storage::disk('public')->exists($photo)) {
+                    Storage::disk('public')->delete($photo);
+                }
+            }
+        }
+
+        // Delete the request
+        $siteVisitRequest->delete();
+
+        return redirect()->route('my-requests.index')
+            ->with('success', 'Your site visit request has been deleted successfully.');
     }
 }

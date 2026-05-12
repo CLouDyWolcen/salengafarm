@@ -32,7 +32,7 @@ class ClientRequestController extends Controller
             ->orderBy('request_date', 'desc')
             ->get();
             
-        // Get user requests
+        // Get user requests (simple inquiries)
         $userRequests = PlantRequest::where('request_type', 'user')
             ->orderBy('request_date', 'desc')
             ->get();
@@ -933,4 +933,4 @@ class ClientRequestController extends Controller
             $htmlContent
         );
     }
-} 
+}

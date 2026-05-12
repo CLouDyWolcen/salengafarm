@@ -1306,20 +1306,37 @@ unset($__errorArgs, $__bag); ?>
         }
 
         function initMap() {
-            const defaultLat = <?php echo e($siteVisit->latitude); ?>;
-            const defaultLng = <?php echo e($siteVisit->longitude); ?>;
+            // Use existing coordinates or default to Philippines center
+            const defaultLat = <?php echo e($siteVisit->latitude ?? 12.8797); ?>;
+            const defaultLng = <?php echo e($siteVisit->longitude ?? 121.7740); ?>;
+            const hasCoordinates = <?php echo e($siteVisit->latitude ? 'true' : 'false'); ?>;
             
-            // Initialize Leaflet map
-            map = L.map('map').setView([defaultLat, defaultLng], 13);
+            // Philippines bounds (southwest and northeast corners)
+            const philippinesBounds = [
+                [4.5, 116.0],  // Southwest corner (Mindanao south, western edge)
+                [21.0, 127.0]  // Northeast corner (Luzon north, eastern edge)
+            ];
+            
+            // Initialize Leaflet map with Philippines restrictions
+            map = L.map('map', {
+                center: [defaultLat, defaultLng],
+                zoom: hasCoordinates ? 13 : 6,
+                minZoom: 6,  // Prevent zooming out too far
+                maxZoom: 18, // Allow detailed zoom
+                maxBounds: philippinesBounds, // Restrict panning to Philippines
+                maxBoundsViscosity: 1.0 // Make bounds solid (can't drag outside)
+            });
 
             // Add OpenStreetMap tiles
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 maxZoom: 19,
-                attribution: 'Â© OpenStreetMap contributors'
+                attribution: '© OpenStreetMap contributors'
             }).addTo(map);
 
-            // Add existing marker
-            addMarker(defaultLat, defaultLng);
+            // Add existing marker only if coordinates exist
+            if (hasCoordinates) {
+                addMarker(defaultLat, defaultLng);
+            }
 
             // Add click listener to map
             map.on('click', function(e) {

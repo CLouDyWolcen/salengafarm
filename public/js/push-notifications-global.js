@@ -23,6 +23,7 @@ window.PushNotifications = {
 
         // Create notification element
         const notification = document.createElement('div');
+        notification.className = 'push-notification-item';
         notification.style.cssText = `
             background: white;
             border-radius: 8px;
@@ -30,12 +31,12 @@ window.PushNotifications = {
             margin-bottom: 10px;
             padding: 16px;
             border-left: 4px solid ${this.getColor(type)};
-            animation: slideInRight 0.3s ease-out;
+            animation: slideInRight 0.3s ease-out forwards;
             cursor: pointer;
             pointer-events: auto;
-            transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
+            will-change: opacity, transform;
         `;
 
         // Add countdown bar for auto-hide notifications
@@ -73,7 +74,7 @@ window.PushNotifications = {
                         ${message}
                     </div>
                 </div>
-                <button onclick="this.parentElement.parentElement.remove()" style="
+                <button class="notification-close-btn" style="
                     background: none;
                     border: none;
                     color: #999;
@@ -92,15 +93,33 @@ window.PushNotifications = {
             ${countdownBar}
         `;
 
-        // Add hover effects
-        notification.addEventListener('mouseenter', function() {
-            this.style.transform = 'translateX(-5px)';
-            this.style.boxShadow = '0 6px 20px rgba(0,0,0,0.2)';
-        });
+        // Add hover effects - store references so we can remove them later
+        const hoverInHandler = function() {
+            if (!this.dataset.fadingOut) {
+                this.style.transform = 'translateX(-5px)';
+                this.style.boxShadow = '0 6px 20px rgba(0,0,0,0.2)';
+            }
+        };
 
-        notification.addEventListener('mouseleave', function() {
-            this.style.transform = 'translateX(0)';
-            this.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+        const hoverOutHandler = function() {
+            if (!this.dataset.fadingOut) {
+                this.style.transform = 'translateX(0)';
+                this.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+            }
+        };
+
+        notification.addEventListener('mouseenter', hoverInHandler);
+        notification.addEventListener('mouseleave', hoverOutHandler);
+        
+        // Store handlers on element for later removal
+        notification._hoverInHandler = hoverInHandler;
+        notification._hoverOutHandler = hoverOutHandler;
+
+        // Close button handler
+        const closeBtn = notification.querySelector('.notification-close-btn');
+        closeBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            startFadeOut(notification);
         });
 
         // Add to container
@@ -110,12 +129,7 @@ window.PushNotifications = {
         if (autoHide) {
             setTimeout(() => {
                 if (notification.parentNode) {
-                    notification.style.animation = 'slideOutRight 0.3s ease-out forwards';
-                    setTimeout(() => {
-                        if (notification.parentNode) {
-                            notification.remove();
-                        }
-                    }, 300);
+                    startFadeOut(notification);
                 }
             }, 5000);
         }
@@ -136,17 +150,6 @@ window.PushNotifications = {
                     }
                 }
                 
-                @keyframes slideOutRight {
-                    from {
-                        transform: translateX(0);
-                        opacity: 1;
-                    }
-                    to {
-                        transform: translateX(400px);
-                        opacity: 0;
-                    }
-                }
-                
                 @keyframes countdown {
                     from {
                         width: 100%;
@@ -154,6 +157,26 @@ window.PushNotifications = {
                     to {
                         width: 0%;
                     }
+                }
+                
+                /* Fade-out classes with maximum specificity */
+                .push-notification-item.fading-out {
+                    pointer-events: none !important;
+                    cursor: default !important;
+                    animation: none !important;
+                }
+                
+                .push-notification-item.fading-out-opacity {
+                    transition: opacity 0.6s ease !important;
+                    opacity: 0 !important;
+                    transform: translateX(0) !important;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+                }
+                
+                .push-notification-item.fading-out-slide {
+                    transition: transform 0.4s ease, opacity 0.4s ease !important;
+                    transform: translateX(400px) !important;
+                    opacity: 0 !important;
                 }
             `;
             document.head.appendChild(style);
@@ -182,5 +205,49 @@ window.PushNotifications = {
         return icons[type] || icons.info;
     }
 };
+
+// Fade-out function - separate from the main object to avoid closure issues
+function startFadeOut(notification) {
+    if (notification.dataset.fadingOut) return; // Already fading out
+    
+    // Set flag on element itself
+    notification.dataset.fadingOut = 'true';
+    
+    // Remove ALL event listeners to prevent interference
+    if (notification._hoverInHandler) {
+        notification.removeEventListener('mouseenter', notification._hoverInHandler);
+    }
+    if (notification._hoverOutHandler) {
+        notification.removeEventListener('mouseleave', notification._hoverOutHandler);
+    }
+    
+    // Add fading-out class to disable interactions and stop animations
+    notification.classList.add('fading-out');
+    
+    // Reset to neutral state immediately
+    notification.style.transform = 'translateX(0)';
+    notification.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+    notification.style.animation = 'none';
+    
+    // Use requestAnimationFrame for smoother transitions
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+            // Start opacity fade
+            notification.classList.add('fading-out-opacity');
+            
+            // After opacity fade, start slide
+            setTimeout(() => {
+                notification.classList.add('fading-out-slide');
+                
+                // Remove after slide completes
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.remove();
+                    }
+                }, 400);
+            }, 600);
+        });
+    });
+}
 
 console.log('Global PushNotifications system loaded');

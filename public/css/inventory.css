@@ -420,6 +420,17 @@ body {
 /* Table Styles */
 .table {
     margin-bottom: 0;
+    table-layout: fixed;
+}
+
+/* Prevent layout shift on initial load */
+.table tbody {
+    opacity: 1;
+    transition: opacity 0.1s ease-in;
+}
+
+.table.loading tbody {
+    opacity: 0;
 }
 
 .table th {
@@ -431,6 +442,14 @@ body {
     padding: 0.75rem;
     font-size: 0.9rem;
     vertical-align: middle;
+}
+
+/* Fixed width for row number column to prevent layout shift */
+.table th:nth-child(2),
+.table td:nth-child(2) {
+    width: 50px;
+    min-width: 50px;
+    text-align: center;
 }
 
 .text-nowrap {

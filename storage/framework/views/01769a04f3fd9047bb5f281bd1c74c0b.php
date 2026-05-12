@@ -59,6 +59,9 @@
                                 <?php echo csrf_field(); ?>
                                 <?php echo method_field('PUT'); ?>
                                 
+                                <!-- Hidden input to ensure page_access is always sent even when all checkboxes are unchecked -->
+                                <input type="hidden" name="page_access_submitted" value="1">
+                                
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="mb-3">
@@ -190,9 +193,10 @@ endif;
 unset($__errorArgs, $__bag); ?>" 
                                                     id="role" 
                                                     name="role" 
-                                                    required>
+                                                    required
+                                                    onchange="togglePageAccessOptions()">
                                                 <option value="">Select Role</option>
-                                                <option value="user" <?php echo e(old('role', $user->role) == 'user' ? 'selected' : ''); ?>>User</option>
+                                                <option value="client" <?php echo e(old('role', $user->role) == 'client' ? 'selected' : ''); ?>>Client</option>
                                                 <option value="admin" <?php echo e(old('role', $user->role) == 'admin' ? 'selected' : ''); ?>>Admin</option>
                                             </select>
                                             <?php $__errorArgs = ['role'];
@@ -207,184 +211,119 @@ endif;
 unset($__errorArgs, $__bag); ?>
                                         </div>
                                     </div>
-                                    <div class="col-md-6">
-                                        <div class="mb-3">
-                                            <div class="form-check mt-4">
-                                                <input class="form-check-input" 
-                                                       type="checkbox" 
-                                                       id="is_client" 
-                                                       name="is_client" 
-                                                       value="1"
-                                                       <?php echo e(old('is_client', $user->is_client) ? 'checked' : ''); ?>
-
-                                                       onchange="toggleAccountTypeFields()">
-                                                <label class="form-check-label" for="is_client">
-                                                    <strong>Is Client</strong>
-                                                    <small class="text-muted d-block">Check this if the user is also a client</small>
-                                                </label>
-                                            </div>
-                                        </div>
-                                    </div>
                                 </div>
 
-                                <!-- Account Type Section (only shown if is_client is checked) -->
-                                <div id="accountTypeSection" style="display: <?php echo e(old('is_client', $user->is_client) ? 'block' : 'none'); ?>;">
+                                <!-- Page Access Section -->
+                                <div id="pageAccessSection">
                                     <hr class="my-4">
-                                    <h6 class="mb-3">Client Information</h6>
+                                    <h6 class="mb-3">Page Access Permissions</h6>
+                                    <p class="text-muted small mb-3">Select which pages this user can access</p>
                                     
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="mb-3">
-                                                <label for="account_type" class="form-label">Account Type *</label>
-                                                <select class="form-select <?php $__errorArgs = ['account_type'];
-$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
-if ($__bag->has($__errorArgs[0])) :
-if (isset($message)) { $__messageOriginal = $message; }
-$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
-if (isset($__messageOriginal)) { $message = $__messageOriginal; }
-endif;
-unset($__errorArgs, $__bag); ?>" 
-                                                        id="account_type" 
-                                                        name="account_type"
-                                                        onchange="toggleAccountFields()">
-                                                    <option value="individual" <?php echo e(old('account_type', $user->account_type) == 'individual' ? 'selected' : ''); ?>>Individual</option>
-                                                    <option value="company" <?php echo e(old('account_type', $user->account_type) == 'company' ? 'selected' : ''); ?>>Company</option>
-                                                </select>
-                                                <?php $__errorArgs = ['account_type'];
-$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
-if ($__bag->has($__errorArgs[0])) :
-if (isset($message)) { $__messageOriginal = $message; }
-$message = $__bag->first($__errorArgs[0]); ?>
-                                                    <div class="invalid-feedback"><?php echo e($message); ?></div>
-                                                <?php unset($message);
-if (isset($__messageOriginal)) { $message = $__messageOriginal; }
-endif;
-unset($__errorArgs, $__bag); ?>
+                                    <?php
+                                        // Decode the saved page access permissions
+                                        $savedAccess = [];
+                                        if ($user->page_access) {
+                                            $decoded = json_decode($user->page_access, true);
+                                            $savedAccess = is_array($decoded) ? $decoded : [];
+                                        }
+                                    ?>
+                                    
+                                    <!-- Client Pages -->
+                                    <div id="clientPages" style="display: <?php echo e(old('role', $user->role) == 'client' ? 'block' : 'none'); ?>;">
+                                        <div class="row">
+                                            <div class="col-md-3">
+                                                <div class="form-check mb-2">
+                                                    <!-- Hidden input to ensure 'home' is always included -->
+                                                    <input type="hidden" name="page_access[]" value="home">
+                                                    <input class="form-check-input" type="checkbox" id="access_home" value="home" checked disabled>
+                                                    <label class="form-check-label" for="access_home">
+                                                        <i class="fas fa-home me-1"></i> Home
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="form-check mb-2">
+                                                    <input class="form-check-input" type="checkbox" id="access_dashboard" name="page_access[]" value="dashboard" <?php echo e(in_array('dashboard', $savedAccess) ? 'checked' : ''); ?>>
+                                                    <label class="form-check-label" for="access_dashboard">
+                                                        <i class="fas fa-tachometer-alt me-1"></i> Dashboard
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="form-check mb-2">
+                                                    <input class="form-check-input" type="checkbox" id="access_plant_guide" name="page_access[]" value="plant_guide" <?php echo e(in_array('plant_guide', $savedAccess) ? 'checked' : ''); ?>>
+                                                    <label class="form-check-label" for="access_plant_guide">
+                                                        <i class="fas fa-book me-1"></i> Plant Guide
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="form-check mb-2">
+                                                    <input class="form-check-input" type="checkbox" id="access_site_data" name="page_access[]" value="site_data" <?php echo e(in_array('site_data', $savedAccess) ? 'checked' : ''); ?>>
+                                                    <label class="form-check-label" for="access_site_data">
+                                                        <i class="fas fa-map-marked-alt me-1"></i> Site Data
+                                                    </label>
+                                                </div>
                                             </div>
                                         </div>
+                                        <small class="text-muted"><i class="fas fa-info-circle me-1"></i>Home page is always accessible</small>
                                     </div>
 
-                                    <!-- Individual Fields -->
-                                    <div id="individualFields" style="display: <?php echo e(old('account_type', $user->account_type) == 'individual' ? 'block' : 'none'); ?>;">
+                                    <!-- Admin Pages -->
+                                    <div id="adminPages" style="display: <?php echo e(old('role', $user->role) == 'admin' ? 'block' : 'none'); ?>;">
                                         <div class="row">
-                                            <div class="col-md-6">
-                                                <div class="mb-3">
-                                                    <label for="address" class="form-label">Address</label>
-                                                    <input type="text" 
-                                                           class="form-control <?php $__errorArgs = ['address'];
-$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
-if ($__bag->has($__errorArgs[0])) :
-if (isset($message)) { $__messageOriginal = $message; }
-$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
-if (isset($__messageOriginal)) { $message = $__messageOriginal; }
-endif;
-unset($__errorArgs, $__bag); ?>" 
-                                                           id="address" 
-                                                           name="address" 
-                                                           value="<?php echo e(old('address', $user->address)); ?>">
-                                                    <?php $__errorArgs = ['address'];
-$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
-if ($__bag->has($__errorArgs[0])) :
-if (isset($message)) { $__messageOriginal = $message; }
-$message = $__bag->first($__errorArgs[0]); ?>
-                                                        <div class="invalid-feedback"><?php echo e($message); ?></div>
-                                                    <?php unset($message);
-if (isset($__messageOriginal)) { $message = $__messageOriginal; }
-endif;
-unset($__errorArgs, $__bag); ?>
+                                            <div class="col-md-4">
+                                                <div class="form-check mb-2">
+                                                    <!-- Hidden input to ensure 'home' is always included -->
+                                                    <input type="hidden" name="page_access[]" value="home">
+                                                    <input class="form-check-input" type="checkbox" id="admin_access_home" value="home" checked disabled>
+                                                    <label class="form-check-label" for="admin_access_home">
+                                                        <i class="fas fa-home me-1"></i> Home
+                                                    </label>
                                                 </div>
                                             </div>
-                                            <div class="col-md-6">
-                                                <div class="mb-3">
-                                                    <label for="gender" class="form-label">Gender</label>
-                                                    <select class="form-select <?php $__errorArgs = ['gender'];
-$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
-if ($__bag->has($__errorArgs[0])) :
-if (isset($message)) { $__messageOriginal = $message; }
-$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
-if (isset($__messageOriginal)) { $message = $__messageOriginal; }
-endif;
-unset($__errorArgs, $__bag); ?>" 
-                                                            id="gender" 
-                                                            name="gender">
-                                                        <option value="">Select Gender</option>
-                                                        <option value="male" <?php echo e(old('gender', $user->gender) == 'male' ? 'selected' : ''); ?>>Male</option>
-                                                        <option value="female" <?php echo e(old('gender', $user->gender) == 'female' ? 'selected' : ''); ?>>Female</option>
-                                                        <option value="other" <?php echo e(old('gender', $user->gender) == 'other' ? 'selected' : ''); ?>>Other</option>
-                                                    </select>
-                                                    <?php $__errorArgs = ['gender'];
-$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
-if ($__bag->has($__errorArgs[0])) :
-if (isset($message)) { $__messageOriginal = $message; }
-$message = $__bag->first($__errorArgs[0]); ?>
-                                                        <div class="invalid-feedback"><?php echo e($message); ?></div>
-                                                    <?php unset($message);
-if (isset($__messageOriginal)) { $message = $__messageOriginal; }
-endif;
-unset($__errorArgs, $__bag); ?>
+                                            <div class="col-md-4">
+                                                <div class="form-check mb-2">
+                                                    <input class="form-check-input" type="checkbox" id="admin_access_dashboard" name="page_access[]" value="dashboard" <?php echo e(in_array('dashboard', $savedAccess) ? 'checked' : ''); ?>>
+                                                    <label class="form-check-label" for="admin_access_dashboard">
+                                                        <i class="fas fa-tachometer-alt me-1"></i> Dashboard
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-check mb-2">
+                                                    <input class="form-check-input" type="checkbox" id="admin_access_inventory" name="page_access[]" value="inventory" <?php echo e(in_array('inventory', $savedAccess) ? 'checked' : ''); ?>>
+                                                    <label class="form-check-label" for="admin_access_inventory">
+                                                        <i class="fas fa-boxes me-1"></i> Inventory
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-check mb-2">
+                                                    <input class="form-check-input" type="checkbox" id="admin_access_pos" name="page_access[]" value="point_of_sale" <?php echo e(in_array('point_of_sale', $savedAccess) ? 'checked' : ''); ?>>
+                                                    <label class="form-check-label" for="admin_access_pos">
+                                                        <i class="fas fa-cash-register me-1"></i> Point of Sale
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-check mb-2">
+                                                    <input class="form-check-input" type="checkbox" id="admin_access_requests" name="page_access[]" value="requests" <?php echo e(in_array('requests', $savedAccess) ? 'checked' : ''); ?>>
+                                                    <label class="form-check-label" for="admin_access_requests">
+                                                        <i class="fas fa-clipboard-list me-1"></i> Requests
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-check mb-2">
+                                                    <input class="form-check-input" type="checkbox" id="admin_access_site_visits" name="page_access[]" value="site_visits" <?php echo e(in_array('site_visits', $savedAccess) ? 'checked' : ''); ?>>
+                                                    <label class="form-check-label" for="admin_access_site_visits">
+                                                        <i class="fas fa-map-marker-alt me-1"></i> Site Visits
+                                                    </label>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-
-                                    <!-- Company Fields -->
-                                    <div id="companyFields" style="display: <?php echo e(old('account_type', $user->account_type) == 'company' ? 'block' : 'none'); ?>;">
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <div class="mb-3">
-                                                    <label for="company_name" class="form-label">Company Name</label>
-                                                    <input type="text" 
-                                                           class="form-control <?php $__errorArgs = ['company_name'];
-$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
-if ($__bag->has($__errorArgs[0])) :
-if (isset($message)) { $__messageOriginal = $message; }
-$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
-if (isset($__messageOriginal)) { $message = $__messageOriginal; }
-endif;
-unset($__errorArgs, $__bag); ?>" 
-                                                           id="company_name" 
-                                                           name="company_name" 
-                                                           value="<?php echo e(old('company_name', $user->company_name)); ?>">
-                                                    <?php $__errorArgs = ['company_name'];
-$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
-if ($__bag->has($__errorArgs[0])) :
-if (isset($message)) { $__messageOriginal = $message; }
-$message = $__bag->first($__errorArgs[0]); ?>
-                                                        <div class="invalid-feedback"><?php echo e($message); ?></div>
-                                                    <?php unset($message);
-if (isset($__messageOriginal)) { $message = $__messageOriginal; }
-endif;
-unset($__errorArgs, $__bag); ?>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="mb-3">
-                                                    <label for="company_address" class="form-label">Company Address</label>
-                                                    <input type="text" 
-                                                           class="form-control <?php $__errorArgs = ['company_address'];
-$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
-if ($__bag->has($__errorArgs[0])) :
-if (isset($message)) { $__messageOriginal = $message; }
-$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
-if (isset($__messageOriginal)) { $message = $__messageOriginal; }
-endif;
-unset($__errorArgs, $__bag); ?>" 
-                                                           id="company_address" 
-                                                           name="company_address" 
-                                                           value="<?php echo e(old('company_address', $user->company_address)); ?>">
-                                                    <?php $__errorArgs = ['company_address'];
-$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
-if ($__bag->has($__errorArgs[0])) :
-if (isset($message)) { $__messageOriginal = $message; }
-$message = $__bag->first($__errorArgs[0]); ?>
-                                                        <div class="invalid-feedback"><?php echo e($message); ?></div>
-                                                    <?php unset($message);
-if (isset($__messageOriginal)) { $message = $__messageOriginal; }
-endif;
-unset($__errorArgs, $__bag); ?>
-                                                </div>
-                                            </div>
-                                        </div>
+                                        <small class="text-muted"><i class="fas fa-info-circle me-1"></i>Home page is always accessible</small>
                                     </div>
                                 </div>
 
@@ -405,31 +344,27 @@ unset($__errorArgs, $__bag); ?>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="<?php echo e(asset('js/dashboard.js')); ?>?v=3"></script>
     <script>
-        function toggleAccountTypeFields() {
-            const isClient = document.getElementById('is_client').checked;
-            const accountTypeSection = document.getElementById('accountTypeSection');
+        function togglePageAccessOptions() {
+            const role = document.getElementById('role').value;
+            const clientPages = document.getElementById('clientPages');
+            const adminPages = document.getElementById('adminPages');
             
-            if (isClient) {
-                accountTypeSection.style.display = 'block';
-                toggleAccountFields(); // Also toggle the specific fields
+            if (role === 'client') {
+                clientPages.style.display = 'block';
+                adminPages.style.display = 'none';
+            } else if (role === 'admin') {
+                clientPages.style.display = 'none';
+                adminPages.style.display = 'block';
             } else {
-                accountTypeSection.style.display = 'none';
+                clientPages.style.display = 'none';
+                adminPages.style.display = 'none';
             }
         }
         
-        function toggleAccountFields() {
-            const accountType = document.getElementById('account_type').value;
-            const individualFields = document.getElementById('individualFields');
-            const companyFields = document.getElementById('companyFields');
-            
-            if (accountType === 'individual') {
-                individualFields.style.display = 'block';
-                companyFields.style.display = 'none';
-            } else {
-                individualFields.style.display = 'none';
-                companyFields.style.display = 'block';
-            }
-        }
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            togglePageAccessOptions();
+        });
     </script>
 </body>
 </html>

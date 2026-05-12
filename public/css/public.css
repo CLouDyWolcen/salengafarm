@@ -159,6 +159,84 @@
     text-align: center !important;
 }
 
+/* Enhanced User Dropdown Styles */
+.user-dropdown-enhanced {
+    min-width: 280px !important;
+    padding: 0 !important;
+}
+
+.user-dropdown-enhanced .user-info-header {
+    background: linear-gradient(135deg, #198754 0%, #157347 100%);
+    color: white;
+    padding: 1rem;
+    border-radius: 0.25rem 0.25rem 0 0;
+    margin-bottom: 0;
+}
+
+.user-dropdown-enhanced .user-name {
+    font-weight: 600;
+    font-size: 1rem;
+    margin-bottom: 0.25rem;
+    display: flex;
+    align-items: center;
+}
+
+.user-dropdown-enhanced .user-email {
+    font-size: 0.8rem;
+    opacity: 0.9;
+    margin-bottom: 0.5rem;
+    word-break: break-word;
+}
+
+.user-dropdown-enhanced .user-account-type {
+    margin-top: 0.5rem;
+}
+
+.user-dropdown-enhanced .user-account-type .badge {
+    font-size: 0.75rem;
+    font-weight: 500;
+    padding: 0.35rem 0.6rem;
+}
+
+.user-dropdown-enhanced .profile-completion-section {
+    padding: 0.75rem 1rem;
+    background-color: #f8f9fa;
+}
+
+.user-dropdown-enhanced .completion-warning,
+.user-dropdown-enhanced .completion-success {
+    display: flex;
+    align-items: center;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.user-dropdown-enhanced .completion-text {
+    color: #495057;
+}
+
+.user-dropdown-enhanced .progress {
+    background-color: #e9ecef;
+    border-radius: 3px;
+}
+
+.user-dropdown-enhanced .btn-sm {
+    font-size: 0.8rem;
+    padding: 0.4rem 0.8rem;
+}
+
+.user-dropdown-enhanced .dropdown-item {
+    padding: 0.6rem 1rem !important;
+}
+
+.user-dropdown-enhanced .dropdown-item.text-danger:hover {
+    background-color: #fff5f5 !important;
+}
+
+.user-dropdown-enhanced .dropdown-divider {
+    margin: 0.25rem 0;
+}
+
 /* Container Spacing */
 .container {
     max-width: 1140px;

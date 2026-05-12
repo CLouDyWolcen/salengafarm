@@ -64,20 +64,6 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="contact_number" class="form-label">Contact Number</label>
-                        <div class="clean-input-group">        
-                            <i class="fas fa-phone input-icon"></i>
-                            <input type="tel" 
-                                   id="contact_number"
-                                   name="contact_number" 
-                                   value="{{ old('contact_number') }}" 
-                                   placeholder="Enter your contact number (optional)"
-                                   autocomplete="tel"
-                                   class="clean-input">
-                        </div>
-                    </div>
-
-                    <div class="form-group">
                         <label for="email" class="form-label">Email Address</label>
                         <div class="clean-input-group">
                             <span class="input-icon">@</span>

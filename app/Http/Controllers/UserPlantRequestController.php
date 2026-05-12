@@ -13,7 +13,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 class UserPlantRequestController extends Controller
 {
     /**
-     * Display the form for users to request plants.
+     * Display the form for clients to request plants (simple inquiry).
      */
     public function create()
     {
@@ -22,7 +22,7 @@ class UserPlantRequestController extends Controller
     }
 
     /**
-     * Show the plant selection interface for users.
+     * Show the plant selection interface for clients.
      */
     public function selectPlants()
     {
@@ -31,12 +31,12 @@ class UserPlantRequestController extends Controller
     }
 
     /**
-     * Store a new plant request from a user.
+     * Store a new plant request from a client (simple inquiry).
      */
     public function store(Request $request)
     {
         try {
-            Log::info('Received user plant request: ' . json_encode($request->all()));
+            Log::info('Received client plant inquiry: ' . json_encode($request->all()));
             
             // Validate the request
             $validator = Validator::make($request->all(), [
@@ -47,10 +47,19 @@ class UserPlantRequestController extends Controller
                 'message' => 'nullable|string|max:1000',
                 'items_json' => 'required|string',
                 'preferred_delivery_date' => 'nullable|date',
-                'agree_to_terms' => 'required|accepted',
+                'agree_to_terms' => 'required', // Changed from 'accepted' to just 'required'
             ]);
             
             if ($validator->fails()) {
+                Log::error('Validation failed for plant inquiry: ' . json_encode($validator->errors()));
+                
+                if ($request->expectsJson()) {
+                    return response()->json([
+                        'message' => 'Validation failed: ' . $validator->errors()->first(),
+                        'errors' => $validator->errors()
+                    ], 422);
+                }
+                
                 return back()->withErrors($validator)->withInput();
             }
             
@@ -64,9 +73,9 @@ class UserPlantRequestController extends Controller
             $plantRequest->request_date = now();
             $plantRequest->due_date = $request->preferred_delivery_date ?? now()->addDays(14);
             $plantRequest->items_json = json_decode($request->items_json, true);
-            $plantRequest->pricing = 'None'; // User requests don't include pricing
+            $plantRequest->pricing = 'None'; // Simple inquiries don't include pricing
             $plantRequest->status = 'pending';
-            $plantRequest->request_type = 'user'; // Mark this as a user request vs partner RFQ
+            $plantRequest->request_type = 'user'; // Keep as 'user' type for simple inquiries
             $plantRequest->save();
             
             // Generate PDF
@@ -74,16 +83,16 @@ class UserPlantRequestController extends Controller
             
             if ($request->expectsJson()) {
                 return response()->json([
-                    'message' => 'Your plant request has been submitted successfully!',
+                    'message' => 'Your plant inquiry has been submitted successfully!',
                     'request_id' => $plantRequest->id
                 ]);
             }
             
             return redirect()->route('user.plant-request.success', $plantRequest->id)
-                ->with('success', 'Your plant request has been submitted successfully!');
+                ->with('success', 'Your plant inquiry has been submitted successfully!');
                 
         } catch (\Exception $e) {
-            Log::error('Failed to process user plant request: ' . $e->getMessage());
+            Log::error('Failed to process client plant inquiry: ' . $e->getMessage());
             
             if ($request->expectsJson()) {
                 return response()->json([
@@ -134,34 +143,6 @@ class UserPlantRequestController extends Controller
     }
 
     /**
-     * Display all user plant requests (admin view)
-     */
-    public function adminIndex()
-    {
-        // Only show requests with type 'user'
-        $userRequests = PlantRequest::where('request_type', 'user')
-            ->orderBy('created_at', 'desc')
-            ->get();
-            
-        return view('admin.requests.user-requests', compact('userRequests'));
-    }
-    
-    /**
-     * View details of a specific user request
-     */
-    public function viewRequest($id)
-    {
-        $request = PlantRequest::findOrFail($id);
-        
-        if ($request->request_type !== 'user') {
-            return redirect()->route('requests.index')
-                ->with('error', 'This is not a user plant request.');
-        }
-        
-        return view('admin.requests.user-request-detail', compact('request'));
-    }
-
-    /**
      * Download the generated PDF
      */
     public function downloadPdf($id)
@@ -173,6 +154,35 @@ class UserPlantRequestController extends Controller
             $request->refresh();
         }
         
-        return Storage::download($request->pdf_path, 'plant_request_' . $id . '.pdf');
+        return Storage::download($request->pdf_path, 'plant_inquiry_' . $id . '.pdf');
+    }
+
+    /**
+     * Delete a plant request (for users to delete their own requests)
+     */
+    public function destroy($id)
+    {
+        try {
+            $user = auth()->user();
+            
+            // Find the request and verify it belongs to this user
+            $plantRequest = PlantRequest::where('id', $id)
+                ->where('email', $user->email)
+                ->firstOrFail();
+            
+            // Delete associated PDF if exists
+            if ($plantRequest->pdf_path && Storage::exists($plantRequest->pdf_path)) {
+                Storage::delete($plantRequest->pdf_path);
+            }
+            
+            // Delete the request
+            $plantRequest->delete();
+            
+            return redirect()->back()->with('success', 'Request deleted successfully.');
+            
+        } catch (\Exception $e) {
+            Log::error('Failed to delete plant request: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Failed to delete request. Please try again.');
+        }
     }
 }

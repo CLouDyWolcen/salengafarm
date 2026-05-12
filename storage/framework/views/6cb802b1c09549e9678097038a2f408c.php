@@ -30,37 +30,57 @@
         <?php ($isAdmin = $user && method_exists($user, 'hasAdminAccess') ? $user->hasAdminAccess() : false); ?>
         <?php ($isClient = $user && method_exists($user, 'isClient') ? $user->isClient() : false); ?>
         <?php ($currentRoute = request()->path()); ?>
+        
+        <!-- Home is always accessible -->
         <li class="nav-item">
             <a href="/" class="nav-link sidebar-link <?php echo e($currentRoute == '/' ? 'active' : ''); ?>" title="Home">
                 <i class="fas fa-house me-2 text-success"></i> <span>Home</span>
             </a>
         </li>
-        <li class="nav-item">
-            <a href="/dashboard" class="nav-link sidebar-link <?php echo e(str_starts_with($currentRoute, 'dashboard') ? 'active' : ''); ?>" title="Dashboard">
-                <i class="fas fa-tachometer-alt me-2 text-success"></i> <span>Dashboard</span>
-            </a>
-        </li>
+        
         <?php if($isAdmin): ?>
+            <!-- Admin Menu Items with Page Access Control -->
+            <?php if($user->hasPageAccess('dashboard')): ?>
+            <li class="nav-item">
+                <a href="/dashboard" class="nav-link sidebar-link <?php echo e(str_starts_with($currentRoute, 'dashboard') ? 'active' : ''); ?>" title="Dashboard">
+                    <i class="fas fa-tachometer-alt me-2 text-success"></i> <span>Dashboard</span>
+                </a>
+            </li>
+            <?php endif; ?>
+            
+            <?php if($user->hasPageAccess('inventory')): ?>
             <li class="nav-item">
                 <a href="/plants" class="nav-link sidebar-link <?php echo e(str_starts_with($currentRoute, 'plants') ? 'active' : ''); ?>" title="Inventory">
                     <i class="fas fa-seedling me-2 text-success"></i> <span>Inventory</span>
                 </a>
             </li>
+            <?php endif; ?>
+            
+            <?php if($user->hasPageAccess('point_of_sale')): ?>
             <li class="nav-item">
-                <a href="<?php echo e(Auth::user()->role === 'super_admin' ? '/walk-in/inventory' : '/walk-in'); ?>" class="nav-link sidebar-link <?php echo e(str_starts_with($currentRoute, 'walk-in') ? 'active' : ''); ?>" title="Point-of-Sale">
+                <a href="<?php echo e(route('walk-in.index')); ?>" class="nav-link sidebar-link <?php echo e(str_starts_with($currentRoute, 'walk-in') ? 'active' : ''); ?>" title="Point-of-Sale">
                     <i class="fas fa-cash-register me-2 text-success"></i> <span>Point-of-Sale</span>
                 </a>
             </li>
+            <?php endif; ?>
+            
+            <?php if($user->hasPageAccess('requests')): ?>
             <li class="nav-item">
                 <a href="/requests" class="nav-link sidebar-link <?php echo e(str_starts_with($currentRoute, 'requests') ? 'active' : ''); ?>" title="Requests">
                     <i class="fas fa-envelope-open-text me-2 text-success"></i> <span>Requests</span>
                 </a>
             </li>
+            <?php endif; ?>
+            
+            <?php if($user->hasPageAccess('site_visits')): ?>
             <li class="nav-item">
                 <a href="/site-visits" class="nav-link sidebar-link <?php echo e(str_starts_with($currentRoute, 'site-visits') ? 'active' : ''); ?>" title="Site Visits">
                     <i class="fas fa-map-marked-alt me-2 text-success"></i> <span>Site Visits</span>
                 </a>
             </li>
+            <?php endif; ?>
+            
+            <!-- User Management - Super Admin Only -->
             <?php if($user && $user->role === 'super_admin'): ?>
             <li class="nav-item">
                 <a href="/users" class="nav-link sidebar-link <?php echo e(str_starts_with($currentRoute, 'users') ? 'active' : ''); ?>" title="Users">
@@ -68,12 +88,32 @@
                 </a>
             </li>
             <?php endif; ?>
+            
         <?php elseif($isClient): ?>
+            <!-- Client Menu Items with Page Access Control -->
+            <?php if($user->hasPageAccess('dashboard')): ?>
             <li class="nav-item">
-                <a href="<?php echo e(route('client-data.index')); ?>" class="nav-link sidebar-link <?php echo e(str_starts_with($currentRoute, 'client-data') ? 'active' : ''); ?>" title="Client Data">
-                    <i class="fas fa-folder-open me-2 text-success"></i> <span>Client Data</span>
+                <a href="/dashboard" class="nav-link sidebar-link <?php echo e(str_starts_with($currentRoute, 'dashboard') ? 'active' : ''); ?>" title="Dashboard">
+                    <i class="fas fa-tachometer-alt me-2 text-success"></i> <span>Dashboard</span>
                 </a>
             </li>
+            <?php endif; ?>
+            
+            <?php if($user->hasPageAccess('plant_guide')): ?>
+            <li class="nav-item">
+                <a href="/plants/public" class="nav-link sidebar-link <?php echo e(str_starts_with($currentRoute, 'plants/public') ? 'active' : ''); ?>" title="Plant Guide">
+                    <i class="fas fa-book me-2 text-success"></i> <span>Plant Guide</span>
+                </a>
+            </li>
+            <?php endif; ?>
+            
+            <?php if($user->hasPageAccess('site_data')): ?>
+            <li class="nav-item">
+                <a href="<?php echo e(route('client-data.index')); ?>" class="nav-link sidebar-link <?php echo e(str_starts_with($currentRoute, 'client-data') ? 'active' : ''); ?>" title="Site Data">
+                    <i class="fas fa-folder-open me-2 text-success"></i> <span>Site Data</span>
+                </a>
+            </li>
+            <?php endif; ?>
         <?php endif; ?>
     </ul>
     <hr style="margin: 1.2rem 0 0.7rem 0.7rem; border-color: #e0e8d8;">

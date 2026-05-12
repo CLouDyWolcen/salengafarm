@@ -249,23 +249,37 @@
                             <i class="fas fa-home me-1"></i> Home
                         </a>
                     </li>
+                    @if(auth()->user()->hasPageAccess('dashboard'))
                     <li class="nav-item">
                         <a class="nav-link text-white {{ request()->routeIs('dashboard.user') ? 'active' : '' }}" href="{{ route('dashboard.user') }}">
                             <i class="fas fa-gauge me-1"></i> Dashboard
                         </a>
                     </li>
+                    @endif
+                    @if(auth()->user()->hasPageAccess('dashboard'))
+                    <li class="nav-item">
+                        <a class="nav-link text-white {{ request()->routeIs('my-requests.index') ? 'active' : '' }}" href="{{ route('my-requests.index') }}">
+                            <i class="fas fa-list-check me-1"></i> My Requests
+                        </a>
+                    </li>
+                    @endif
+                    @if(auth()->user()->hasPageAccess('plant_guide'))
                     <li class="nav-item">
                         <a class="nav-link text-white {{ request()->routeIs('plant-care.*') ? 'active' : '' }}" href="{{ route('plant-care.index') }}">
                             <i class="fas fa-leaf me-1"></i> Plant Guide
                         </a>
                     </li>
-                    @if(auth()->user()->isClient())
+                    @endif
                     <li class="nav-item">
                         <a class="nav-link text-white {{ request()->routeIs('client-data.*') ? 'active' : '' }}" href="{{ route('client-data.index') }}">
-                            <i class="fas fa-folder-open me-1"></i> Client Data
+                            @if(!auth()->user()->isProfileComplete())
+                                <i class="fas fa-lock me-1"></i>
+                            @else
+                                <i class="fas fa-folder-open me-1"></i>
+                            @endif
+                            Site Data
                         </a>
                     </li>
-                    @endif
                 </ul>
                 @elseif(auth()->check() && auth()->user()->hasAdminAccess())
                 <!-- Admin users: show Home and Plant Care nav links -->
@@ -365,11 +379,21 @@
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="menuDropdownMobile">
                             <li><a class="dropdown-item" href="{{ route('public.plants') }}"><i class="fas fa-home me-2"></i>Home</a></li>
+                            @if(auth()->user()->hasPageAccess('dashboard'))
                             <li><a class="dropdown-item" href="{{ route('dashboard.user') }}"><i class="fas fa-gauge me-2"></i>Dashboard</a></li>
-                            <li><a class="dropdown-item" href="{{ route('plant-care.index') }}"><i class="fas fa-leaf me-2"></i>Plant Guide</a></li>
-                            @if(auth()->user()->isClient())
-                                <li><a class="dropdown-item" href="{{ route('client-data.index') }}"><i class="fas fa-folder-open me-2"></i>Client Data</a></li>
+                            <li><a class="dropdown-item" href="{{ route('my-requests.index') }}"><i class="fas fa-list-check me-2"></i>My Requests</a></li>
                             @endif
+                            @if(auth()->user()->hasPageAccess('plant_guide'))
+                            <li><a class="dropdown-item" href="{{ route('plant-care.index') }}"><i class="fas fa-leaf me-2"></i>Plant Guide</a></li>
+                            @endif
+                            <li><a class="dropdown-item" href="{{ route('client-data.index') }}">
+                                @if(!auth()->user()->isProfileComplete())
+                                    <i class="fas fa-lock me-2"></i>
+                                @else
+                                    <i class="fas fa-folder-open me-2"></i>
+                                @endif
+                                Site Data
+                            </a></li>
                         </ul>
                     </div>
                     @endif
@@ -386,17 +410,59 @@
                             @endif
                                 <span>{{ auth()->user()->name }}</span>
                         </button>
-                        <ul class="dropdown-menu dropdown-menu-end">
+                        <ul class="dropdown-menu dropdown-menu-end user-dropdown-enhanced">
+                            <!-- User Info Header -->
+                            <li class="dropdown-header user-info-header">
+                                <div class="user-name">
+                                    <i class="fas fa-user-circle me-2"></i>{{ auth()->user()->first_name }} {{ auth()->user()->last_name }}
+                                </div>
+                                <div class="user-email">{{ auth()->user()->email }}</div>
+                                <div class="user-account-type">
+                                    <span class="badge bg-{{ auth()->user()->account_type === 'company' ? 'primary' : 'info' }}">
+                                        <i class="fas fa-{{ auth()->user()->account_type === 'company' ? 'building' : 'user' }} me-1"></i>
+                                        {{ ucfirst(auth()->user()->account_type ?? 'Individual') }} Account
+                                    </span>
+                                </div>
+                            </li>
+                            
+                            <!-- Profile Completion Section -->
+                            @if(!auth()->user()->isProfileComplete())
+                            <li class="dropdown-item-text profile-completion-section">
+                                <div class="completion-warning">
+                                    <i class="fas fa-exclamation-triangle text-warning me-2"></i>
+                                    <span class="completion-text">Profile {{ auth()->user()->getProfileCompletionPercentage() }}% Complete</span>
+                                </div>
+                                <div class="progress mt-2 mb-2" style="height: 6px;">
+                                    <div class="progress-bar bg-warning" role="progressbar" 
+                                         style="width: {{ auth()->user()->getProfileCompletionPercentage() }}%">
+                                    </div>
+                                </div>
+                                <a href="{{ route('profile.edit') }}" class="btn btn-sm btn-warning w-100">
+                                    <i class="fas fa-edit me-1"></i>Complete Profile
+                                </a>
+                            </li>
+                            @else
+                            <li class="dropdown-item-text profile-completion-section">
+                                <div class="completion-success">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    <span class="completion-text">Profile Complete</span>
+                                </div>
+                            </li>
+                            @endif
+                            
+                            <li><hr class="dropdown-divider"></li>
+                            
+                            <!-- Menu Items -->
                             <li>
                                 <a class="dropdown-item" href="{{ route('profile.edit') }}">
-                                    <i class="fas fa-user me-2"></i>Profile
+                                    <i class="fas fa-user-edit me-2"></i>Edit Profile
                                 </a>
                             </li>
                             <li><hr class="dropdown-divider"></li>
                             <li>
-                                <form action="{{ route('logout') }}" method="POST">
+                                <form id="public-logout-form" action="{{ route('logout') }}" method="POST">
                                     @csrf
-                                    <button type="submit" class="dropdown-item">
+                                    <button type="button" class="dropdown-item text-danger" id="public-logout-btn">
                                         <i class="fas fa-sign-out-alt me-2"></i>Logout
                                     </button>
                                 </form>
@@ -450,6 +516,30 @@
     @if(request()->routeIs('requests.*') || request()->is('*/plants'))
     <script src="{{ asset('js/rfq.js') }}?v={{ time() }}"></script>
     @endif
+    
+    <!-- Public Logout Confirmation Script -->
+    @auth
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const publicLogoutBtn = document.getElementById('public-logout-btn');
+        if (publicLogoutBtn) {
+            publicLogoutBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                AlertSystem.confirm({
+                    title: 'Logout?',
+                    message: 'Are you sure you want to log out?',
+                    confirmText: 'Yes, Logout',
+                    cancelText: 'Cancel',
+                    onConfirm: function() {
+                        document.getElementById('public-logout-form').submit();
+                    }
+                });
+            });
+        }
+    });
+    </script>
+    @endauth
+    
     @yield('scripts')
 </body>
 </html>

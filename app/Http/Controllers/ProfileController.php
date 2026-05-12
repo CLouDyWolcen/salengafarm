@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
@@ -27,25 +28,66 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
+        $user = $request->user();
+        
+        // Base fields for all users
         $updateData = [
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
             'contact_number' => $request->contact_number,
             'email' => $request->email,
+            'account_type' => $request->account_type ?? $user->account_type,
         ];
 
-        // Only update company_name if user is a client
-        if ($request->user()->is_client) {
-            $updateData['company_name'] = $request->company_name;
+        // Account type specific fields
+        if ($request->account_type === 'company') {
+            // Handle business_type "other" option
+            $businessType = $request->business_type;
+            if ($businessType === 'other' && $request->business_type_other) {
+                $businessType = $request->business_type_other;
+            }
+            
+            $updateData = array_merge($updateData, [
+                'company_name' => $request->company_name,
+                'company_address' => $request->company_address,
+                'company_city' => $request->company_city,
+                'company_province' => $request->company_province,
+                'company_zip_code' => $request->company_zip_code,
+                'company_contact_person' => $request->company_contact_person,
+                'position' => $request->position,
+                'company_phone_number' => $request->company_phone_number,
+                'business_type' => $businessType,
+                'tin' => $request->tin,
+                'website_socials' => $request->website_socials,
+            ]);
+        } else {
+            // Individual account
+            // Handle property_type "other" option
+            $propertyType = $request->property_type;
+            if ($propertyType === 'other' && $request->property_type_other) {
+                $propertyType = $request->property_type_other;
+            }
+            
+            $updateData = array_merge($updateData, [
+                'address' => $request->address,
+                'city' => $request->city,
+                'province' => $request->province,
+                'zip_code' => $request->zip_code,
+                'property_type' => $propertyType,
+                'gender' => $request->gender,
+            ]);
         }
 
-        $request->user()->fill($updateData);
+        $user->fill($updateData);
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+        if ($user->isDirty('email')) {
+            $user->email_verified_at = null;
         }
 
-        $request->user()->save();
+        // Check if profile is now complete and update flag
+        $user->profile_completed = $user->isProfileComplete();
+
+        $user->save();
 
         return redirect()->route('profile.edit')->with('status', 'profile-updated');
     }
@@ -75,7 +117,7 @@ class ProfileController extends Controller
         return Redirect::to('/');
     }
 
-    public function updateAvatar(Request $request): RedirectResponse
+    public function updateAvatar(Request $request): RedirectResponse|JsonResponse
     {
         $request->validate([
             'avatar' => ['required', 'image', 'max:1024'],
@@ -91,6 +133,15 @@ class ProfileController extends Controller
         $request->user()->update([
             'avatar' => $path
         ]);
+
+        // Return JSON for AJAX requests
+        if ($request->expectsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Profile picture updated successfully',
+                'avatar_url' => asset('storage/' . $path)
+            ]);
+        }
 
         return redirect()->route('profile.edit')->with('status', 'avatar-updated');
     }

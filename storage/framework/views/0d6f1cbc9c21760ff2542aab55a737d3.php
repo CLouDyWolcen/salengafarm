@@ -51,7 +51,6 @@
                                     <input type="text" id="searchInput" class="form-control" placeholder="Search by name, code, or scientific name" style="font-size: 0.9rem; padding: 0.4rem 0.75rem;">
                             </div>
                                 <div class="d-flex gap-2 mb-2">
-                                    <?php if(Auth::user()->role !== 'super_admin'): ?>
                                     <button id="addBtn" class="btn btn-success btn-sm">Add New Plant</button>
                                 <div id="bulkActionButtons" class="d-none d-inline">
                                         <button id="bulkEditBtn" class="btn btn-primary btn-sm">
@@ -64,19 +63,16 @@
                                         <i class="fas fa-trash"></i> Delete Selected
                                     </button>
                                 </div>
-                                    <?php endif; ?>
                             </div>
                         </div>
                         <div class="col-md-8">
                                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
                                     <label style="font-size: 0.9rem; margin: 0;">Category Filter</label>
-                                    <?php if(Auth::user()->role !== 'super_admin'): ?>
                                     <div style="display: flex; gap: 0.5rem;">
                                         <button type="button" id="addCategoryBtn" class="btn btn-outline-success btn-sm" style="padding: 0.25rem 0.5rem;">
                                             <i class="fas fa-plus"></i>
                                         </button>
                                     </div>
-                                    <?php endif; ?>
                                 </div>
                                 <div class="category-icons d-flex align-items-center" style="padding: 0.7rem; gap: 0.5rem !important; justify-content: space-between;">
                                 <div class="category-icon-item text-center" data-category="all">
@@ -162,17 +158,15 @@
                 </div>
 
                 <!-- Plants Table -->
-                    <table class="table" style="font-size: 0.8rem;">
+                    <table class="table" id="plantsTable" style="font-size: 0.8rem;">
                     <thead>
                         <tr>
-                            <?php if(Auth::user()->role !== 'super_admin'): ?>
                             <th width="50">
                                 <label class="container-checkbox">
                                     <input type="checkbox" id="selectAll">
                                     <div class="checkmark"></div>
                                 </label>
                             </th>
-                            <?php endif; ?>
                             <th width="50">#</th>
                             <th width="20%">Name</th>
                             <th width="10%">Code</th>
@@ -185,7 +179,7 @@
                         </tr>
                     </thead>
                     <tbody id="plantsTableBody">
-                        <?php $__currentLoopData = $plants; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $plant): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <?php $__currentLoopData = $plants; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $plant): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                             <tr class="plant-row" 
                                 data-id="<?php echo e($plant->id); ?>"
                                 data-category="<?php echo e($plant->category); ?>"
@@ -197,16 +191,15 @@
                                 data-cost-per-sqm="<?php echo e($plant->cost_per_sqm); ?>"
                                 data-pieces-per-sqm="<?php echo e($plant->pieces_per_sqm); ?>"
                                 data-cost-per-mm="<?php echo e($plant->cost_per_mm); ?>"
-                                data-quantity="<?php echo e($plant->quantity); ?>">
-                                <?php if(Auth::user()->role !== 'super_admin'): ?>
+                                data-quantity="<?php echo e($plant->quantity); ?>"
+                                data-original-index="<?php echo e($index + 1); ?>">
                                 <td>
                                     <label class="container-checkbox">
                                         <input type="checkbox" class="plant-checkbox" value="<?php echo e($plant->id); ?>">
                                         <div class="checkmark"></div>
                                     </label>
                                 </td>
-                                <?php endif; ?>
-                                <td class="row-number"></td>
+                                <td class="row-number"><?php echo e($index + 1); ?></td>
                                 <td class="text-nowrap"><?php echo e($plant->name); ?></td>
                                 <td class="text-nowrap"><?php echo e($plant->code); ?></td>
                                 <td><?php echo e($plant->scientific_name); ?></td>
@@ -216,14 +209,12 @@
                                 <td><?php echo e($plant->spacing_mm); ?></td>
                                 <td>
                                     <div class="d-flex gap-2 justify-content-end">
-                                        <?php if(Auth::user()->role !== 'super_admin'): ?>
                                         <button class="btn btn-link text-primary edit-plant" data-plant-id="<?php echo e($plant->id); ?>" title="Edit">
                                             <i class="fas fa-edit fa-lg"></i>
                                         </button>
                                         <button class="btn btn-link text-danger delete-plant" data-plant-id="<?php echo e($plant->id); ?>" title="Delete">
                                             <i class="fas fa-trash fa-lg"></i>
                                         </button>
-                                        <?php endif; ?>
                                         <button class="btn btn-link text-secondary toggle-details" data-plant-id="<?php echo e($plant->id); ?>">
                                             <i class="fas fa-chevron-circle-down fa-lg"></i>
                                         </button>
@@ -521,6 +512,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="<?php echo e(asset('js/push-notifications-global.js')); ?>?v=fadefix<?php echo e(time()); ?>"></script>
     <script src="<?php echo e(asset('js/alerts.js')); ?>?v=<?php echo e(time()); ?>"></script>
     <script src="<?php echo e(asset('js/loading.js')); ?>"></script>
     <script src="<?php echo e(asset('js/push-notifications.js')); ?>?v=<?php echo e(time()); ?>"></script>
@@ -543,8 +535,8 @@
                 });
             }
 
-            // Initial numbering
-            updateRowNumbers();
+            // Initial numbering - numbers are already rendered by PHP, just update for filtered views
+            // No need to call updateRowNumbers() on initial load to prevent layout shift
 
             // Category icon selection
             $('.category-icon-item').click(function() {
@@ -774,8 +766,16 @@
                     },
                     success: function(response) {
                         $('#plantModal').modal('hide');
-                        showNotification('Plant saved successfully!');
-                        location.reload();
+                        
+                        // Use PushNotifications instead of custom notification
+                        if (window.PushNotifications) {
+                            window.PushNotifications.show('success', 'Plant saved successfully!', true);
+                        }
+                        
+                        // Reload the table data without refreshing the page
+                        setTimeout(() => {
+                            location.reload();
+                        }, 2500); // Give time to see the notification
                     },
                     error: function(xhr) {
                         let errorMessage = 'An error occurred while saving the plant.';
@@ -1661,11 +1661,9 @@
                 <div class="modal-body">
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <p class="text-muted mb-0" style="font-size: 0.9rem;">Click on a category to filter plants</p>
-                        <?php if(auth()->check() && auth()->user()->hasAdminAccess() && !auth()->user()->isSuperAdmin()): ?>
                         <button type="button" id="deleteModeCategoryBtn" class="btn btn-outline-danger btn-sm" style="min-width: 130px;">
                             <i class="fas fa-trash"></i> Delete Mode
                         </button>
-                        <?php endif; ?>
                     </div>
                     <div id="additionalCategoriesList" class="d-flex flex-wrap gap-3" style="max-height: 100px; overflow-y: auto; overflow-x: hidden; background: transparent !important;">
                         <!-- Additional categories will be displayed here -->
@@ -1845,13 +1843,9 @@
             
             if (additionalCategories.length === 0) {
                 modalBody.html('<p class="text-muted">No additional categories yet. Click the <i class="fas fa-plus"></i> button to add one.</p>');
-                <?php if(auth()->check() && auth()->user()->hasAdminAccess() && !auth()->user()->isSuperAdmin()): ?>
                 $('#deleteModeCategoryBtn').prop('disabled', true);
-                <?php endif; ?>
             } else {
-                <?php if(auth()->check() && auth()->user()->hasAdminAccess() && !auth()->user()->isSuperAdmin()): ?>
                 $('#deleteModeCategoryBtn').prop('disabled', false);
-                <?php endif; ?>
                 additionalCategories.forEach(cat => {
                     const categorySlug = cat.slug || cat.name.toLowerCase();
                     const isActive = activeCategory === categorySlug ? 'active' : '';

@@ -7,30 +7,245 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
 use App\Models\PlantRequest;
+use App\Models\SiteVisitRequest;
+use App\Models\SiteVisit;
 use App\Models\Notification;
 use App\Models\User;
 
 class UserDashboardController extends Controller
 {
     /**
-     * Show the user/client dashboard (Request Center)
+     * Show the overview dashboard with stats (NEW)
+     */
+    public function dashboard()
+    {
+        $user = Auth::user();
+        
+        // Check if user has page access permission for dashboard
+        if (!$user->hasAdminAccess() && !$user->hasPageAccess('dashboard')) {
+            abort(403, 'Access denied. You do not have permission to access the Dashboard.');
+        }
+
+        // Get plant inquiries counts
+        $inquiriesCount = PlantRequest::where('email', $user->email)->count();
+        $inquiriesResponded = PlantRequest::where('email', $user->email)
+            ->where('status', 'responded')->count();
+        $inquiriesPending = PlantRequest::where('email', $user->email)
+            ->where('status', 'pending')->count();
+
+        // Get site visit requests counts
+        $siteVisitRequestsCount = SiteVisitRequest::where('user_id', $user->id)->count();
+        $siteVisitRequestsApproved = SiteVisitRequest::where('user_id', $user->id)
+            ->where('status', 'approved')->count();
+        $siteVisitRequestsPending = SiteVisitRequest::where('user_id', $user->id)
+            ->where('status', 'pending')->count();
+
+        // Get site visits counts (only those visible in Site Data page)
+        $siteVisitsCount = SiteVisit::where('user_id', $user->id)
+            ->where(function($q){
+                $q->where('status', 'completed')
+                  ->orWhere('client_data_open', true);
+            })
+            ->count();
+        $siteVisitsActive = SiteVisit::where('user_id', $user->id)
+            ->where(function($q){
+                $q->where('status', 'completed')
+                  ->orWhere('client_data_open', true);
+            })
+            ->whereIn('status', ['pending', 'follow_up'])->count();
+        $siteVisitsCompleted = SiteVisit::where('user_id', $user->id)
+            ->where('status', 'completed')->count();
+
+        // Get recent activity
+        $recentActivity = $this->getRecentActivity($user);
+
+        // Get pending actions
+        $pendingActions = $this->getPendingActions($user);
+
+        return view('dashboard.overview', compact(
+            'user',
+            'inquiriesCount',
+            'inquiriesResponded',
+            'inquiriesPending',
+            'siteVisitRequestsCount',
+            'siteVisitRequestsApproved',
+            'siteVisitRequestsPending',
+            'siteVisitsCount',
+            'siteVisitsActive',
+            'siteVisitsCompleted',
+            'recentActivity',
+            'pendingActions'
+        ));
+    }
+
+    /**
+     * Get recent activity for the user
+     */
+    private function getRecentActivity($user)
+    {
+        $activities = collect();
+
+        // Get recent plant inquiries
+        $recentInquiries = PlantRequest::where('email', $user->email)
+            ->orderByDesc('created_at')
+            ->limit(3)
+            ->get();
+
+        foreach ($recentInquiries as $inquiry) {
+            $activities->push([
+                'type' => $inquiry->status === 'responded' ? 'success' : 'warning',
+                'icon' => 'seedling',
+                'title' => 'Plant Inquiry #' . $inquiry->id,
+                'description' => $inquiry->status === 'responded' 
+                    ? 'Your inquiry received a response' 
+                    : 'Inquiry submitted and pending review',
+                'date' => $inquiry->created_at->diffForHumans(),
+                'link' => $inquiry->status === 'responded' 
+                    ? route('user.inquiry.response', $inquiry->id) 
+                    : null,
+            ]);
+        }
+
+        // Get recent site visit requests
+        $recentRequests = SiteVisitRequest::where('user_id', $user->id)
+            ->orderByDesc('created_at')
+            ->limit(3)
+            ->get();
+
+        foreach ($recentRequests as $request) {
+            $type = match($request->status) {
+                'approved' => 'success',
+                'rejected' => 'danger',
+                default => 'warning',
+            };
+
+            $activities->push([
+                'type' => $type,
+                'icon' => 'calendar-check',
+                'title' => 'Site Visit Request',
+                'description' => match($request->status) {
+                    'approved' => 'Your request was approved',
+                    'rejected' => 'Your request was declined',
+                    default => 'Request submitted and pending review',
+                },
+                'date' => $request->created_at->diffForHumans(),
+                'link' => route('client-data.index'),
+            ]);
+        }
+
+        // Get recent site visits
+        $recentVisits = SiteVisit::where('user_id', $user->id)
+            ->orderByDesc('visit_date')
+            ->limit(2)
+            ->get();
+
+        foreach ($recentVisits as $visit) {
+            $activities->push([
+                'type' => $visit->status === 'completed' ? 'success' : 'info',
+                'icon' => 'map-marked-alt',
+                'title' => 'Site Visit Scheduled',
+                'description' => 'Visit scheduled for ' . $visit->visit_date->format('M d, Y'),
+                'date' => $visit->created_at->diffForHumans(),
+                'link' => route('client-data.show', $visit->id),
+            ]);
+        }
+
+        // Sort by date and limit to 5
+        return $activities->sortByDesc(function($activity) {
+            return strtotime($activity['date']);
+        })->take(5)->values();
+    }
+
+    /**
+     * Get pending actions for the user
+     */
+    private function getPendingActions($user)
+    {
+        $actions = collect();
+
+        // Check for pending site visit requests
+        $pendingRequests = SiteVisitRequest::where('user_id', $user->id)
+            ->where('status', 'pending')
+            ->get();
+
+        foreach ($pendingRequests as $request) {
+            $actions->push([
+                'icon' => 'clock',
+                'title' => 'Site Visit Request Pending',
+                'description' => 'Your request for ' . $request->property_address . ' is awaiting approval',
+                'date' => 'Submitted ' . $request->created_at->diffForHumans(),
+                'link' => route('client-data.index'),
+                'action' => 'View Request',
+            ]);
+        }
+
+        // Check for site visits with open uploads
+        $openUploads = SiteVisit::where('user_id', $user->id)
+            ->where('client_data_open', true)
+            ->get();
+
+        foreach ($openUploads as $visit) {
+            $actions->push([
+                'icon' => 'upload',
+                'title' => 'Upload Required',
+                'description' => 'Please upload documents for site visit at ' . $visit->location,
+                'date' => 'Due soon',
+                'link' => route('client-data.show', $visit->id),
+                'action' => 'Upload Now',
+            ]);
+        }
+
+        return $actions;
+    }
+
+    /**
+     * Show plant inquiries list (RENAMED from index)
+     */
+    public function inquiries()
+    {
+        $user = Auth::user();
+        
+        // Check if user has page access permission for dashboard
+        if (!$user->hasAdminAccess() && !$user->hasPageAccess('dashboard')) {
+            abort(403, 'Access denied. You do not have permission to access My Requests.');
+        }
+
+        // Tab 1: Plant Inquiries (simple questions - request_type = 'user')
+        $plantInquiries = PlantRequest::where('email', $user->email)
+            ->where('request_type', 'user')
+            ->orderByDesc('created_at')
+            ->get();
+
+        // Tab 2: RFQ Requests (formal quotations - request_type = 'client' or null)
+        $rfqRequests = PlantRequest::where('email', $user->email)
+            ->where(function($q) {
+                $q->where('request_type', 'client')
+                  ->orWhereNull('request_type'); // Legacy records
+            })
+            ->orderByDesc('created_at')
+            ->get();
+
+        // Tab 3: Site Visit Requests
+        $siteVisitRequests = SiteVisitRequest::where('user_id', $user->id)
+            ->with(['reviewer'])
+            ->orderByDesc('created_at')
+            ->get();
+
+        return view('requests.index', [
+            'user' => $user,
+            'plantInquiries' => $plantInquiries,
+            'rfqRequests' => $rfqRequests,
+            'siteVisitRequests' => $siteVisitRequests,
+        ]);
+    }
+    
+    /**
+     * Show the user/client dashboard (OLD - kept for backward compatibility)
      */
     public function index(Request $request)
     {
-        $user = Auth::user();
-
-        // Fetch recent plant requests by the authenticated user's email
-        $requests = PlantRequest::when($user && $user->email, function ($q) use ($user) {
-                $q->where('email', $user->email);
-            })
-            ->orderByDesc('created_at')
-            ->limit(15)
-            ->get();
-
-        return view('dashboard.user', [
-            'user' => $user,
-            'requests' => $requests,
-        ]);
+        // Redirect to new dashboard
+        return redirect()->route('dashboard.user');
     }
     
     /**

@@ -60,6 +60,7 @@ class PublicController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
+            'code' => 'nullable|string|max:50',
             'scientific_name' => 'nullable|string|max:255',
             'category' => 'required|string',
             'description' => 'nullable|string',
