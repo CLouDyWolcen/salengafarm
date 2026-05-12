@@ -1306,10 +1306,14 @@ unset($__errorArgs, $__bag); ?>
         }
 
         function initMap() {
+            console.log('Initializing map...');
+            
             // Use existing coordinates or default to Philippines center
             const defaultLat = <?php echo e($siteVisit->latitude ?? 12.8797); ?>;
             const defaultLng = <?php echo e($siteVisit->longitude ?? 121.7740); ?>;
             const hasCoordinates = <?php echo e($siteVisit->latitude ? 'true' : 'false'); ?>;
+            
+            console.log('Coordinates:', { defaultLat, defaultLng, hasCoordinates });
             
             // Philippines bounds (southwest and northeast corners)
             const philippinesBounds = [
@@ -1327,15 +1331,22 @@ unset($__errorArgs, $__bag); ?>
                 maxBoundsViscosity: 1.0 // Make bounds solid (can't drag outside)
             });
 
+            console.log('Map initialized');
+
             // Add OpenStreetMap tiles
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 maxZoom: 19,
                 attribution: '© OpenStreetMap contributors'
             }).addTo(map);
 
+            console.log('Tiles added');
+
             // Add existing marker only if coordinates exist
             if (hasCoordinates) {
                 addMarker(defaultLat, defaultLng);
+                console.log('Marker added at existing coordinates');
+            } else {
+                console.log('No existing coordinates - showing Philippines overview');
             }
 
             // Add click listener to map

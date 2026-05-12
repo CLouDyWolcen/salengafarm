@@ -60,20 +60,22 @@
                                 <table class="table table-hover">
                                     <thead>
                                         <tr>
-                                            <th>No.</th>
-                                            <th>First Name</th>
-                                            <th>Last Name</th>
-                                            <th>Role</th>
-                                            <th class="text-end">Actions</th>
+                                            <th style="width: 50px;">No.</th>
+                                            <th style="width: 150px;">First Name</th>
+                                            <th style="width: 150px;">Last Name</th>
+                                            <th style="width: 220px;">Email</th>
+                                            <th style="width: 100px;">Role</th>
+                                            <th class="text-end" style="width: 100px;">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <?php $__currentLoopData = $users; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $user): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                         <tr>
-                                            <td><?php echo e($index + 1); ?></td>
-                                            <td><?php echo e($user->first_name); ?></td>
-                                            <td><?php echo e($user->last_name); ?></td>
-                                            <td>
+                                            <td style="text-align: left;"><?php echo e($index + 1); ?></td>
+                                            <td style="text-align: left;"><?php echo e($user->first_name); ?></td>
+                                            <td style="text-align: left;"><?php echo e($user->last_name); ?></td>
+                                            <td style="text-align: left;"><?php echo e($user->email); ?></td>
+                                            <td style="text-align: left;">
                                                 <?php
                                                     $badgeColor = match($user->role) {
                                                         'super_admin' => 'bg-warning text-dark',

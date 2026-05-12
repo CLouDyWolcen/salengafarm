@@ -531,43 +531,23 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// Show success/error messages
-@if(session('success'))
+// Show success/error messages using PushNotifications
+@if(session('success') || session('error'))
+<script>
     document.addEventListener('DOMContentLoaded', function() {
-        const alert = document.createElement('div');
-        alert.className = 'alert alert-success alert-dismissible fade show position-fixed';
-        alert.style.top = '20px';
-        alert.style.right = '20px';
-        alert.style.zIndex = '9999';
-        alert.innerHTML = `
-            {{ session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        `;
-        document.body.appendChild(alert);
+        @if(session('success'))
+            if (window.PushNotifications) {
+                window.PushNotifications.show('success', '{{ session('success') }}', true);
+            }
+        @endif
         
-        setTimeout(() => {
-            alert.remove();
-        }, 5000);
+        @if(session('error'))
+            if (window.PushNotifications) {
+                window.PushNotifications.show('danger', '{{ session('error') }}', false);
+            }
+        @endif
     });
-@endif
-
-@if(session('error'))
-    document.addEventListener('DOMContentLoaded', function() {
-        const alert = document.createElement('div');
-        alert.className = 'alert alert-danger alert-dismissible fade show position-fixed';
-        alert.style.top = '20px';
-        alert.style.right = '20px';
-        alert.style.zIndex = '9999';
-        alert.innerHTML = `
-            {{ session('error') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        `;
-        document.body.appendChild(alert);
-        
-        setTimeout(() => {
-            alert.remove();
-        }, 5000);
-    });
+</script>
 @endif
 
 // Fullscreen map functionality

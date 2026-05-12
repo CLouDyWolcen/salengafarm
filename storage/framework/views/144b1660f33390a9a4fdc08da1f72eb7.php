@@ -121,19 +121,15 @@
 
                         </span>
                     </h2>
-                    <div>
-                        <form action="<?php echo e(route('site-visits.update-status', $siteVisit)); ?>" method="POST" class="d-inline-flex align-items-center me-2">
+                    <div class="d-flex align-items-center gap-2">
+                        <form action="<?php echo e(route('site-visits.update-status', $siteVisit)); ?>" method="POST" class="d-inline-flex align-items-center">
                             <?php echo csrf_field(); ?>
-                            <select name="status" class="form-select form-select-sm" style="width:auto; margin-right: 1.5rem;">
+                            <select name="status" class="form-select form-select-sm me-2" style="width: 150px;">
                                 <option value="pending" <?php echo e($siteVisit->status==='pending' ? 'selected' : ''); ?>>Pending</option>
                                 <option value="completed" <?php echo e($siteVisit->status==='completed' ? 'selected' : ''); ?>>Completed</option>
                                 <option value="follow_up" <?php echo e($siteVisit->status==='follow_up' ? 'selected' : ''); ?>>Follow-up</option>
                             </select>
-                            <div class="form-check form-check-sm" style="margin-right: 1.5rem;">
-                                <input class="form-check-input" type="checkbox" id="quick_cdo" name="client_data_open" value="1" <?php echo e($siteVisit->client_data_open ? 'checked' : ''); ?>>
-                                <label class="form-check-label small" for="quick_cdo">Open Client Data</label>
-                            </div>
-                            <button type="submit" class="btn btn-sm btn-primary">Update</button>
+                            <button type="submit" class="btn btn-sm btn-primary me-2">Update</button>
                         </form>
                         <a href="<?php echo e(route('site-visits.edit', $siteVisit)); ?>" class="btn btn-warning me-2">
                             <i class="fas fa-edit me-2"></i>Edit
@@ -164,14 +160,6 @@
                         <?php echo csrf_field(); ?>
                         <div class="row g-2 mb-2">
                             <div class="col-6">
-                                <button type="submit" class="btn btn-primary w-100">Update</button>
-                            </div>
-                            <div class="col-6">
-                                <a href="<?php echo e(route('site-visits.edit', $siteVisit)); ?>" class="btn btn-warning w-100">Edit</a>
-                            </div>
-                        </div>
-                        <div class="row g-2">
-                            <div class="col-6">
                                 <select name="status" class="form-select form-select-sm">
                                     <option value="pending" <?php echo e($siteVisit->status==='pending' ? 'selected' : ''); ?>>Pending</option>
                                     <option value="completed" <?php echo e($siteVisit->status==='completed' ? 'selected' : ''); ?>>Completed</option>
@@ -179,10 +167,12 @@
                                 </select>
                             </div>
                             <div class="col-6">
-                                <div class="form-check d-flex align-items-center h-100">
-                                    <input class="form-check-input me-2" type="checkbox" id="quick_cdo_mobile" name="client_data_open" value="1" <?php echo e($siteVisit->client_data_open ? 'checked' : ''); ?>>
-                                    <label class="form-check-label" for="quick_cdo_mobile" style="font-size: 0.85rem;">Open Client Data</label>
-                                </div>
+                                <button type="submit" class="btn btn-primary w-100">Update</button>
+                            </div>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-12">
+                                <a href="<?php echo e(route('site-visits.edit', $siteVisit)); ?>" class="btn btn-warning w-100">Edit</a>
                             </div>
                         </div>
                     </form>
@@ -941,25 +931,45 @@
     <script src="<?php echo e(asset('js/alerts.js')); ?>?v=<?php echo e(time()); ?>"></script>
     <script>
         function initMap() {
-            const lat = <?php echo e($siteVisit->latitude); ?>;
-            const lng = <?php echo e($siteVisit->longitude); ?>;
-            const map = L.map('map').setView([lat, lng], 15);
+            // Use existing coordinates or default to Philippines center
+            const defaultLat = <?php echo e($siteVisit->latitude ?? 12.8797); ?>;
+            const defaultLng = <?php echo e($siteVisit->longitude ?? 121.7740); ?>;
+            const hasCoordinates = <?php echo e($siteVisit->latitude ? 'true' : 'false'); ?>;
+            
+            // Philippines bounds (southwest and northeast corners)
+            const philippinesBounds = [
+                [4.5, 116.0],  // Southwest corner
+                [21.0, 127.0]  // Northeast corner
+            ];
+            
+            // Initialize map with Philippines restrictions
+            const map = L.map('map', {
+                center: [defaultLat, defaultLng],
+                zoom: hasCoordinates ? 15 : 6,
+                minZoom: 6,
+                maxZoom: 18,
+                maxBounds: philippinesBounds,
+                maxBoundsViscosity: 1.0
+            });
 
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 maxZoom: 19,
                 attribution: '© OpenStreetMap contributors'
             }).addTo(map);
 
-            const marker = L.marker([lat, lng]).addTo(map);
-            const popupHtml = `
-                <div>
-                    <h6><strong><?php echo e($siteVisit->client); ?></strong></h6>
-                    <p><strong>Location:</strong> <?php echo e($siteVisit->location); ?></p>
-                    <p><strong>Visit Date:</strong> <?php echo e($siteVisit->visit_date->format('M j, Y')); ?></p>
-                    <p><strong>Status:</strong> <span class="badge bg-<?php echo e($siteVisit->status_badge_color); ?>"><?php echo e(ucfirst(str_replace('_', ' ', $siteVisit->status))); ?></span></p>
-                </div>
-            `;
-            marker.bindPopup(popupHtml).openPopup();
+            // Only add marker if coordinates exist
+            if (hasCoordinates) {
+                const marker = L.marker([defaultLat, defaultLng]).addTo(map);
+                const popupHtml = `
+                    <div>
+                        <h6><strong><?php echo e($siteVisit->client); ?></strong></h6>
+                        <p><strong>Location:</strong> <?php echo e($siteVisit->location); ?></p>
+                        <p><strong>Visit Date:</strong> <?php echo e($siteVisit->visit_date->format('M j, Y')); ?></p>
+                        <p><strong>Status:</strong> <span class="badge bg-<?php echo e($siteVisit->status_badge_color); ?>"><?php echo e(ucfirst(str_replace('_', ' ', $siteVisit->status))); ?></span></p>
+                    </div>
+                `;
+                marker.bindPopup(popupHtml).openPopup();
+            }
         }
 
         function confirmDelete() {

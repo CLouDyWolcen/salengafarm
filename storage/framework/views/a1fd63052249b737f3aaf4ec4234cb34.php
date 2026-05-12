@@ -532,45 +532,23 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// Show success/error messages
-<?php if(session('success')): ?>
+// Show success/error messages using PushNotifications
+<?php if(session('success') || session('error')): ?>
+<script>
     document.addEventListener('DOMContentLoaded', function() {
-        const alert = document.createElement('div');
-        alert.className = 'alert alert-success alert-dismissible fade show position-fixed';
-        alert.style.top = '20px';
-        alert.style.right = '20px';
-        alert.style.zIndex = '9999';
-        alert.innerHTML = `
-            <?php echo e(session('success')); ?>
-
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        `;
-        document.body.appendChild(alert);
+        <?php if(session('success')): ?>
+            if (window.PushNotifications) {
+                window.PushNotifications.show('success', '<?php echo e(session('success')); ?>', true);
+            }
+        <?php endif; ?>
         
-        setTimeout(() => {
-            alert.remove();
-        }, 5000);
+        <?php if(session('error')): ?>
+            if (window.PushNotifications) {
+                window.PushNotifications.show('danger', '<?php echo e(session('error')); ?>', false);
+            }
+        <?php endif; ?>
     });
-<?php endif; ?>
-
-<?php if(session('error')): ?>
-    document.addEventListener('DOMContentLoaded', function() {
-        const alert = document.createElement('div');
-        alert.className = 'alert alert-danger alert-dismissible fade show position-fixed';
-        alert.style.top = '20px';
-        alert.style.right = '20px';
-        alert.style.zIndex = '9999';
-        alert.innerHTML = `
-            <?php echo e(session('error')); ?>
-
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        `;
-        document.body.appendChild(alert);
-        
-        setTimeout(() => {
-            alert.remove();
-        }, 5000);
-    });
+</script>
 <?php endif; ?>
 
 // Fullscreen map functionality
