@@ -9,7 +9,7 @@
 <?php endif; ?>
 <?php $component->withAttributes([]); ?>
     <link rel="stylesheet" href="<?php echo e(asset('css/auth.css')); ?>?v=<?php echo e(time()); ?>">
-    <link rel="stylesheet" href="<?php echo e(asset('css/loading.css')); ?>">
+    <link rel="stylesheet" href="<?php echo e(asset('css/loading.css')); ?>?v=<?php echo e(time()); ?>">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script src="<?php echo e(asset('js/loading.js')); ?>"></script>
     

@@ -1,8 +1,6 @@
-@extends('layouts.public')
+<?php $__env->startSection('title', 'Inventory - Salenga Farm'); ?>
 
-@section('title', 'Inventory - Salenga Farm')
-
-@section('content')
+<?php $__env->startSection('content'); ?>
 <style>
     /* Mobile responsive - force cards side by side */
     @media (max-width: 767px) {
@@ -149,7 +147,7 @@
                         <i class="fas fa-boxes me-2" style="color: #4caf50;"></i>Point of Sale Inventory Management
                     </h2>
                     <div class="btn-group">
-                        <a href="{{ route('walk-in.index') }}" class="btn btn-primary" style="background: linear-gradient(135deg, #66bb6a 0%, #4caf50 100%); border: none; box-shadow: 0 2px 4px rgba(76, 175, 80, 0.3);">
+                        <a href="<?php echo e(route('walk-in.index')); ?>" class="btn btn-primary" style="background: linear-gradient(135deg, #66bb6a 0%, #4caf50 100%); border: none; box-shadow: 0 2px 4px rgba(76, 175, 80, 0.3);">
                             <i class="fas fa-arrow-left"></i><span class="btn-text ms-1">Back to Sales</span>
                         </a>
                         <button id="refresh-btn" class="btn btn-success ms-2" style="background: linear-gradient(135deg, #81c784 0%, #66bb6a 100%); border: none; box-shadow: 0 2px 4px rgba(102, 187, 106, 0.3);">
@@ -260,41 +258,41 @@
                                     </tr>
                                 </thead>
                                 <tbody id="inventory-table-body">
-                                    @foreach($plants as $plant)
-                                        <tr data-id="{{ $plant->id }}">
-                                            <td class="align-middle">{{ $plant->name }}</td>
-                                            <td class="align-middle">{{ $plant->code }}</td>
+                                    <?php $__currentLoopData = $plants; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $plant): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <tr data-id="<?php echo e($plant->id); ?>">
+                                            <td class="align-middle"><?php echo e($plant->name); ?></td>
+                                            <td class="align-middle"><?php echo e($plant->code); ?></td>
                                             <td class="align-middle">
                                                 <div class="input-group input-group-sm" style="width: 120px;">
                                                     <span class="input-group-text">₱</span>
-                                                    <input type="number" class="form-control form-control-sm editable-price" value="{{ $plant->price }}" min="0" step="0.01">
+                                                    <input type="number" class="form-control form-control-sm editable-price" value="<?php echo e($plant->price); ?>" min="0" step="0.01">
                                                 </div>
                                             </td>
                                             <td class="align-middle">
-                                                <input type="number" class="form-control form-control-sm editable-quantity" value="{{ $plant->quantity }}" min="0" style="width: 80px;">
+                                                <input type="number" class="form-control form-control-sm editable-quantity" value="<?php echo e($plant->quantity); ?>" min="0" style="width: 80px;">
                                             </td>
                                             <td class="align-middle">
-                                                @if($plant->quantity < 5)
+                                                <?php if($plant->quantity < 5): ?>
                                                     <span class="status-badge status-low">
                                                         <i class="fas fa-exclamation-circle"></i> Low
                                                     </span>
-                                                @elseif($plant->quantity < 10)
+                                                <?php elseif($plant->quantity < 10): ?>
                                                     <span class="status-badge status-medium">
                                                         <i class="fas fa-exclamation-triangle"></i> Medium
                                                     </span>
-                                                @else
+                                                <?php else: ?>
                                                     <span class="status-badge status-good">
                                                         <i class="fas fa-check-circle"></i> Good
                                                     </span>
-                                                @endif
+                                                <?php endif; ?>
                                             </td>
                                             <td class="align-middle">
-                                                <button class="btn btn-sm btn-success save-btn" data-id="{{ $plant->id }}">
+                                                <button class="btn btn-sm btn-success save-btn" data-id="<?php echo e($plant->id); ?>">
                                                     <i class="fas fa-save"></i> Save
                                                 </button>
                                             </td>
                                         </tr>
-                                    @endforeach
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                 </tbody>
                             </table>
                         </div>
@@ -312,25 +310,26 @@
                             </div>
                             <div class="card-body" style="flex: 1; overflow-y: auto; padding: 0.75rem;">
                                 <div class="list-group list-group-flush" id="recent-sales-list">
-                                    @forelse($recentSales as $sale)
+                                    <?php $__empty_1 = true; $__currentLoopData = $recentSales; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $sale): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                                         <div class="list-group-item" style="border-radius: 8px; margin-bottom: 0.5rem; border: 1px solid #e0e0e0; background-color: white;">
                                             <div class="d-flex w-100 justify-content-between align-items-center">
                                                 <div style="flex: 1; min-width: 0;">
-                                                    <h6 class="mb-1" style="font-size: 0.85rem; font-weight: 600; color: #2e7d32; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="{{ $sale->plant->name }}">{{ $sale->plant->name }}</h6>
+                                                    <h6 class="mb-1" style="font-size: 0.85rem; font-weight: 600; color: #2e7d32; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="<?php echo e($sale->plant->name); ?>"><?php echo e($sale->plant->name); ?></h6>
                                                     <small class="text-muted" style="font-size: 0.75rem;">
-                                                        {{ $sale->created_at->format('M d, Y h:i A') }}
+                                                        <?php echo e($sale->created_at->format('M d, Y h:i A')); ?>
+
                                                     </small>
                                                 </div>
-                                                <span class="badge" style="background: linear-gradient(135deg, #66bb6a 0%, #4caf50 100%); color: white; font-size: 0.75rem; padding: 0.35rem 0.6rem;">{{ $sale->quantity }} sold</span>
+                                                <span class="badge" style="background: linear-gradient(135deg, #66bb6a 0%, #4caf50 100%); color: white; font-size: 0.75rem; padding: 0.35rem 0.6rem;"><?php echo e($sale->quantity); ?> sold</span>
                                             </div>
                                         </div>
-                                    @empty
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                                         <div class="text-center py-5">
                                             <i class="fas fa-receipt fa-3x text-muted mb-3" style="opacity: 0.3;"></i>
                                             <p class="text-muted mb-0" style="font-size: 0.9rem;">No recent sales</p>
                                             <small class="text-muted" style="font-size: 0.8rem;">Sales will appear here</small>
                                         </div>
-                                    @endforelse
+                                    <?php endif; ?>
                                 </div>
                             </div>
                         </div>
@@ -482,9 +481,9 @@
         </div>
     </div>
 
-@endsection
+<?php $__env->stopSection(); ?>
 
-@section('scripts')
+<?php $__env->startSection('scripts'); ?>
 <script>
     $(document).ready(function() {
             // Initialize tooltips
@@ -577,10 +576,10 @@
 
                 // Send AJAX request to update inventory
                 $.ajax({
-                    url: '{{ route("walk-in.inventory.update") }}',
+                    url: '<?php echo e(route("walk-in.inventory.update")); ?>',
                     type: 'POST',
                     data: {
-                        _token: '{{ csrf_token() }}',
+                        _token: '<?php echo e(csrf_token()); ?>',
                         updates: [
                             {
                                 id: plantId,
@@ -631,7 +630,7 @@
             // Function to load inventory statistics
             function loadInventoryStats() {
                 $.ajax({
-                    url: '{{ route("walk-in.inventory.stats") }}',
+                    url: '<?php echo e(route("walk-in.inventory.stats")); ?>',
                     type: 'GET',
                     success: function(response) {
                         if (response.success) {
@@ -738,7 +737,7 @@
             // Function to update summary cards
             function updateSummaryCards() {
                 $.ajax({
-                    url: '{{ route("walk-in.inventory.summary") }}',
+                    url: '<?php echo e(route("walk-in.inventory.summary")); ?>',
                     type: 'GET',
                     success: function(response) {
                         if (response.success) {
@@ -931,4 +930,6 @@
             }
     });
 </script>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.public', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\CODING\my_Inventory\resources\views/walk-in/inventory.blade.php ENDPATH**/ ?>

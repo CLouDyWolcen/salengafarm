@@ -31,15 +31,20 @@ class UserController extends Controller
             'contact_number' => 'required|string|max:255',
             'company_name' => 'required|string|max:255',
             'password' => 'required|string|min:8|confirmed',
-            'role' => 'required|in:client,admin',
         ]);
 
-        $validated['is_client'] = $request->has('is_client');
+        // Automatically set as client (role and is_client flag)
+        $validated['role'] = 'client';
+        $validated['is_client'] = true;
         $validated['password'] = Hash::make($validated['password']);
+        
+        // Set default page access for new clients
+        // Give them access to all pages by default (same as registration)
+        $validated['page_access'] = json_encode(['dashboard', 'plant_guide', 'site_data']);
 
         User::create($validated);
 
-        return redirect()->route('users.index')->with('success', 'User created successfully');
+        return redirect()->route('users.index')->with('success', 'Client account created successfully');
     }
 
     public function updateRole(User $user, Request $request)

@@ -7,7 +7,7 @@
 @section('title', 'My Requests - Salenga Farm')
 
 @push('styles')
-<link href="{{ asset('css/loading.css') }}" rel="stylesheet">
+<link href="{{ asset('css/loading.css') }}?v={{ time() }}" rel="stylesheet">
 <style>
     /* Copy all styles from user.blade.php */
     .container-fluid {

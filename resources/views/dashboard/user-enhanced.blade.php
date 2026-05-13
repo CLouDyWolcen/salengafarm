@@ -1,7 +1,7 @@
 @extends('layouts.public')
 
 @push('styles')
-<link href="{{ asset('css/loading.css') }}" rel="stylesheet">
+<link href="{{ asset('css/loading.css') }}?v={{ time() }}" rel="stylesheet">
 <style>
     .btn-sm {
         padding: 0.375rem 0.75rem;

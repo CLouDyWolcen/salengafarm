@@ -24,11 +24,11 @@
         <div class="main-content">
             <div style="padding-top: 0; padding-bottom: 0;">
                 <div class="p-0" style="margin-bottom: 0;">
-                    <!-- Title and Add Account Button -->
+                    <!-- Title and Add New Client Button -->
                     <div class="d-flex justify-content-between align-items-center" style="margin-top: 15px; margin-bottom: 15px;">
                         <h2 class="mb-0">User Management</h2>
                         <a href="{{ route('users.create') }}" class="btn btn-success">
-                            <i class="fas fa-plus me-1"></i> Add Account
+                            <i class="fas fa-user-plus me-1"></i> Add New Client
                         </a>
                     </div>
                     

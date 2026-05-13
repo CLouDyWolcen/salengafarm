@@ -1,6 +1,6 @@
 <x-guest-layout>
-    <link rel="stylesheet" href="{{ asset('css/auth.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/loading.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/auth.css') }}?v={{ time() }}">
+    <link rel="stylesheet" href="{{ asset('css/loading.css') }}?v={{ time() }}">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script src="{{ asset('js/loading.js') }}"></script>
     <div class="min-h-screen">

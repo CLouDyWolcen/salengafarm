@@ -19,8 +19,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
     <link href="{{ asset('css/inventory.css') }}?v=2" rel="stylesheet">
     <link href="{{ asset('css/dashboard.css') }}?v=4" rel="stylesheet">
-    <link href="{{ asset('css/loading.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/loading.css') }}?v={{ time() }}" rel="stylesheet">
     <link href="{{ asset('css/push-notifications.css') }}?v={{ time() }}" rel="stylesheet">
+    <link href="{{ asset('css/button-spinner.css') }}?v={{ time() }}" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
 </head>
 <body class="bg-light inventory-page">
@@ -741,14 +742,11 @@
             
             // Function to submit plant form
             function submitPlantForm(formData) {
-                // Show loading state with domino loader
+                // Show Google Chrome-style spinner on button
                 const $saveBtn = $('#saveBtn');
-                LoadingManager.buttonStart($saveBtn[0], 'Saving...');
-                
-                // Show full page loading
-                setTimeout(() => {
-                    LoadingManager.show('Saving Plant...', 'Please wait');
-                }, 300);
+                const originalBtnHtml = $saveBtn.html();
+                $saveBtn.html('<span class="btn-spinner"></span>Saving...');
+                $saveBtn.prop('disabled', true);
 
                 // Determine URL based on whether we're editing or adding
                 const url = isEditing ? `/plants/${editingPlantId}` : '/plants';
@@ -774,7 +772,7 @@
                         // Reload the table data without refreshing the page
                         setTimeout(() => {
                             location.reload();
-                        }, 2500); // Give time to see the notification
+                        }, 1500);
                     },
                     error: function(xhr) {
                         let errorMessage = 'An error occurred while saving the plant.';
@@ -782,11 +780,15 @@
                             errorMessage = xhr.responseJSON.message;
                         }
                         showNotification(errorMessage, 'error');
+                        
+                        // Reset button on error
+                        $saveBtn.html(originalBtnHtml);
+                        $saveBtn.prop('disabled', false);
                     },
                     complete: function() {
-                        // Hide loading and reset button state
-                        LoadingManager.hide();
-                        LoadingManager.buttonStop($saveBtn[0]);
+                        // Reset button (will reload on success anyway)
+                        $saveBtn.html(originalBtnHtml);
+                        $saveBtn.prop('disabled', false);
                     }
                 });
             }
@@ -879,12 +881,9 @@
                 if (!selectedPlant || !selectedPlant.id) return;
                 
                 const $btn = $(this);
-                LoadingManager.buttonStart($btn[0], 'Deleting...');
-                
-                // Show full page loading
-                setTimeout(() => {
-                    LoadingManager.show('Deleting Plant...', 'Please wait');
-                }, 300);
+                const originalBtnHtml = $btn.html();
+                $btn.html('<span class="btn-spinner"></span>Deleting...');
+                $btn.prop('disabled', true);
 
                 $.ajax({
                     url: `/plants/${selectedPlant.id}`,
@@ -899,10 +898,12 @@
                     error: function(xhr) {
                         deleteModal.hide();
                         alert('Error deleting plant: ' + (xhr.responseJSON?.message || 'Unknown error'));
+                        $btn.html(originalBtnHtml);
+                        $btn.prop('disabled', false);
                     },
                     complete: function() {
-                        LoadingManager.hide();
-                        LoadingManager.buttonStop($btn[0]);
+                        $btn.html(originalBtnHtml);
+                        $btn.prop('disabled', false);
                     }
                 });
             });
@@ -1018,12 +1019,14 @@
                     return $(this).val();
                 }).get();
 
+                const $btn = $(this);
+                const originalBtnHtml = $btn.html();
+                $btn.html('<span class="btn-spinner"></span>Deleting...');
+                $btn.prop('disabled', true);
+
                 // Hide modal
                 const bulkDeleteModal = bootstrap.Modal.getInstance(document.getElementById('bulkDeleteModal'));
                 bulkDeleteModal.hide();
-
-                // Show loading
-                LoadingManager.show('Deleting Plants...', 'Please wait');
 
                 // Delete each plant one by one
                 let deletePromises = selectedIds.map(id => {
@@ -1039,13 +1042,13 @@
                 // Wait for all deletions to complete
                 Promise.all(deletePromises)
                     .then(() => {
-                        LoadingManager.hide();
                         window.location.reload();
                     })
                     .catch((error) => {
-                        LoadingManager.hide();
                         alert('Error deleting some plants. Please try again.');
                         console.error(error);
+                        $btn.html(originalBtnHtml);
+                        $btn.prop('disabled', false);
                     });
             });
 

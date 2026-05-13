@@ -3,7 +3,7 @@
 @section('title', 'User Dashboard - Salenga Farm')
 
 @push('styles')
-<link href="{{ asset('css/loading.css') }}" rel="stylesheet">
+<link href="{{ asset('css/loading.css') }}?v={{ time() }}" rel="stylesheet">
 <style>
     /* Ensure main content area allows full height */
     .container-fluid {

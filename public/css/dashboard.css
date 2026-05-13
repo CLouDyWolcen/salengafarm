@@ -263,23 +263,6 @@ h2.mb-4.fs-4:after {
   padding: 0.5rem;
 }
 
-/* Card animation for staggered loading effect */
-.card-animated {
-  animation: cardFadeIn 0.5s ease forwards;
-}
-
-@keyframes cardFadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(15px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
 /* Card hover effect */
 .card-hover {
   transform: translateY(-5px);
@@ -1096,6 +1079,28 @@ h2.mb-4.fs-4:after {
         animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
     }
+    
+    /* Exception: Keep loading spinners animated for better UX */
+    .fa-spin,
+    .fa-spinner,
+    .spinner-border {
+        animation-duration: 1s !important;
+        animation-iteration-count: infinite !important;
+    }
+}
+
+/* Ensure fa-spin animation is always defined */
+@keyframes fa-spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.fa-spin {
+    animation: fa-spin 1s infinite linear;
 }
 
 /* High contrast mode support */

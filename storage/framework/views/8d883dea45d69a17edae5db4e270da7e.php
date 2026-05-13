@@ -15,7 +15,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
     <link href="<?php echo e(asset('css/public.css')); ?>?v=3" rel="stylesheet">
     <link href="<?php echo e(asset('css/plant-selection.css')); ?>?v=<?php echo e(time()); ?>" rel="stylesheet">
-    <link href="<?php echo e(asset('css/loading.css')); ?>" rel="stylesheet">
+    <link href="<?php echo e(asset('css/loading.css')); ?>?v=<?php echo e(time()); ?>" rel="stylesheet">
     <link href="<?php echo e(asset('css/push-notifications.css')); ?>?v=<?php echo e(time()); ?>" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
 
@@ -1719,7 +1719,7 @@
                 <div class="category-filter-box">
                     <div class="filter-title d-flex align-items-center justify-content-between mb-3">
                         <span>Category Filter</span>
-                        <?php if(Auth::check() && Auth::user()->hasAdminAccess() && !Auth::user()->isSuperAdmin()): ?>
+                        <?php if(Auth::check() && Auth::user()->hasAdminAccess()): ?>
                         <div class="d-flex align-items-center" style="gap: .5rem;">
                             <button type="button" id="deleteCategoryBtn" class="btn btn-outline-danger icon-square-btn" title="Delete Category" aria-label="Delete Category">
                                 <i class="fas fa-trash"></i>
@@ -1821,7 +1821,7 @@
                 </div>
             </div>
             <div class="col-md-6 text-end search-controls-container">
-                    <?php if(Auth::check() && Auth::user()->hasAdminAccess() && !Auth::user()->isSuperAdmin()): ?>
+                    <?php if(Auth::check() && Auth::user()->hasAdminAccess()): ?>
                     <button class="btn btn-success me-2" data-bs-toggle="modal" data-bs-target="#addPlantModal">
                     <i class="fas fa-plus me-1"></i>Add New Plant
                 </button>
@@ -1845,7 +1845,7 @@
         <div class="category-filter-box d-md-none mb-3">
             <div class="filter-title d-flex align-items-center justify-content-between mb-3">
                 <span>Category Filter</span>
-                <?php if(Auth::check() && Auth::user()->hasAdminAccess() && !Auth::user()->isSuperAdmin()): ?>
+                <?php if(Auth::check() && Auth::user()->hasAdminAccess()): ?>
                 <div class="d-flex align-items-center" style="gap: .5rem;">
                     <button type="button" class="btn btn-outline-danger icon-square-btn delete-category-btn" title="Delete Category" aria-label="Delete Category">
                         <i class="fas fa-trash"></i>
@@ -3788,18 +3788,26 @@ console.log('Loading modal form submission handler');
 
     <!-- Preloader script -->
     <script>
+        // Track when page started loading
+        const loadStartTime = Date.now();
+        const minimumLoadingTime = 1200; // Show loading for at least 1.2 seconds
+        
         window.addEventListener('load', function() {
             const preloader = document.getElementById('page-preloader');
             const content = document.querySelector('.page-content');
             
-            // Add a small delay to ensure everything is rendered
+            // Calculate how long the page took to load
+            const loadTime = Date.now() - loadStartTime;
+            const remainingTime = Math.max(0, minimumLoadingTime - loadTime);
+            
+            // Wait for the remaining time to ensure minimum display duration
             setTimeout(function() {
                 content.classList.add('loaded');
                 preloader.style.opacity = '0';
                 setTimeout(function() {
                     preloader.style.display = 'none';
                 }, 300);
-            }, 100);
+            }, remainingTime);
         });
     </script>
 </body>

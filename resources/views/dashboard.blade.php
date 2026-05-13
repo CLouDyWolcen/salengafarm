@@ -17,40 +17,11 @@
     <link href="{{ asset('css/sidebar.css') }}" rel="stylesheet">
     <link href="{{ asset('css/inventory.css') }}?v=2" rel="stylesheet">
     <link href="{{ asset('css/dashboard.css') }}?v=4" rel="stylesheet">
-    <link href="{{ asset('css/loading.css') }}" rel="stylesheet">
-    <link href="{{ asset('css/push-notifications.css') }}?v={{ time() }}" rel="stylesheet">
+    <link href="{{ asset('css/loading.css') }}?v=5&t={{ time() }}" rel="stylesheet">
+    <link href="{{ asset('css/push-notifications.css') }}?v=2&t={{ time() }}" rel="stylesheet">
+    <link href="{{ asset('css/button-spinner.css') }}?v={{ time() }}" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* Loading overlay that will fade out when page is ready */
-        #loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.9);
-            z-index: 9999;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: opacity 0.5s ease-out;
-        }
-        .loader {
-            width: 48px;
-            height: 48px;
-            border: 5px solid #2a9d4e;
-            border-bottom-color: transparent;
-            border-radius: 50%;
-            display: inline-block;
-            box-sizing: border-box;
-            animation: rotation 1s linear infinite;
-        }
-        @keyframes rotation {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        /* All sidebar-related styles removed. */
-        
         /* Update Stock Modal - Compact Table Styling */
         #updateStockModal .table th,
         #updateStockModal .table td {
@@ -742,6 +713,7 @@
     <script src="{{ asset('js/alerts.js') }}?v={{ time() }}"></script>
     <script src="{{ asset('js/loading.js') }}"></script>
     <script src="{{ asset('js/push-notifications.js') }}?v={{ time() }}"></script>
+    <script src="{{ asset('js/push-notifications-global.js') }}?v={{ time() }}"></script>
     <script src="{{ asset('js/dashboard.js') }}?v=2"></script>
     <script>
         $(document).ready(function() {
@@ -783,12 +755,11 @@
                     });
                 });
 
-                // Show loading state with domino loader
+                // Show Google Chrome-style spinner on button
                 const $saveBtn = $(this);
-                LoadingManager.buttonStart($saveBtn[0], 'Saving...');
-                
-                // Show full page loading immediately
-                LoadingManager.show('Updating Stock...', 'Please wait');
+                const originalBtnHtml = $saveBtn.html();
+                $saveBtn.html('<span class="btn-spinner"></span>Saving...');
+                $saveBtn.prop('disabled', true);
 
                 // Send AJAX request to update stock
                 $.ajax({
@@ -799,22 +770,37 @@
                         _token: $('meta[name="csrf-token"]').attr('content')
                     },
                     success: function(response) {
-                        LoadingManager.hide();
-                        LoadingManager.buttonStop($saveBtn[0]);
-                        showAlert('Stock updated successfully!', 'success');
+                        // Hide modal
                         $('#updateStockModal').modal('hide');
+                        
+                        // Reset button state
+                        $saveBtn.html(originalBtnHtml);
+                        $saveBtn.prop('disabled', false);
+                        
+                        // Show success notification
+                        if (window.PushNotifications) {
+                            window.PushNotifications.show('success', 'Stock updated successfully!', true);
+                        }
+                        
+                        // Reload page after showing notification
                         setTimeout(() => {
                             window.location.reload();
-                        }, 3000);
+                        }, 1500);
                     },
                     error: function(xhr) {
                         let errorMessage = 'An error occurred while updating stock.';
                         if (xhr.responseJSON && xhr.responseJSON.message) {
                             errorMessage = xhr.responseJSON.message;
                         }
-                        showAlert(errorMessage, 'danger');
-                        LoadingManager.hide();
-                        LoadingManager.buttonStop($saveBtn[0]);
+                        
+                        // Reset button state
+                        $saveBtn.html(originalBtnHtml);
+                        $saveBtn.prop('disabled', false);
+                        
+                        // Show error notification
+                        if (window.PushNotifications) {
+                            window.PushNotifications.show('danger', errorMessage, false);
+                        }
                     }
                 });
             });
