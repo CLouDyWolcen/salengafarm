@@ -205,6 +205,104 @@ Shows Esther's Garden branding
 ❌ Brand name ("Salenga Farm" vs "Esther's Garden")
 ❌ Logo image
 ❌ Domain name
+❌ Splash page content (Welcome vs About Us)
+
+---
+
+## 🗄️ DATABASE OPTIONS
+
+### Current Setup: Shared Database (Recommended)
+Both domains use the **same database** (`salengafarm_db`):
+
+**Advantages:**
+- ✅ One inventory to manage
+- ✅ Customers can use either domain
+- ✅ Same admin panel for both
+- ✅ Easier to maintain
+- ✅ Lower cost
+
+**Use Case:**
+- Same business, different branding
+- Same products on both sites
+- Unified customer base
+
+---
+
+### Alternative: Separate Databases (Advanced)
+
+Each domain uses its **own database**:
+- `salengafarm.page` → `salengafarm_db`
+- `esthersgarden.page` → `esthersgarden_db`
+
+**Advantages:**
+- ✅ Completely independent businesses
+- ✅ Different products/inventory
+- ✅ Different customers
+- ✅ Different admins
+- ✅ Total data separation
+
+**Disadvantages:**
+- ❌ More complex setup
+- ❌ Manage two inventories
+- ❌ Two admin panels
+- ❌ More maintenance work
+
+**Use Case:**
+- Two different businesses
+- Different owners/managers
+- Different product catalogs
+- Need complete separation
+
+---
+
+### How to Implement Separate Databases (Future)
+
+If you decide to use separate databases later:
+
+1. **Create second database on server:**
+```bash
+mysql -u root -p
+CREATE DATABASE esthersgarden_db;
+GRANT ALL ON esthersgarden_db.* TO 'salengafarm_user'@'localhost';
+FLUSH PRIVILEGES;
+EXIT;
+```
+
+2. **Update config/database.php:**
+```php
+'connections' => [
+    'salengafarm' => [
+        'driver' => 'mysql',
+        'database' => 'salengafarm_db',
+        // ... other settings
+    ],
+    'esthersgarden' => [
+        'driver' => 'mysql',
+        'database' => 'esthersgarden_db',
+        // ... other settings
+    ],
+],
+```
+
+3. **Update BrandHelper.php:**
+```php
+public static function getDatabaseConnection()
+{
+    return self::isEsthersGarden() ? 'esthersgarden' : 'salengafarm';
+}
+```
+
+4. **Update models to use dynamic connection:**
+```php
+// In each model (Plant.php, User.php, etc.)
+public function __construct(array $attributes = [])
+{
+    parent::__construct($attributes);
+    $this->connection = \App\Helpers\BrandHelper::getDatabaseConnection();
+}
+```
+
+**Note:** This is advanced setup. Start with shared database first!
 
 ---
 

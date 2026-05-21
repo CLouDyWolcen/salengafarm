@@ -8,7 +8,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
-    <title>Salenga Farm</title>
+    <title><?php echo e(\App\Helpers\BrandHelper::getName()); ?></title>
     <link rel="icon" type="image/x-icon" href="<?php echo e(asset('tree-leaf.ico')); ?>?v=2">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -17,6 +17,7 @@
     <link href="<?php echo e(asset('css/plant-selection.css')); ?>?v=<?php echo e(time()); ?>" rel="stylesheet">
     <link href="<?php echo e(asset('css/loading.css')); ?>?v=<?php echo e(time()); ?>" rel="stylesheet">
     <link href="<?php echo e(asset('css/push-notifications.css')); ?>?v=<?php echo e(time()); ?>" rel="stylesheet">
+    <link href="<?php echo e(asset('css/splash-about.css')); ?>?v=<?php echo e(time()); ?>" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
 
     <!-- Preloader styles - inline to prevent FOUC -->
@@ -126,6 +127,8 @@
             const splashPage = document.getElementById('splashPage');
             if (splashPage) {
                 splashPage.classList.add('hidden');
+                // Re-enable body scrolling when splash is hidden
+                document.body.style.overflow = '';
             }
             
             // Scroll to the top of the page
@@ -133,6 +136,15 @@
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             }, 300); // Small delay to let the animation start
         }
+
+        // Prevent body scroll when splash page is visible
+        document.addEventListener('DOMContentLoaded', function() {
+            const splashPage = document.getElementById('splashPage');
+            if (splashPage && !splashPage.classList.contains('hidden')) {
+                // Disable body scrolling while splash is visible
+                document.body.style.overflow = 'hidden';
+            }
+        });
 
         // Function to start Plant Inquiry (works like RFQ but skips email modal)
         function startPlantInquiry() {
@@ -1428,7 +1440,7 @@
         <div class="container-fluid">
             <a class="navbar-brand" href="<?php echo e(route('public.plants')); ?>">
                 <img src="<?php echo e(asset('images/salengap-modified.png')); ?>" alt="Salenga Logo" class="nav-logo">
-                <span class="brand-text">Salenga Farm</span>
+                <span class="brand-text"><?php echo e(\App\Helpers\BrandHelper::getName()); ?></span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
                 <span class="navbar-toggler-icon"></span>
@@ -1674,14 +1686,199 @@
     <!-- Main content structure -->
     <div class="main-content">
         <!-- Splash Page Content -->
-    <div class="splash-page" id="splashPage">
-                <div class="splash-content">
-            <h1 class="display-4">Welcome to Salenga Farm</h1>
-            <p class="lead">Discover our wide range of available plants</p>
-            <button class="scroll-down-btn" onclick="scrollToContent()">
-                <i class="fas fa-chevron-down"></i>
-                Explore Plants
-            </button>
+    <div class="splash-page has-scroll" id="splashPage">
+        <div class="splash-content">
+            <?php if(\App\Helpers\BrandHelper::isEsthersGarden()): ?>
+                
+                <?php $about = \App\Helpers\BrandHelper::getAboutContent(); ?>
+                <h1 class="display-4 mb-4">Welcome to <?php echo e($about['title']); ?></h1>
+                
+                
+                <div class="row g-4 mb-4">
+                    
+                    <div class="col-md-6">
+                        
+                        <div class="about-box mb-4">
+                            <h3 class="h5 fw-bold text-white mb-3"><?php echo e($about['sections']['about']['title']); ?></h3>
+                            <p class="about-description text-justify mb-0"><?php echo e($about['sections']['about']['content']); ?></p>
+                        </div>
+                        
+                        
+                        <div class="about-box">
+                            <h3 class="h5 fw-bold text-white mb-3"><?php echo e($about['sections']['services']['title']); ?></h3>
+                            <ul class="list-unstyled services-list about-features">
+                                <?php $__currentLoopData = $about['sections']['services']['items']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $service): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <li class="service-item <?php if(!$loop->last): ?> border-bottom <?php endif; ?> pb-3 mb-3">
+                                        <div class="d-flex align-items-start">
+                                            <div class="service-icon">
+                                                <i class="fas <?php echo e($service['icon']); ?> text-success"></i>
+                                            </div>
+                                            <div class="service-content">
+                                                <div class="fw-bold service-title"><?php echo e($service['name']); ?></div>
+                                                <div class="service-description text-justify"><?php echo e($service['description']); ?></div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    
+                    <div class="col-md-6">
+                        <div class="about-box mb-4 projects-gallery">
+                            <h3 class="h5 fw-bold text-white mb-3">Projects</h3>
+                            <div class="project-images">
+                                <div class="project-item">
+                                    <img src="<?php echo e(asset('images/ScrollpageImg/BONHOMIE LIESURE AND RESORT.png')); ?>" alt="Bonhomie Leisure and Resort" class="project-img">
+                                    <div class="project-caption">Bonhomie Leisure and Resort</div>
+                                </div>
+                                <div class="project-item">
+                                    <img src="<?php echo e(asset('images/ScrollpageImg/LPU Showroom.png')); ?>" alt="LPU Showroom" class="project-img">
+                                    <div class="project-caption">LPU Showroom</div>
+                                </div>
+                                <div class="project-item">
+                                    <img src="<?php echo e(asset('images/ScrollpageImg/LYCEUM OF THE PHILIPPINES DAVAO CAMPUS.png')); ?>" alt="Lyceum of the Philippines Davao Campus" class="project-img">
+                                    <div class="project-caption">Lyceum of the Philippines Davao Campus</div>
+                                </div>
+                                <div class="project-item">
+                                    <img src="<?php echo e(asset('images/ScrollpageImg/Marihatag Municipal Plaza.png')); ?>" alt="Marihatag Municipal Plaza" class="project-img">
+                                    <div class="project-caption">Marihatag Municipal Plaza</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                
+                <div class="contact-info mb-4">
+                    <h3 class="h5 fw-bold text-white mb-3"><?php echo e($about['sections']['contact']['title']); ?></h3>
+                    <p class="mb-2"><i class="fas fa-envelope me-2"></i><?php echo e($about['sections']['contact']['email']); ?></p>
+                    <p class="mb-2">
+                        <i class="fas fa-phone me-2"></i>
+                        <?php $__currentLoopData = $about['sections']['contact']['phones']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $phone): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <?php echo e($phone); ?><?php if(!$loop->last): ?> / <?php endif; ?>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                    </p>
+                    <p class="mb-2">
+                        <i class="fab fa-facebook me-2"></i>
+                        <a href="<?php echo e($about['sections']['contact']['facebook_url']); ?>" target="_blank" class="text-white text-decoration-none">
+                            <?php echo e($about['sections']['contact']['facebook']); ?>
+
+                        </a>
+                    </p>
+                    <p class="mb-0"><i class="fas fa-map-marker-alt me-2"></i><?php echo e($about['sections']['contact']['address']); ?></p>
+                </div>
+                
+                
+                <div class="sticky-explore-btn">
+                    <button class="scroll-down-btn" onclick="scrollToContent()">
+                        <i class="fas fa-chevron-down"></i>
+                        Explore Plants
+                    </button>
+                </div>
+            <?php else: ?>
+                
+                <h1 class="display-4">Welcome to Salenga Farm</h1>
+                <p class="lead fw-bold mb-3">Plants, Landscaping, and Outdoor Solutions</p>
+                <p class="lead mb-4">Find quality plants, request landscaping services, and manage your inquiries with ease through our integrated platform.</p>
+                
+                
+                <div class="row g-4 mb-4">
+                    
+                    <div class="col-md-6">
+                        <div class="about-box">
+                            <h3 class="h5 fw-bold text-white mb-3">Our Services</h3>
+                            <ul class="list-unstyled services-list about-features">
+                                <li class="service-item border-bottom pb-3 mb-3">
+                                    <div class="d-flex align-items-start">
+                                        <div class="service-icon">
+                                            <i class="fas fa-seedling text-success"></i>
+                                        </div>
+                                        <div class="service-content">
+                                            <div class="fw-bold service-title">Wide Variety of Plants</div>
+                                            <div class="service-description text-justify">Browse our extensive collection of quality plants for your garden, landscaping projects, and outdoor spaces.</div>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="service-item border-bottom pb-3 mb-3">
+                                    <div class="d-flex align-items-start">
+                                        <div class="service-icon">
+                                            <i class="fas fa-home text-success"></i>
+                                        </div>
+                                        <div class="service-content">
+                                            <div class="fw-bold service-title">Landscaping & Site Visits</div>
+                                            <div class="service-description text-justify">Professional landscaping services with on-site consultations to transform your outdoor spaces.</div>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="service-item border-bottom pb-3 mb-3">
+                                    <div class="d-flex align-items-start">
+                                        <div class="service-icon">
+                                            <i class="fas fa-clipboard-list text-success"></i>
+                                        </div>
+                                        <div class="service-content">
+                                            <div class="fw-bold service-title">Easy RFQ & Inquiries</div>
+                                            <div class="service-description text-justify">Submit requests for quotations and manage your plant inquiries through our integrated platform.</div>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="service-item pb-3">
+                                    <div class="d-flex align-items-start">
+                                        <div class="service-icon">
+                                            <i class="fas fa-leaf text-success"></i>
+                                        </div>
+                                        <div class="service-content">
+                                            <div class="fw-bold service-title">Plant Care Guidance</div>
+                                            <div class="service-description text-justify">Get expert advice and guidance on plant care to ensure your plants thrive and flourish.</div>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    
+                    <div class="col-md-6">
+                        <div class="about-box mb-4 projects-gallery">
+                            <h3 class="h5 fw-bold text-white mb-3">Projects</h3>
+                            <div class="project-images">
+                                <div class="project-item">
+                                    <img src="<?php echo e(asset('images/ScrollpageImg/BONHOMIE LIESURE AND RESORT.png')); ?>" alt="Bonhomie Leisure and Resort" class="project-img">
+                                    <div class="project-caption">Bonhomie Leisure and Resort</div>
+                                </div>
+                                <div class="project-item">
+                                    <img src="<?php echo e(asset('images/ScrollpageImg/LPU Showroom.png')); ?>" alt="LPU Showroom" class="project-img">
+                                    <div class="project-caption">LPU Showroom</div>
+                                </div>
+                                <div class="project-item">
+                                    <img src="<?php echo e(asset('images/ScrollpageImg/LYCEUM OF THE PHILIPPINES DAVAO CAMPUS.png')); ?>" alt="Lyceum of the Philippines Davao Campus" class="project-img">
+                                    <div class="project-caption">Lyceum of the Philippines Davao Campus</div>
+                                </div>
+                                <div class="project-item">
+                                    <img src="<?php echo e(asset('images/ScrollpageImg/Marihatag Municipal Plaza.png')); ?>" alt="Marihatag Municipal Plaza" class="project-img">
+                                    <div class="project-caption">Marihatag Municipal Plaza</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                
+                <div class="contact-info mb-4">
+                    <h3 class="h5 fw-bold text-white mb-3">For Consultation</h3>
+                    <p class="mb-2"><i class="fas fa-envelope me-2"></i>salengafarm@example.com</p>
+                    <p class="mb-2"><i class="fas fa-phone me-2"></i>Contact us for inquiries</p>
+                </div>
+                
+                
+                <div class="sticky-explore-btn">
+                    <button class="scroll-down-btn" onclick="scrollToContent()">
+                        <i class="fas fa-chevron-down"></i>
+                        Explore Plants
+                    </button>
+                </div>
+            <?php endif; ?>
         </div>
     </div>
 

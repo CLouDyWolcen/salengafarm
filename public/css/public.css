@@ -1,3 +1,6 @@
+/* Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&display=swap');
+
 /* Hero Section */
 .hero-section {
     background-color: #f8f9fa;
@@ -319,8 +322,9 @@
 }
 
 .brand-text {
-    font-family: 'Pacifico', cursive !important;
+    font-family: 'Playfair Display', serif !important;
     font-size: 22px !important;
+    font-weight: 600 !important;
     color: white !important;
     line-height: 1.2 !important;
     letter-spacing: 0.5px !important;
@@ -2285,6 +2289,13 @@ img {
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
 }
 
+/* Only add scroll for Esther's Garden (has-scroll class) */
+.splash-page.has-scroll .splash-content {
+    max-height: 85vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
 .splash-logo {
     max-width: 200px;
     height: auto;
@@ -2294,7 +2305,9 @@ img {
 
 .splash-page h1 {
     color: white;
-    font-weight: 600;
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    letter-spacing: 0.5px;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 

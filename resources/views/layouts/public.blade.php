@@ -235,7 +235,7 @@
         <div class="container-fluid">
             <a class="navbar-brand" href="{{ route('public.plants') }}">
                 <img src="{{ asset('images/salengap-modified.png') }}" alt="Salenga Logo" class="nav-logo">
-                <span class="brand-text">Salenga Farm</span>
+                <span class="brand-text">{{ \App\Helpers\BrandHelper::getName() }}</span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
                 <span class="navbar-toggler-icon"></span>
