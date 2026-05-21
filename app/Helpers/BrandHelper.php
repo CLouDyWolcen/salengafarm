@@ -127,7 +127,7 @@ class BrandHelper
                 ],
                 'contact' => [
                     'title' => 'For Consultation and Get a Free Estimate',
-                    'email' => 'esthersaflangarden@gmail.com',
+                    'email' => 'esthersalenga@gmail.com',
                     'phones' => [
                         '0936-8070866 (TM)',
                         '0916-9401197 (TM)',
