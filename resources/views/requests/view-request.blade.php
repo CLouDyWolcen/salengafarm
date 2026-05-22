@@ -1031,7 +1031,7 @@
                         btn.prop('disabled', false).html('Send Response');
                         alert('Request timed out. Please try again.');
                     }
-                }, 30000); // 30 second timeout
+                }, 120000); // 120 second timeout (2 minutes)
                 
                 // ACTUALLY SUBMIT THE FORM
                 form.submit();

@@ -115,10 +115,10 @@
                         <h6 class="text-success mb-3"><i class="fas fa-camera me-2"></i>Property Photos</h6>
                         <div class="d-flex flex-wrap">
                             @foreach($request->photos as $photo)
-                                <img src="{{ Storage::url($photo) }}" 
+                                <img src="{{ \Storage::url($photo) }}" 
                                      alt="Property Photo" 
                                      class="photo-thumbnail mb-2 me-2"
-                                     onclick="viewPhoto('{{ Storage::url($photo) }}')">
+                                     onclick="viewPhoto('{{ \Storage::url($photo) }}')">
                             @endforeach
                         </div>
                     @else
