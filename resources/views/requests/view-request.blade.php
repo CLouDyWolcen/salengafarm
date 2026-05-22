@@ -813,6 +813,14 @@
     <!-- Add your JavaScript for print functionality and other interactions here -->
     <script>
         $(document).ready(function() {
+            // CRITICAL: Clean up any lingering modal artifacts from previous page load
+            // This fixes the issue where modal backdrop blocks buttons after form submission
+            $('.modal-backdrop').remove();
+            $('body').removeClass('modal-open').css({
+                'overflow': '',
+                'padding-right': ''
+            });
+            
             // Edit button functionality - show modal forms
             $('.edit-request-info-btn').on('click', function(e) {
                 e.preventDefault();
@@ -966,6 +974,22 @@
             $('#editRequestInfoForm, #editClientInfoForm, #editItemsForm').on('submit', function(e) {
                 const submitBtn = $(this).find('button[type="submit"]');
                 submitBtn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Saving...');
+                
+                // CRITICAL: Properly close all modals before form submission to prevent backdrop issues
+                const $modal = $(this).closest('.modal');
+                if ($modal.length) {
+                    // Hide the modal
+                    $modal.modal('hide');
+                    
+                    // Force cleanup after a brief delay to ensure Bootstrap completes its animation
+                    setTimeout(() => {
+                        $('.modal-backdrop').remove();
+                        $('body').removeClass('modal-open').css({
+                            'overflow': '',
+                            'padding-right': ''
+                        });
+                    }, 150);
+                }
             });
 
             // Print button functionality

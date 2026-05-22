@@ -7,7 +7,7 @@
 <?php $__env->startSection('title', 'My Requests - Salenga Farm'); ?>
 
 <?php $__env->startPush('styles'); ?>
-<link href="<?php echo e(asset('css/loading.css')); ?>" rel="stylesheet">
+<link href="<?php echo e(asset('css/loading.css')); ?>?v=<?php echo e(time()); ?>" rel="stylesheet">
 <style>
     /* Copy all styles from user.blade.php */
     .container-fluid {
