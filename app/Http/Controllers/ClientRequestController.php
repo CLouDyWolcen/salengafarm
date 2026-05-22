@@ -865,11 +865,11 @@ class ClientRequestController extends Controller
             $request->responded_by = auth()->id();
             $request->save();
             
-            // Send email notification to user
+            // Send email notification to user (queued for background processing)
             try {
                 $subject = "Response to Your Plant Inquiry #{$request->id} - Salenga Farm";
                 
-                Mail::send('emails.inquiry-response', [
+                Mail::later(now()->addSeconds(5), 'emails.inquiry-response', [
                     'request' => $request,
                     'viewLink' => url('/dashboard/user')
                 ], function ($message) use ($request, $subject) {
@@ -877,12 +877,12 @@ class ClientRequestController extends Controller
                             ->subject($subject);
                 });
                 
-                Log::info('Response email sent successfully', [
+                Log::info('Response email queued successfully', [
                     'request_id' => $request->id,
                     'recipient' => $request->email
                 ]);
             } catch (\Exception $e) {
-                Log::error('Failed to send response email', [
+                Log::error('Failed to queue response email', [
                     'request_id' => $request->id,
                     'error' => $e->getMessage()
                 ]);
