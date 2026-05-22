@@ -865,16 +865,43 @@ class ClientRequestController extends Controller
             $request->responded_by = auth()->id();
             $request->save();
             
-            // Create in-app notification for user
-            $user = User::where('email', $request->email)->first();
+            // Create in-app notification for user with comprehensive logging
+            Log::info('SendResponse - Creating notification', [
+                'request_id' => $request->id,
+                'request_email' => $request->email,
+                'request_type' => $request->request_type
+            ]);
+            
+            // Case-insensitive email search with trimming
+            $user = User::whereRaw('LOWER(TRIM(email)) = ?', [strtolower(trim($request->email))])->first();
+            
             if ($user) {
-                Notification::create([
+                Log::info('SendResponse - User found', [
                     'user_id' => $user->id,
-                    'type' => 'inquiry_response',
-                    'title' => 'Inquiry Response',
-                    'message' => "Your inquiry #{$request->id} has been responded to. Click to view details.",
-                    'link' => '/user/inquiries/' . $request->id . '/response',
-                    'is_read' => false
+                    'user_email' => $user->email
+                ]);
+                
+                try {
+                    $notification = Notification::create([
+                        'user_id' => $user->id,
+                        'type' => 'request_response',
+                        'title' => 'Request Response',
+                        'message' => "Your request #{$request->id} has been responded to. Check your dashboard for details.",
+                        'link' => '/dashboard/user',
+                        'is_read' => false
+                    ]);
+                    
+                    Log::info('SendResponse - Notification created', [
+                        'notification_id' => $notification->id
+                    ]);
+                } catch (\Exception $notifException) {
+                    Log::error('SendResponse - Notification creation failed', [
+                        'error' => $notifException->getMessage()
+                    ]);
+                }
+            } else {
+                Log::warning('SendResponse - User not found', [
+                    'email' => $request->email
                 ]);
             }
             
