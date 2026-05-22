@@ -1,40 +1,4 @@
-*** System restart required ***
-Last login: Fri May 22 06:54:18 2026 from 162.243.188.66
-root@salengafarm:~# sed -i 's/max_execution_time = 30/max_execution_time = 300/' /etc/php/8.3/fpm/php.ini
-root@salengafarm:~# sed -i 's/max_execution_time = 30/max_execution_time = 300/' /etc/php/8.3/fpm/php.ini
-root@salengafarm:~# systemctl restart php8.3-fpm
-root@salengafarm:~# nano /etc/nginx/sites-available/salengafarm
-root@salengafarm:~# systemctl reload nginx
-root@salengafarm:~# tail -100 /var/www/salengafarm/storage/logs/laravel.log
-#37 /var/www/salengafarm/vendor/laravel/framework/src/Illuminate/Routing/Router.php(807): Illuminate\\Pipeline\\Pipeline->then()
-#38 /var/www/salengafarm/vendor/laravel/framework/src/Illuminate/Routing/Router.php(786): Illuminate\\Routing\\Router->runRouteWithinStack()
-#39 /var/www/salengafarm/vendor/laravel/framework/src/Illuminate/Routing/Router.php(750): Illuminate\\Routing\\Router->runRoute()
-#40 /var/www/salengafarm/vendor/laravel/framework/src/Illuminate/Routing/Router.php(739): Illuminate\\Routing\\Router->dispatchToRoute()
-#41 /var/www/salengafarm/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(201): Illuminate\\Routing\\Router->dispatch()
-#42 /var/www/salengafarm/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(144): Illuminate\\Foundation\\Http\\Kernel->Illuminate\\Foundation\\Http\\{closure}()
-#43 /var/www/salengafarm/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}()
-#44 /var/www/salengafarm/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/ConvertEmptyStringsToNull.php(31): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle()
-#45 /var/www/salengafarm/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull->handle()
-#46 /var/www/salengafarm/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}()
-#47 /var/www/salengafarm/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TrimStrings.php(51): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle()
-#48 /var/www/salengafarm/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\TrimStrings->handle()
-#49 /var/www/salengafarm/vendor/laravel/framework/src/Illuminate/Http/Middleware/ValidatePostSize.php(27): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}()
-#50 /var/www/salengafarm/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Http\\Middleware\\ValidatePostSize->handle()
-#51 /var/www/salengafarm/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/PreventRequestsDuringMaintenance.php(110): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}()
-#52 /var/www/salengafarm/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance->handle()
-#53 /var/www/salengafarm/vendor/laravel/framework/src/Illuminate/Http/Middleware/HandleCors.php(49): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}()
-#54 /var/www/salengafarm/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Http\\Middleware\\HandleCors->handle()
-#55 /var/www/salengafarm/vendor/laravel/framework/src/Illuminate/Http/Middleware/TrustProxies.php(58): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}()
-#56 /var/www/salengafarm/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Http\\Middleware\\TrustProxies->handle()
-#57 /var/www/salengafarm/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/InvokeDeferredCallbacks.php(22): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}()
-#58 /var/www/salengafarm/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\InvokeDeferredCallbacks->handle()
-#59 /var/www/salengafarm/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(119): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}()
-#60 /var/www/salengafarm/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(176): Illuminate\\Pipeline\\Pipeline->then()
-#61 /var/www/salengafarm/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(145): Illuminate\\Foundation\\Http\\Kernel->sendRequestThroughRouter()
-#62 /var/www/salengafarm/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(1190): Illuminate\\Foundation\\Http\\Kernel->handle()
-#63 /var/www/salengafarm/public/index.php(17): Illuminate\\Foundation\\Application->handleRequest()
-#64 {main}
-
+root@salengafarm:/var/www/salengafarm# tail -100 /var/www/salengafarm/storage/logs/laravel.log | grep -A 50 "Error"
 [previous exception] [object] (Error(code: 0): Class \"Storage\" not found at /var/www/salengafarm/storage/framework/views/6005b0fbaf95bb6a87d77e9d50be56df.php:122)
 [stacktrace]
 #0 /var/www/salengafarm/vendor/laravel/framework/src/Illuminate/Filesystem/Filesystem.php(123): require()
@@ -105,5 +69,4 @@ root@salengafarm:~# tail -100 /var/www/salengafarm/storage/logs/laravel.log
 #65 /var/www/salengafarm/public/index.php(17): Illuminate\\Foundation\\Application->handleRequest()
 #66 {main}
 "} 
-[2026-05-22 07:04:12] production.INFO: Plain HTML view request {"id":"114","items_count":1,"controller":"ClientRequestController@plainViewRequest"} 
-root@salengafarm:~# 
+root@salengafarm:/var/www/salengafarm# 
