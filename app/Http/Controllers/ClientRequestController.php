@@ -865,29 +865,6 @@ class ClientRequestController extends Controller
             $request->responded_by = auth()->id();
             $request->save();
             
-            // Send email notification to user (queued for background processing)
-            try {
-                $subject = "Response to Your Plant Inquiry #{$request->id} - Salenga Farm";
-                
-                Mail::later(now()->addSeconds(5), 'emails.inquiry-response', [
-                    'request' => $request,
-                    'viewLink' => url('/dashboard/user')
-                ], function ($message) use ($request, $subject) {
-                    $message->to($request->email)
-                            ->subject($subject);
-                });
-                
-                Log::info('Response email queued successfully', [
-                    'request_id' => $request->id,
-                    'recipient' => $request->email
-                ]);
-            } catch (\Exception $e) {
-                Log::error('Failed to queue response email', [
-                    'request_id' => $request->id,
-                    'error' => $e->getMessage()
-                ]);
-            }
-            
             // Create in-app notification for user
             $user = User::where('email', $request->email)->first();
             if ($user) {
