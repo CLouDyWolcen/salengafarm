@@ -818,19 +818,64 @@
     <!-- Add your JavaScript for print functionality and other interactions here -->
     <script>
         $(document).ready(function() {
+            // ULTRA-AGGRESSIVE modal cleanup function
+            function forceModalCleanup() {
+                // Remove all modal backdrops
+                $('.modal-backdrop').remove();
+                
+                // Remove modal-open class from body
+                $('body').removeClass('modal-open');
+                
+                // Reset ALL body styles that Bootstrap might have added
+                $('body').css({
+                    'overflow': '',
+                    'padding-right': '',
+                    'overflow-y': ''
+                });
+                
+                // Remove any inline styles completely
+                if ($('body').attr('style') === '') {
+                    $('body').removeAttr('style');
+                }
+                
+                // Hide all modals
+                $('.modal').each(function() {
+                    $(this).modal('hide');
+                    $(this).removeClass('show');
+                    $(this).css('display', '');
+                });
+            }
+            
+            // Run cleanup immediately on page load
+            forceModalCleanup();
+            
+            // Run cleanup multiple times with delays to catch any lingering artifacts
+            setTimeout(forceModalCleanup, 100);
+            setTimeout(forceModalCleanup, 300);
+            setTimeout(forceModalCleanup, 500);
+            
+            // Run cleanup when window gains focus (user switches back to tab)
+            $(window).on('focus', forceModalCleanup);
+            
+            // Run cleanup before page unload
+            $(window).on('beforeunload', forceModalCleanup);
+            
             // Edit button functionality - show modal forms
             $('.edit-request-info-btn').on('click', function(e) {
                 e.preventDefault();
+                forceModalCleanup(); // Clean before opening
                 $('#editRequestInfoModal').modal('show');
             });
 
             $('.edit-client-info-btn').on('click', function(e) {
                 e.preventDefault();
+                forceModalCleanup(); // Clean before opening
                 $('#editClientInfoModal').modal('show');
             });
 
             $('.edit-items-btn').on('click', function(e) {
                 e.preventDefault();
+                forceModalCleanup(); // Clean before opening
                 $('#editItemsModal').modal('show');
             });
 
@@ -971,6 +1016,29 @@
             $('#editRequestInfoForm, #editClientInfoForm, #editItemsForm').on('submit', function(e) {
                 const submitBtn = $(this).find('button[type="submit"]');
                 submitBtn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Saving...');
+                
+                // CRITICAL: Force close modal and cleanup IMMEDIATELY before form submission
+                const $modal = $(this).closest('.modal');
+                if ($modal.length) {
+                    // Force hide modal without animation
+                    $modal.modal('hide');
+                    $modal.removeClass('show');
+                    $modal.css('display', 'none');
+                }
+                
+                // Immediate aggressive cleanup
+                $('.modal-backdrop').remove();
+                $('body').removeClass('modal-open').removeAttr('style');
+                
+                // Additional cleanup after tiny delay
+                setTimeout(function() {
+                    $('.modal-backdrop').remove();
+                    $('body').removeClass('modal-open').css({
+                        'overflow': '',
+                        'padding-right': '',
+                        'overflow-y': ''
+                    }).removeAttr('style');
+                }, 50);
             });
 
             // Print button functionality

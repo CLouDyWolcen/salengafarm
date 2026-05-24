@@ -82,13 +82,18 @@ h2.mb-4.fs-4:after {
 }
 
 .row.mb-4 .card.border-success {
-  background: linear-gradient(145deg, #ffffff, #f5f9f7);
+  background: linear-gradient(to right, #ffffff 60%, #f0f9f4);
   border-left: 4px solid var(--primary-green) !important;
 }
 
 .row.mb-4 .card.border-warning {
-  background: linear-gradient(145deg, #ffffff, #f9f8f5);
+  background: linear-gradient(to right, #ffffff 60%, #fffbf0);
   border-left: 4px solid var(--soft-yellow) !important;
+}
+
+.row.mb-4 .card.border-danger {
+  background: linear-gradient(to right, #ffffff 60%, #fff5f5);
+  border-left: 4px solid #dc3545 !important;
 }
 
 .row.mb-4 .card .card-body {
@@ -126,6 +131,10 @@ h2.mb-4.fs-4:after {
   color: var(--earthy-brown);
 }
 
+.row.mb-4 .card.border-danger h2.card-title {
+  color: #dc3545;
+}
+
 .row.mb-4 .stats-icon {
   display: flex;
   align-items: center;
@@ -146,6 +155,10 @@ h2.mb-4.fs-4:after {
 
 .row.mb-4 .card.border-warning .stats-icon {
   background-color: rgba(246, 229, 141, 0.2);
+}
+
+.row.mb-4 .card.border-danger .stats-icon {
+  background-color: rgba(220, 53, 69, 0.1);
 }
 
 /* Content cards styling - IMPROVED SPACING AND STRUCTURE */

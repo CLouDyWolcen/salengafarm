@@ -260,8 +260,8 @@ class ClientRequestController extends Controller
                 // Generate PDF
                 $this->generatePdf($plantRequest->id);
                 
-                // Create notification for admins
-                $admins = User::where('role', 'admin')->get();
+                // Create notification for admins and super admins
+                $admins = User::where('role', 'admin')->orWhere('role', 'super_admin')->get();
                 foreach ($admins as $admin) {
                     Notification::create([
                         'user_id' => $admin->id,
@@ -313,8 +313,8 @@ class ClientRequestController extends Controller
                 // Generate PDF
                 $this->generatePdf($plantRequest->id);
                 
-                // Create notification for admins
-                $admins = User::where('role', 'admin')->get();
+                // Create notification for admins and super admins
+                $admins = User::where('role', 'admin')->orWhere('role', 'super_admin')->get();
                 foreach ($admins as $admin) {
                     Notification::create([
                         'user_id' => $admin->id,
@@ -886,8 +886,8 @@ class ClientRequestController extends Controller
                         'user_id' => $user->id,
                         'type' => 'request_response',
                         'title' => 'Request Response',
-                        'message' => "Your request #{$request->id} has been responded to. Check your dashboard for details.",
-                        'link' => '/dashboard/user',
+                        'message' => "Your request #{$request->id} has been responded to. Check your requests for details.",
+                        'link' => '/my-requests',
                         'is_read' => false
                     ]);
                     

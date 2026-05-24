@@ -131,8 +131,8 @@ class RequestFormController extends Controller
                 // Don't fail the request if email fails, just log it
             }
             
-            // Create notification for admins only (not super admin) about new plant request
-            $admins = User::where('role', 'admin')->get();
+            // Create notification for admins and super admins about new plant request
+            $admins = User::where('role', 'admin')->orWhere('role', 'super_admin')->get();
             foreach ($admins as $admin) {
                 Notification::create([
                     'user_id' => $admin->id,

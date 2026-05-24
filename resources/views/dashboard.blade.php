@@ -147,7 +147,7 @@
                     </div>
             <!-- Summary Cards Row - Reduced height via CSS -->
             <div class="row mb-4">
-                <div class="col-md-6 mb-2 mb-md-0">
+                <div class="col-md-4 mb-2">
                     <div class="card border-success">
                         <div class="card-body">
                             <div class="d-flex align-items-center">
@@ -156,13 +156,13 @@
                                 </div>
                                 <div>
                                     <h6 class="card-subtitle mb-2 text-muted">Total Plants in Stock</h6>
-                                            <h2 class="card-title mb-0">{{ $totalStock }}</h2>
+                                    <h2 class="card-title mb-0">{{ $totalStock }}</h2>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-4 mb-2">
                     <div class="card border-warning">
                         <div class="card-body">
                             <div class="d-flex align-items-center">
@@ -171,7 +171,22 @@
                                 </div>
                                 <div>
                                     <h6 class="card-subtitle mb-2 text-muted">Low Stock Items</h6>
-                                            <h2 class="card-title mb-0">{{ $lowStockItems->count() }}</h2>
+                                    <h2 class="card-title mb-0">{{ $lowStockItems->count() }}</h2>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-2">
+                    <div class="card border-danger">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div class="stats-icon me-3">
+                                    <i class="fas fa-times-circle fa-2x text-danger opacity-50"></i>
+                                </div>
+                                <div>
+                                    <h6 class="card-subtitle mb-2 text-muted">Out of Stock</h6>
+                                    <h2 class="card-title mb-0">{{ $outOfStockItems->count() }}</h2>
                                 </div>
                             </div>
                         </div>
@@ -250,27 +265,74 @@
                         <div class="card-header">
                             <div class="d-flex justify-content-between align-items-center">
                                 <h5 class="card-title mb-0 fs-6">
-                                    <i class="fas fa-exclamation-circle me-2 text-warning"></i>Low Stock Alerts
+                                    <i class="fas fa-exclamation-circle me-2 text-warning"></i>Stock Alerts
                                 </h5>
                             </div>
                         </div>
-                        <div class="card-body">
-                            <div class="list-group list-group-flush">
-                                @forelse($lowStockItems as $item)
-                                    <div class="list-group-item">
-                                        <div class="d-flex justify-content-between align-items-center w-100">
-                                            <div>
-                                                <h6 class="mb-0">{{ strtoupper($item->name) }}</h6>
-                                                <small class="text-muted">{{ $item->category }}</small>
+                        <div class="card-body p-0">
+                            <!-- Tabs -->
+                            <ul class="nav nav-tabs nav-fill" role="tablist" style="border-bottom: 1px solid #dee2e6;">
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link active" id="low-stock-tab" data-bs-toggle="tab" data-bs-target="#low-stock-content" type="button" role="tab" style="font-size: 0.85rem; padding: 0.5rem;">
+                                        <i class="fas fa-exclamation-triangle me-1 text-warning"></i> Low Stock
+                                        <span class="badge bg-warning text-dark ms-1">{{ $lowStockItems->count() }}</span>
+                                    </button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="out-stock-tab" data-bs-toggle="tab" data-bs-target="#out-stock-content" type="button" role="tab" style="font-size: 0.85rem; padding: 0.5rem;">
+                                        <i class="fas fa-times-circle me-1 text-danger"></i> Out of Stock
+                                        <span class="badge bg-danger ms-1">{{ $outOfStockItems->count() }}</span>
+                                    </button>
+                                </li>
+                            </ul>
+                            
+                            <!-- Tab Content -->
+                            <div class="tab-content">
+                                <!-- Low Stock Tab -->
+                                <div class="tab-pane fade show active" id="low-stock-content" role="tabpanel">
+                                    <div class="list-group list-group-flush">
+                                        @forelse($lowStockItems as $item)
+                                            <div class="list-group-item">
+                                                <div class="d-flex justify-content-between align-items-center w-100">
+                                                    <div>
+                                                        <h6 class="mb-0">{{ strtoupper($item->name) }}</h6>
+                                                        <small class="text-muted">{{ $item->category }}</small>
+                                                    </div>
+                                                    <span class="badge bg-warning text-dark">{{ $item->quantity }} left</span>
+                                                </div>
                                             </div>
-                                            <span class="badge bg-warning">{{ $item->quantity }} left</span>
-                                        </div>
+                                        @empty
+                                            <div class="list-group-item">
+                                                <p class="text-muted mb-0 text-center">
+                                                    <i class="fas fa-check-circle text-success me-2"></i>No low stock items
+                                                </p>
+                                            </div>
+                                        @endforelse
                                     </div>
-                                @empty
-                                    <div class="list-group-item">
-                                        <p class="text-muted mb-0 text-center">No low stock items</p>
+                                </div>
+                                
+                                <!-- Out of Stock Tab -->
+                                <div class="tab-pane fade" id="out-stock-content" role="tabpanel">
+                                    <div class="list-group list-group-flush">
+                                        @forelse($outOfStockItems as $item)
+                                            <div class="list-group-item">
+                                                <div class="d-flex justify-content-between align-items-center w-100">
+                                                    <div>
+                                                        <h6 class="mb-0">{{ strtoupper($item->name) }}</h6>
+                                                        <small class="text-muted">{{ $item->category }}</small>
+                                                    </div>
+                                                    <span class="badge bg-danger">Out of Stock</span>
+                                                </div>
+                                            </div>
+                                        @empty
+                                            <div class="list-group-item">
+                                                <p class="text-muted mb-0 text-center">
+                                                    <i class="fas fa-check-circle text-success me-2"></i>No out of stock items
+                                                </p>
+                                            </div>
+                                        @endforelse
                                     </div>
-                                @endforelse
+                                </div>
                             </div>
                         </div>
                     </div>

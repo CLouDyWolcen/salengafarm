@@ -440,6 +440,16 @@ function loadSiteVisits() {
 }
 
 function addMarkerForVisit(visit) {
+    // Validate coordinates before adding marker
+    const lat = parseFloat(visit.latitude);
+    const lng = parseFloat(visit.longitude);
+    
+    // Skip if coordinates are invalid (null, undefined, NaN, or 0)
+    if (!lat || !lng || isNaN(lat) || isNaN(lng)) {
+        console.warn('Skipping site visit with invalid coordinates:', visit.id, visit.client);
+        return;
+    }
+    
     // Create custom colored marker icon
     const markerColor = getMarkerColor(visit.status);
     const customIcon = L.divIcon({
@@ -450,7 +460,7 @@ function addMarkerForVisit(visit) {
         popupAnchor: [0, -24]
     });
     
-    const marker = L.marker([parseFloat(visit.latitude), parseFloat(visit.longitude)], { icon: customIcon })
+    const marker = L.marker([lat, lng], { icon: customIcon })
         .addTo(map)
         .bindPopup(`
             <div class="p-2">

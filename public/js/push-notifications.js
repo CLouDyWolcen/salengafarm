@@ -269,6 +269,7 @@ class NotificationManager {
     }
 
     async loadNotifications() {
+        console.log('=== LOADING NOTIFICATIONS ===');
         try {
             const response = await fetch('/notifications', {
                 headers: {
@@ -277,10 +278,17 @@ class NotificationManager {
                 }
             });
 
+            console.log('Fetch response status:', response.status, response.ok);
+
             if (response.ok) {
                 const data = await response.json();
+                console.log('Notifications data received:', data);
+                console.log('Notifications array:', data.data);
                 this.notifications = data.data || [];
+                console.log('Stored notifications count:', this.notifications.length);
                 this.updateUI();
+            } else {
+                console.error('Failed to load notifications, status:', response.status);
             }
         } catch (error) {
             console.error('Error loading notifications:', error);
@@ -291,6 +299,7 @@ class NotificationManager {
     }
 
     async updateUnreadCount() {
+        console.log('=== UPDATING UNREAD COUNT ===');
         try {
             const response = await fetch('/notifications/unread-count', {
                 headers: {
@@ -299,10 +308,16 @@ class NotificationManager {
                 }
             });
 
+            console.log('Unread count response status:', response.status, response.ok);
+
             if (response.ok) {
                 const data = await response.json();
+                console.log('Unread count data:', data);
                 this.unreadCount = data.count || 0;
+                console.log('Unread count:', this.unreadCount);
                 this.updateBadge();
+            } else {
+                console.error('Failed to get unread count, status:', response.status);
             }
         } catch (error) {
             console.error('Error updating unread count:', error);
@@ -332,8 +347,13 @@ class NotificationManager {
     }
 
     updateUI() {
+        console.log('=== UPDATING UI ===');
         const listContainers = document.querySelectorAll('.notification-list');
-        if (listContainers.length === 0) return;
+        console.log('Found notification list containers:', listContainers.length);
+        if (listContainers.length === 0) {
+            console.warn('No notification list containers found!');
+            return;
+        }
 
         const html = this.notifications.length === 0 
             ? `<div class="no-notifications">
@@ -342,8 +362,11 @@ class NotificationManager {
             </div>`
             : this.notifications.map(notif => this.renderNotification(notif)).join('');
 
+        console.log('Rendering', this.notifications.length, 'notifications');
+
         listContainers.forEach(container => {
             container.innerHTML = html;
+            console.log('Updated container:', container.id || container.className);
             
             // Add click handlers to notification items in this container
             container.querySelectorAll('.notification-item').forEach(item => {
@@ -423,6 +446,7 @@ class NotificationManager {
             'request_submitted': 'info',
             'request_approved': 'success',
             'request_sent': 'success',
+            'request_response': 'success',
             'client_approved': 'success',
             'client_rejected': 'warning',
             'new_request': 'info',
@@ -436,6 +460,7 @@ class NotificationManager {
             'request_submitted': 'fas fa-paper-plane',
             'request_approved': 'fas fa-check-circle',
             'request_sent': 'fas fa-truck',
+            'request_response': 'fas fa-reply',
             'client_approved': 'fas fa-user-check',
             'client_rejected': 'fas fa-times-circle',
             'new_request': 'fas fa-bell',

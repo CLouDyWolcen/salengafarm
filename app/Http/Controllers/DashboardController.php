@@ -15,8 +15,11 @@ class DashboardController extends Controller
         // Get total stock
         $totalStock = Plant::sum('quantity');
 
-        // Get low stock items (quantity less than 10)
-        $lowStockItems = Plant::where('quantity', '<', 10)->get();
+        // Get low stock items (quantity between 1 and 9)
+        $lowStockItems = Plant::whereBetween('quantity', [1, 9])->orderBy('quantity')->get();
+        
+        // Get out of stock items (quantity = 0)
+        $outOfStockItems = Plant::where('quantity', 0)->get();
 
         // Get recent plants (last 5 added)
         $recentPlants = Plant::orderBy('created_at', 'desc')->take(5)->get();
@@ -108,6 +111,7 @@ class DashboardController extends Controller
         return view('dashboard', compact(
             'totalStock',
             'lowStockItems',
+            'outOfStockItems',
             'recentPlants',
             'stockByCategory',
             'salesByCategory',

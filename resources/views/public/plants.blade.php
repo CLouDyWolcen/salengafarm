@@ -2028,9 +2028,27 @@
                             <button class="btn btn-success" id="viewRequestBtn" onclick="startPlantInquiry()">
                                 <i class="fas fa-clipboard-list me-1"></i>Request Inquiry
                             </button>
-                            <button class="btn btn-success" id="requestPlantsBtn">
-                                <i class="fas fa-file-invoice me-1"></i>Request for Quotation (RFQ)
-                            </button>
+                            
+                            @if(!Auth::user()->isProfileComplete())
+                                <!-- RFQ Locked - Profile Incomplete -->
+                                <button class="btn btn-success position-relative" id="requestPlantsBtn" 
+                                        style="opacity: 0.5; cursor: not-allowed;" 
+                                        data-bs-toggle="tooltip" 
+                                        data-bs-placement="top" 
+                                        title="Complete your profile to unlock RFQ"
+                                        data-profile-incomplete="true"
+                                        onclick="event.preventDefault(); event.stopPropagation(); showProfileIncompleteAlert();">
+                                    <i class="fas fa-file-invoice me-1"></i>Request for Quotation (RFQ)
+                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark" style="font-size: 0.65rem;">
+                                        <i class="fas fa-lock"></i>
+                                    </span>
+                                </button>
+                            @else
+                                <!-- RFQ Unlocked - Profile Complete -->
+                                <button class="btn btn-success" id="requestPlantsBtn">
+                                    <i class="fas fa-file-invoice me-1"></i>Request for Quotation (RFQ)
+                                </button>
+                            @endif
                         </div>
                     @endif
             </div>
@@ -2926,6 +2944,122 @@
     });
     </script>
     @endauth
+    
+    <!-- Profile Incomplete Alert for RFQ -->
+    <script>
+    // Initialize Bootstrap tooltips
+    document.addEventListener('DOMContentLoaded', function() {
+        // Prevent modal from opening if profile is incomplete
+        const requestPlantsBtn = document.getElementById('requestPlantsBtn');
+        if (requestPlantsBtn && requestPlantsBtn.hasAttribute('data-profile-incomplete')) {
+            // Remove any existing event listeners by cloning the button
+            const newBtn = requestPlantsBtn.cloneNode(true);
+            requestPlantsBtn.parentNode.replaceChild(newBtn, requestPlantsBtn);
+            
+            // Initialize tooltip on the cloned button with proper trigger
+            const tooltip = new bootstrap.Tooltip(newBtn, {
+                trigger: 'hover',
+                placement: 'top',
+                container: 'body'
+            });
+            
+            // Add only the profile incomplete alert
+            newBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                e.stopImmediatePropagation();
+                
+                // Hide tooltip before showing alert
+                tooltip.hide();
+                
+                showProfileIncompleteAlert();
+                return false;
+            }, true);
+        }
+        
+        // Initialize other tooltips
+        var otherTooltips = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]:not(#requestPlantsBtn)'));
+        otherTooltips.forEach(function (tooltipTriggerEl) {
+            new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    });
+
+    // Show alert when locked RFQ button is clicked
+    function showProfileIncompleteAlert() {
+        Swal.fire({
+            icon: 'warning',
+            title: '<strong style="color: #333; font-size: 1.5rem;">Profile Incomplete</strong>',
+            html: `
+                <div style="text-align: center; padding: 0.5rem 0;">
+                    <p style="font-size: 1rem; color: #555; margin-bottom: 1rem; line-height: 1.5;">
+                        You need to complete your profile to access the<br>
+                        <strong style="color: #28a745;">Request for Quotation (RFQ)</strong> feature.
+                    </p>
+                    <div style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); 
+                                border-radius: 10px; 
+                                padding: 1rem; 
+                                margin: 0.75rem 0;
+                                border-left: 4px solid #ffc107;">
+                        <div style="font-size: 0.85rem; color: #666; margin-bottom: 0.5rem;">Profile Completion</div>
+                        <div style="font-size: 1.75rem; font-weight: bold; color: #28a745; margin-bottom: 0.5rem;">
+                            {{ auth()->user()->getProfileCompletionPercentage() }}%
+                        </div>
+                        <div class="progress" style="height: 6px; border-radius: 10px; background-color: #e9ecef;">
+                            <div class="progress-bar bg-success" role="progressbar" 
+                                 style="width: {{ auth()->user()->getProfileCompletionPercentage() }}%; border-radius: 10px;"
+                                 aria-valuenow="{{ auth()->user()->getProfileCompletionPercentage() }}" 
+                                 aria-valuemin="0" 
+                                 aria-valuemax="100">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `,
+            showCancelButton: true,
+            confirmButtonText: '<i class="fas fa-user-edit me-2"></i>Complete Profile Now',
+            cancelButtonText: '<i class="fas fa-times me-2"></i>Later',
+            confirmButtonColor: '#28a745',
+            cancelButtonColor: '#6c757d',
+            buttonsStyling: false,
+            customClass: {
+                popup: 'swal-custom-popup',
+                confirmButton: 'btn btn-success px-4 py-2 me-2',
+                cancelButton: 'btn btn-secondary px-4 py-2'
+            },
+            width: '500px',
+            padding: '1.5rem'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = '{{ route("profile.edit") }}';
+            }
+        });
+        return false;
+    }
+    </script>
+    
+    <style>
+    .swal-custom-popup {
+        border-radius: 12px !important;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12) !important;
+    }
+    
+    .swal2-icon.swal2-warning {
+        border-color: #ffc107 !important;
+        color: #ffc107 !important;
+        width: 4em !important;
+        height: 4em !important;
+        font-size: 1rem !important;
+        margin: 1rem auto !important;
+    }
+    
+    .swal2-icon.swal2-warning .swal2-icon-content {
+        font-size: 2.5em !important;
+    }
+    
+    .swal2-actions {
+        margin-top: 1rem !important;
+    }
+    </style>
     
 <script>
 // UX improvement for modalRequestForm submission
