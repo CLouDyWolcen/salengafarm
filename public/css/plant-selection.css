@@ -47,6 +47,11 @@ body.plant-selection-mode .selection-checkbox {
     display: flex !important;
 }
 
+/* Hide the chevron arrow icon in selection mode */
+body.plant-selection-mode .info-icon {
+    display: none !important;
+}
+
 /* Checkbox icon */
 .selection-checkbox i {
     color: transparent;
@@ -354,6 +359,18 @@ body.plant-selection-mode .selection-checkbox {
 
 /* Mobile responsive */
 @media (max-width: 768px) {
+    /* Fix checkbox positioning on mobile */
+    .selection-checkbox {
+        top: 8px !important;
+        right: 8px !important;
+        width: 30px !important;
+        height: 30px !important;
+    }
+    
+    .selection-checkbox i {
+        font-size: 16px !important;
+    }
+    
     .plant-selection-counter {
         bottom: 15px;
         right: 15px;
@@ -375,5 +392,43 @@ body.plant-selection-mode .selection-checkbox {
     .plant-selection-counter .clear-btn {
         width: 32px;
         height: 32px;
+    }
+}
+
+/* Extra small mobile devices */
+@media (max-width: 576px) {
+    /* Even smaller checkbox on phones */
+    .selection-checkbox {
+        top: 6px !important;
+        right: 6px !important;
+        width: 28px !important;
+        height: 28px !important;
+    }
+    
+    .selection-checkbox i {
+        font-size: 14px !important;
+    }
+    
+    .plant-selection-counter {
+        bottom: 10px;
+        right: 10px;
+        padding: 10px 14px;
+        font-size: 13px;
+        gap: 8px;
+    }
+    
+    .plant-selection-counter .count {
+        font-size: 13px;
+        padding: 2px 8px;
+    }
+    
+    .plant-selection-counter .view-btn {
+        padding: 5px 12px;
+        font-size: 12px;
+    }
+    
+    .plant-selection-counter .clear-btn {
+        width: 28px;
+        height: 28px;
     }
 }

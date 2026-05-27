@@ -62,7 +62,7 @@ class SocialiteController extends Controller
                     'email' => $email,
                     // Generate password without excessive entropy
                     'password' => Hash::make(Str::random(12)),
-                    'role' => 'user',
+                    'role' => 'client',  // Changed from 'user' to 'client'
                     'is_client' => true
                 ];
                 
