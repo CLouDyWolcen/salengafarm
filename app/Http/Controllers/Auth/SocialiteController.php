@@ -63,7 +63,9 @@ class SocialiteController extends Controller
                     // Generate password without excessive entropy
                     'password' => Hash::make(Str::random(12)),
                     'role' => 'client',  // Changed from 'user' to 'client'
-                    'is_client' => true
+                    'is_client' => true,
+                    // Set default page access for client users
+                    'page_access' => json_encode(['dashboard', 'plant_guide'])
                 ];
                 
                 // Avoid redundant Schema check if possible by using static property or cache
