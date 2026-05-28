@@ -234,6 +234,9 @@ Route::middleware(['auth'])->group(function () {
 
         // Add plant search API endpoint before the resource route
         Route::get('/plants/search', [PlantController::class, 'search'])->name('plants.search');
+        
+        // Plant export routes
+        Route::get('/plants/export', [PlantController::class, 'export'])->name('plants.export');
 
         Route::resource('plants', PlantController::class)->except(['create', 'edit', 'show']);
         Route::post('/plants/bulk-update', [PlantController::class, 'bulkUpdate'])->name('plants.bulk-update');

@@ -309,4 +309,60 @@ class PlantController extends Controller
         
         return response()->json($plants);
     }
+
+    /**
+     * Export inventory to Excel or CSV
+     */
+    public function export(Request $request)
+    {
+        $format = $request->get('format', 'xlsx'); // xlsx or csv
+        
+        // Get all plants
+        $plants = Plant::orderBy('category')->orderBy('name')->get();
+        
+        // Prepare headers
+        $headers = [
+            'Code',
+            'Name',
+            'Scientific Name',
+            'Category',
+            'Stock',
+            'Price (₱)',
+            'Height (mm)',
+            'Spread (mm)',
+            'Spacing (mm)',
+            'Cost/sqm (₱)',
+            'Pieces/sqm',
+            'Description'
+        ];
+        
+        // Prepare data rows
+        $data = [];
+        foreach ($plants as $plant) {
+            $data[] = [
+                $plant->code ?? 'N/A',
+                $plant->name,
+                $plant->scientific_name ?? '',
+                ucfirst($plant->category ?? 'Uncategorized'),
+                $plant->quantity ?? 0,
+                number_format($plant->price ?? 0, 2),
+                $plant->height_mm ?? '',
+                $plant->spread_mm ?? '',
+                $plant->spacing_mm ?? '',
+                $plant->cost_per_sqm ? number_format($plant->cost_per_sqm, 2) : '',
+                $plant->pieces_per_sqm ?? '',
+                $plant->description ?? ''
+            ];
+        }
+        
+        // Use ExportService to generate file
+        $exportService = new \App\Services\ExportService();
+        return $exportService->export(
+            $data,
+            $headers,
+            'inventory_export',
+            $format,
+            'Plant Inventory'
+        );
+    }
 }
