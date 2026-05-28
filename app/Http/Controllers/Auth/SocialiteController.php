@@ -85,6 +85,17 @@ class SocialiteController extends Controller
             // Login the user (this creates the session)
             Auth::login($user);
             
+            // Debug logging to verify page_access
+            Log::info('Google OAuth user logged in', [
+                'user_id' => $user->id,
+                'email' => $user->email,
+                'role' => $user->role,
+                'page_access' => $user->page_access,
+                'page_access_decoded' => json_decode($user->page_access, true),
+                'hasPageAccess_dashboard' => $user->hasPageAccess('dashboard'),
+                'hasPageAccess_plant_guide' => $user->hasPageAccess('plant_guide')
+            ]);
+            
             // Optimize redirection by avoiding additional queries when possible
             $redirectRoute = $user->hasAdminAccess() ? 'dashboard' : 'home';
             return redirect()->route($redirectRoute);
