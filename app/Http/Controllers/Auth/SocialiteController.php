@@ -64,8 +64,8 @@ class SocialiteController extends Controller
                     'password' => Hash::make(Str::random(12)),
                     'role' => 'client',  // Changed from 'user' to 'client'
                     'is_client' => true,
-                    // Set default page access for client users
-                    'page_access' => json_encode(['dashboard', 'plant_guide'])
+                    // Set default page access for client users (match RegisteredUserController)
+                    'page_access' => json_encode(['dashboard', 'my_requests', 'plant_guide', 'site_data'])
                 ];
                 
                 // Avoid redundant Schema check if possible by using static property or cache
