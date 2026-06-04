@@ -246,4 +246,94 @@ class WalkInSalesController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * Export sales records to Excel or CSV
+     */
+    public function export(Request $request)
+    {
+        $format = $request->get('format', 'xlsx'); // xlsx or csv
+        
+        // Get sales with filters (same as showRecords)
+        $query = Sale::with('plant')->orderBy('sale_date', 'desc');
+        
+        // Apply date range filter if provided
+        if ($request->has('start_date') && $request->start_date) {
+            $query->where('sale_date', '>=', $request->input('start_date'));
+        }
+        
+        if ($request->has('end_date') && $request->end_date) {
+            $query->where('sale_date', '<=', $request->input('end_date') . ' 23:59:59');
+        }
+        
+        $sales = $query->get();
+        
+        // Prepare headers
+        $headers = [
+            'Sale Date',
+            'Plant Code',
+            'Plant Name',
+            'Quantity',
+            'Unit Price (₱)',
+            'Total Price (₱)',
+            'Height (mm)',
+            'Spread (mm)',
+            'Spacing (mm)',
+            'Customer Name',
+            'Customer Email',
+            'Payment Method',
+            'Notes'
+        ];
+        
+        // Prepare data rows
+        $data = [];
+        foreach ($sales as $sale) {
+            $data[] = [
+                $sale->sale_date ? $sale->sale_date->format('Y-m-d H:i:s') : '',
+                $sale->plant->code ?? 'N/A',
+                $sale->plant->name ?? 'Unknown Plant',
+                $sale->quantity,
+                number_format($sale->price, 2),
+                number_format($sale->total_price, 2),
+                $sale->height ?? '',
+                $sale->spread ?? '',
+                $sale->spacing ?? '',
+                $sale->customer_name ?? '',
+                $sale->customer_email ?? '',
+                $sale->payment_method ?? '',
+                $sale->notes ?? ''
+            ];
+        }
+        
+        // Add summary row at the end
+        $totalQuantity = $sales->sum('quantity');
+        $totalRevenue = $sales->sum('total_price');
+        
+        $data[] = []; // Empty row
+        $data[] = [
+            'TOTAL',
+            '',
+            '',
+            $totalQuantity,
+            '',
+            number_format($totalRevenue, 2),
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            ''
+        ];
+        
+        // Use ExportService to generate file
+        $exportService = new \App\Services\ExportService();
+        return $exportService->export(
+            $data,
+            $headers,
+            'sales_export',
+            $format,
+            'Walk-in Sales'
+        );
+    }
 } 

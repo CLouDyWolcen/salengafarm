@@ -32,7 +32,8 @@ class ExportService
         // Set headers
         $columnIndex = 1;
         foreach ($headers as $header) {
-            $cell = $sheet->getCellByColumnAndRow($columnIndex, 1);
+            $columnLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($columnIndex);
+            $cell = $sheet->getCell($columnLetter . '1');
             $cell->setValue($header);
             
             // Style headers (only for Excel)
@@ -53,7 +54,8 @@ class ExportService
         foreach ($data as $row) {
             $columnIndex = 1;
             foreach ($row as $value) {
-                $sheet->getCellByColumnAndRow($columnIndex, $rowIndex)->setValue($value);
+                $columnLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($columnIndex);
+                $sheet->getCell($columnLetter . $rowIndex)->setValue($value);
                 $columnIndex++;
             }
             $rowIndex++;
@@ -62,7 +64,8 @@ class ExportService
         // Auto-size columns (only for Excel)
         if ($format === 'xlsx') {
             foreach (range(1, count($headers)) as $columnIndex) {
-                $sheet->getColumnDimensionByColumn($columnIndex)->setAutoSize(true);
+                $columnLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($columnIndex);
+                $sheet->getColumnDimension($columnLetter)->setAutoSize(true);
             }
 
             // Add borders to all cells

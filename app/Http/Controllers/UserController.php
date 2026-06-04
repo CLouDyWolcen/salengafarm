@@ -10,11 +10,48 @@ use App\Models\Notification;
 
 class UserController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::where('role', '!=', 'super_admin')->get();
+        $query = User::where('role', '!=', 'super_admin');
+        
+        // Search functionality
+        if ($request->has('search') && $request->search != '') {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('first_name', 'like', '%' . $search . '%')
+                  ->orWhere('last_name', 'like', '%' . $search . '%')
+                  ->orWhere('email', 'like', '%' . $search . '%')
+                  ->orWhere('contact_number', 'like', '%' . $search . '%')
+                  ->orWhere('company_name', 'like', '%' . $search . '%');
+            });
+        }
+        
+        // Role filter
+        if ($request->has('role') && $request->role != 'all') {
+            $query->where('role', $request->role);
+        }
+        
+        $users = $query->orderBy('created_at', 'desc')->get();
+        
+        // If AJAX request, return only table rows
+        if ($request->ajax() || $request->has('ajax')) {
+            return view('admin.users.partials.users-table-rows', compact('users'))->render();
+        }
+        
+        // Calculate statistics (use fresh queries to avoid query builder conflicts)
+        $stats = [
+            'total_users' => User::where('role', '!=', 'super_admin')->count(),
+            'total_clients' => User::where('role', 'client')->count(),
+            'total_admins' => User::where('role', 'admin')->count(),
+            'new_this_month' => User::where('role', '!=', 'super_admin')
+                                    ->whereMonth('created_at', now()->month)
+                                    ->whereYear('created_at', now()->year)
+                                    ->count()
+        ];
+        
         $roleRequests = \App\Models\RoleRequest::with('user')->orderBy('created_at', 'desc')->get();
-        return view('admin.users.index', compact('users', 'roleRequests'));
+        
+        return view('admin.users.index', compact('users', 'roleRequests', 'stats'));
     }
 
     public function create()
@@ -297,6 +334,169 @@ class UserController extends Controller
         } catch (\Exception $e) {
             Log::error('Failed to delete role request: ' . $e->getMessage());
             return redirect()->route('users.index')->with('error', 'Failed to delete role request.')->with('activeTab', 'role-requests');
+        }
+    }
+    
+    /**
+     * Export users to Excel or CSV
+     */
+    public function export(Request $request)
+    {
+        $format = $request->get('format', 'xlsx'); // xlsx or csv
+        $roleFilter = $request->get('role', 'all'); // all, client, admin
+        
+        // Get users based on role filter
+        $query = User::where('role', '!=', 'super_admin')->orderBy('created_at', 'desc');
+        
+        if ($roleFilter !== 'all') {
+            $query->where('role', $roleFilter);
+        }
+        
+        $users = $query->get();
+        
+        // Prepare headers
+        $headers = [
+            'User ID',
+            'First Name',
+            'Last Name',
+            'Email',
+            'Contact Number',
+            'Role',
+            'Account Type',
+            'Company Name',
+            'Address',
+            'Gender',
+            'Registration Date',
+            'Email Verified'
+        ];
+        
+        // Prepare data rows
+        $data = [];
+        foreach ($users as $user) {
+            $data[] = [
+                'U-' . str_pad($user->id, 5, '0', STR_PAD_LEFT),
+                $user->first_name ?? '',
+                $user->last_name ?? '',
+                $user->email ?? '',
+                $user->contact_number ?? '',
+                ucfirst(str_replace('_', ' ', $user->role ?? 'client')),
+                ucfirst($user->account_type ?? 'individual'),
+                $user->company_name ?? '',
+                $user->address ?? $user->company_address ?? '',
+                ucfirst($user->gender ?? ''),
+                $user->created_at ? $user->created_at->format('Y-m-d H:i:s') : '',
+                $user->email_verified_at ? 'Yes' : 'No'
+            ];
+        }
+        
+        // Add summary row
+        $totalUsers = $users->count();
+        $clientCount = $users->where('role', 'client')->count();
+        $adminCount = $users->where('role', 'admin')->count();
+        
+        $data[] = []; // Empty row
+        $data[] = [
+            'SUMMARY',
+            '',
+            '',
+            '',
+            '',
+            'Total: ' . $totalUsers,
+            'Clients: ' . $clientCount,
+            'Admins: ' . $adminCount,
+            '',
+            '',
+            '',
+            ''
+        ];
+        
+        // Use ExportService to generate file
+        $exportService = new \App\Services\ExportService();
+        return $exportService->export(
+            $data,
+            $headers,
+            'users_export',
+            $format,
+            'Users'
+        );
+    }
+    
+    /**
+     * Bulk update users
+     */
+    public function bulkUpdate(Request $request)
+    {
+        try {
+            $request->validate([
+                'user_ids' => 'required|array',
+                'user_ids.*' => 'exists:users,id',
+                'role' => 'nullable|in:client,admin',
+            ]);
+            
+            $userIds = $request->user_ids;
+            $updateData = [];
+            
+            // Only add fields that are provided
+            if ($request->filled('role')) {
+                $updateData['role'] = $request->role;
+            }
+            
+            // If no fields to update, return error
+            if (empty($updateData)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No fields selected for update'
+                ], 400);
+            }
+            
+            // Update users (excluding super_admin)
+            $updated = User::whereIn('id', $userIds)
+                          ->where('role', '!=', 'super_admin')
+                          ->update($updateData);
+            
+            return response()->json([
+                'success' => true,
+                'message' => "Successfully updated {$updated} user(s)"
+            ]);
+            
+        } catch (\Exception $e) {
+            Log::error('Bulk update failed: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to update users: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+    
+    /**
+     * Bulk delete users
+     */
+    public function bulkDelete(Request $request)
+    {
+        try {
+            $request->validate([
+                'user_ids' => 'required|array',
+                'user_ids.*' => 'exists:users,id',
+            ]);
+            
+            $userIds = $request->user_ids;
+            
+            // Delete users (excluding super_admin)
+            $deleted = User::whereIn('id', $userIds)
+                          ->where('role', '!=', 'super_admin')
+                          ->delete();
+            
+            return response()->json([
+                'success' => true,
+                'message' => "Successfully deleted {$deleted} user(s)"
+            ]);
+            
+        } catch (\Exception $e) {
+            Log::error('Bulk delete failed: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to delete users: ' . $e->getMessage()
+            ], 500);
         }
     }
 }

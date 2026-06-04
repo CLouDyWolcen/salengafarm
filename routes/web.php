@@ -214,6 +214,11 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/users', [UserController::class, 'store'])->name('users.store');
         Route::put('/users/{user}/role', [UserController::class, 'updateRole'])->name('users.update-role');
         Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
+        Route::get('/users/export', [UserController::class, 'export'])->name('users.export');
+        
+        // Bulk actions
+        Route::post('/users/bulk-update', [UserController::class, 'bulkUpdate'])->name('users.bulk-update');
+        Route::post('/users/bulk-delete', [UserController::class, 'bulkDelete'])->name('users.bulk-delete');
         
         // Role request routes
         Route::get('/users/role-requests/{id}/edit', [UserController::class, 'editRoleRequest'])->name('users.role-requests.edit');
@@ -253,6 +258,7 @@ Route::middleware(['auth'])->group(function () {
         // Walk-in sales routes
         Route::get('/walk-in', [WalkInSalesController::class, 'index'])->name('walk-in.index');
         Route::get('/walk-in/sales-records', [WalkInSalesController::class, 'showRecords'])->name('walk-in.sales-records');
+        Route::get('/walk-in/export', [WalkInSalesController::class, 'export'])->name('walk-in.export');
         Route::post('/walk-in/process-sale', [WalkInSalesController::class, 'processSale'])->name('walk-in.process-sale');
         Route::get('/walk-in/records', [WalkInSalesController::class, 'getSalesRecords'])->name('walk-in.records');
         Route::get('/walk-in/percentages', [WalkInSalesController::class, 'getSalesPercentages'])->name('walk-in.percentages');
@@ -266,6 +272,7 @@ Route::middleware(['auth'])->group(function () {
 
         // Requests management routes
         Route::get('/requests', [ClientRequestController::class, 'index'])->name('requests.index');
+        Route::get('/requests/export', [ClientRequestController::class, 'export'])->name('requests.export');
         Route::post('/requests/send-email/{id}', [ClientRequestController::class, 'sendEmail'])->name('requests.send-email');
         Route::post('/requests/{id}/send-response', [ClientRequestController::class, 'sendResponse'])->name('requests.send-response');
         Route::get('/requests/view/{id}', [ClientRequestController::class, 'plainViewRequest'])->name('requests.view');
@@ -279,6 +286,7 @@ Route::middleware(['auth'])->group(function () {
 
         // Site Visits routes
         Route::get('/site-visits', [SiteVisitController::class, 'index'])->name('site-visits.index');
+        Route::get('/site-visits/export', [SiteVisitController::class, 'export'])->name('site-visits.export');
         Route::resource('site-visits', SiteVisitController::class)->except(['index']);
         // Quick status update from show page
         Route::post('/site-visits/{siteVisit}/status', [SiteVisitController::class, 'updateStatus'])->name('site-visits.update-status');

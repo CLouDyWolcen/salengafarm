@@ -1298,4 +1298,131 @@ class SiteVisitController extends Controller
         return redirect()->route('my-requests.index')
             ->with('success', 'Your site visit request has been deleted successfully.');
     }
+
+    /**
+     * Export site visits to Excel or CSV
+     */
+    public function export(Request $request)
+    {
+        $format = $request->get('format', 'xlsx'); // xlsx or csv
+        $status = $request->get('status', 'all'); // all, pending, completed, follow_up
+        
+        // Get site visits based on status
+        $query = SiteVisit::with('user')->orderBy('visit_date', 'desc');
+        
+        if ($status !== 'all') {
+            $query->where('status', $status);
+        }
+        
+        $siteVisits = $query->get();
+        
+        // Prepare headers
+        $headers = [
+            'Visit ID',
+            'Visit Date',
+            'Client Name',
+            'Email',
+            'Contact Number',
+            'Location',
+            'Job No',
+            'Project Code',
+            'Landscape Area',
+            'Site Inspector',
+            'Status',
+            'Topography',
+            'Geotechnical/Soils',
+            'Utilities',
+            'Notes'
+        ];
+        
+        // Prepare data rows
+        $data = [];
+        foreach ($siteVisits as $visit) {
+            // Helper function to extract readable text from nested arrays
+            $extractText = function($field) {
+                if (is_string($field)) {
+                    $field = json_decode($field, true) ?: [];
+                }
+                
+                if (!is_array($field)) {
+                    return $field ?? '';
+                }
+                
+                $parts = [];
+                foreach ($field as $key => $value) {
+                    // Skip 'notes' key as it's usually long text
+                    if ($key === 'notes') continue;
+                    
+                    if (is_array($value)) {
+                        // Handle nested structure like ['value' => 'yes', 'remarks' => 'text']
+                        if (isset($value['value']) && $value['value'] === 'yes') {
+                            $label = ucwords(str_replace('_', ' ', $key));
+                            $parts[] = $label;
+                            if (!empty($value['remarks'])) {
+                                $parts[] = "({$value['remarks']})";
+                            }
+                        }
+                    } else if (!empty($value) && $value !== 'no') {
+                        // Simple key-value pair
+                        $parts[] = ucwords(str_replace('_', ' ', $key)) . ': ' . $value;
+                    }
+                }
+                
+                return implode('; ', $parts);
+            };
+            
+            $data[] = [
+                'SV-' . str_pad($visit->id, 5, '0', STR_PAD_LEFT),
+                $visit->visit_date ? $visit->visit_date->format('Y-m-d') : '',
+                $visit->client ?? '',
+                $visit->email ?? '',
+                $visit->contact_number ?? '',
+                $visit->location_address ?? $visit->location ?? '',
+                $visit->job_no ?? '',
+                $visit->project_code ?? '',
+                $visit->landscape_area ?? '',
+                $visit->site_inspector ?? '',
+                ucfirst($visit->status ?? 'pending'),
+                $extractText($visit->topography),
+                $extractText($visit->geotechnical_soils),
+                $extractText($visit->utilities),
+                $visit->notes ?? ''
+            ];
+        }
+        
+        // Add summary row
+        $totalVisits = $siteVisits->count();
+        $pendingCount = $siteVisits->where('status', 'pending')->count();
+        $completedCount = $siteVisits->where('status', 'completed')->count();
+        $followUpCount = $siteVisits->where('status', 'follow_up')->count();
+        
+        $data[] = []; // Empty row
+        $data[] = [
+            'SUMMARY',
+            '',
+            '',
+            '',
+            '',
+            '',
+            'Total: ' . $totalVisits,
+            'Pending: ' . $pendingCount,
+            'Completed: ' . $completedCount,
+            'Follow-up: ' . $followUpCount,
+            '',
+            '',
+            '',
+            '',
+            ''
+        ];
+        
+        // Use ExportService to generate file
+        $exportService = new \App\Services\ExportService();
+        return $exportService->export(
+            $data,
+            $headers,
+            'site_visits_export',
+            $format,
+            'Site Visits'
+        );
+    }
 }
