@@ -8,9 +8,30 @@
         <h2 class="mb-0">
             <i class="fas fa-receipt me-2 text-success"></i>Sales Records
         </h2>
-        <a href="{{ route('dashboard') }}" class="btn btn-secondary">
-            <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
-        </a>
+        <div class="d-flex gap-2">
+            <!-- Export Dropdown -->
+            <div class="dropdown">
+                <button class="btn btn-success dropdown-toggle" type="button" id="exportDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-file-export me-1"></i>Export
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="exportDropdown">
+                    <li>
+                        <a class="dropdown-item" href="{{ route('walk-in.export', array_merge(['format' => 'xlsx'], request()->only(['start_date', 'end_date']))) }}">
+                            <i class="fas fa-file-excel me-2 text-success"></i>Excel (.xlsx)
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="{{ route('walk-in.export', array_merge(['format' => 'csv'], request()->only(['start_date', 'end_date']))) }}">
+                            <i class="fas fa-file-csv me-2 text-info"></i>CSV (.csv)
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            
+            <a href="{{ route('dashboard') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+            </a>
+        </div>
     </div>
 
     <!-- Summary Cards -->

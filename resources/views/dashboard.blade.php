@@ -1402,6 +1402,25 @@
                             <div class="col-md-4">
                                 <label class="form-label small mb-1">&nbsp;</label>
                                 <div class="d-flex gap-2">
+                                    <!-- Export Dropdown -->
+                                    <div class="dropdown flex-fill">
+                                        <button class="btn btn-success btn-sm dropdown-toggle w-100" type="button" id="exportDropdownDashboard" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="fas fa-file-export me-1"></i>Export
+                                        </button>
+                                        <ul class="dropdown-menu" aria-labelledby="exportDropdownDashboard">
+                                            <li>
+                                                <a class="dropdown-item" href="#" onclick="exportDashboardSales('xlsx'); return false;">
+                                                    <i class="fas fa-file-excel me-2 text-success"></i>Excel (.xlsx)
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item" href="#" onclick="exportDashboardSales('csv'); return false;">
+                                                    <i class="fas fa-file-csv me-2 text-info"></i>CSV (.csv)
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    
                                     <button class="btn btn-success btn-sm flex-fill" onclick="loadSalesRecords()">
                                         <i class="fas fa-filter"></i> Apply Custom
                                     </button>
@@ -1448,6 +1467,20 @@
     <script>
         // Sales Records Functions
         let currentSalesFilter = 'all'; // Default to all time
+        
+        // Export dashboard sales function
+        function exportDashboardSales(format) {
+            const startDate = $('#salesStartDate').val();
+            const endDate = $('#salesEndDate').val();
+            
+            // Build export URL with current filters
+            let url = '{{ route("walk-in.export") }}?format=' + format;
+            if (startDate) url += '&start_date=' + startDate;
+            if (endDate) url += '&end_date=' + endDate;
+            
+            // Trigger download
+            window.location.href = url;
+        }
         
         function applySalesQuickFilter(filter) {
             currentSalesFilter = filter;
