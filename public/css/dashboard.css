@@ -669,18 +669,20 @@ h2.mb-4.fs-4:after {
     padding-top: 0 !important;
   }
 
-  /* Keep summary cards in a row like desktop */
+  /* Overview cards - Stack vertically on mobile for better readability */
   .row.mb-4 {
     margin-bottom: 0.75rem !important;
     display: flex !important;
-    flex-direction: row !important;
+    flex-direction: column !important;
     gap: 0.5rem !important;
     margin-left: 0 !important;
     margin-right: 0 !important;
   }
 
-  .row.mb-4 .col-md-6 {
-    flex: 1 !important;
+  .row.mb-4 .col-md-4 {
+    width: 100% !important;
+    flex: 0 0 100% !important;
+    max-width: 100% !important;
     margin-bottom: 0 !important;
     padding: 0 !important;
   }
@@ -688,28 +690,30 @@ h2.mb-4.fs-4:after {
   .row.mb-4 .card {
     margin-left: 0 !important;
     margin-right: 0 !important;
-  }
-
-  .row.mb-4 .card {
     height: auto;
-    min-height: 85px;
+    min-height: 70px;
   }
 
   .row.mb-4 .card .card-body {
-    padding: 0.6rem;
+    padding: 0.75rem;
   }
 
   .row.mb-4 .stats-icon {
-    width: 35px;
-    height: 35px;
+    width: 40px;
+    height: 40px;
+  }
+
+  .row.mb-4 .stats-icon i {
+    font-size: 1.2rem;
   }
 
   .row.mb-4 .card h6.card-subtitle {
-    font-size: 0.7rem;
+    font-size: 0.75rem;
+    white-space: normal;
   }
 
   .row.mb-4 .card h2.card-title {
-    font-size: 1.2rem;
+    font-size: 1.4rem;
   }
 
   /* Main content row - reorder for mobile */
@@ -829,6 +833,7 @@ h2.mb-4.fs-4:after {
 
   .list-group-item h6 {
     font-size: 0.85rem;
+    max-width: 100%;
   }
 
   .list-group-item small.text-muted {
@@ -844,6 +849,21 @@ h2.mb-4.fs-4:after {
   .badge {
     font-size: 0.75rem;
     padding: 0.3rem 0.6rem;
+  }
+  
+  /* Stock Alerts tabs - make them stack vertically on very small screens */
+  .nav-tabs.nav-fill {
+    flex-direction: column;
+  }
+  
+  .nav-tabs.nav-fill .nav-item {
+    width: 100%;
+  }
+  
+  .nav-tabs.nav-fill .nav-link {
+    border-radius: 0;
+    text-align: left;
+    padding: 0.75rem 1rem;
   }
 }
 

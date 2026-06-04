@@ -140,6 +140,111 @@
                                             @enderror
                                         </div>
                                     </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="account_type" class="form-label">Account Type *</label>
+                                            <select class="form-select @error('account_type') is-invalid @enderror" 
+                                                    id="account_type" 
+                                                    name="account_type" 
+                                                    required
+                                                    onchange="toggleAccountTypeFields()">
+                                                <option value="">Select Account Type</option>
+                                                <option value="individual" {{ old('account_type', $user->account_type) == 'individual' ? 'selected' : '' }}>Individual</option>
+                                                <option value="company" {{ old('account_type', $user->account_type) == 'company' ? 'selected' : '' }}>Company</option>
+                                            </select>
+                                            @error('account_type')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Individual Fields -->
+                                <div id="individualFields" style="display: none;">
+                                    <hr class="my-3">
+                                    <h6 class="mb-3 text-primary">
+                                        <i class="fas fa-user me-2"></i>Individual Information
+                                    </h6>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="address" class="form-label">Personal Address</label>
+                                                <input type="text" 
+                                                       class="form-control @error('address') is-invalid @enderror" 
+                                                       id="address" 
+                                                       name="address" 
+                                                       value="{{ old('address', $user->address) }}">
+                                                @error('address')
+                                                    <div class="invalid-feedback">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="gender" class="form-label">Gender</label>
+                                                <select class="form-select @error('gender') is-invalid @enderror" 
+                                                        id="gender" 
+                                                        name="gender">
+                                                    <option value="">Select Gender</option>
+                                                    <option value="male" {{ old('gender', $user->gender) == 'male' ? 'selected' : '' }}>Male</option>
+                                                    <option value="female" {{ old('gender', $user->gender) == 'female' ? 'selected' : '' }}>Female</option>
+                                                    <option value="other" {{ old('gender', $user->gender) == 'other' ? 'selected' : '' }}>Other</option>
+                                                </select>
+                                                @error('gender')
+                                                    <div class="invalid-feedback">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="property_type" class="form-label">Property Type</label>
+                                                <input type="text" 
+                                                       class="form-control @error('property_type') is-invalid @enderror" 
+                                                       id="property_type" 
+                                                       name="property_type" 
+                                                       value="{{ old('property_type', $user->property_type) }}">
+                                                @error('property_type')
+                                                    <div class="invalid-feedback">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Company Fields -->
+                                <div id="companyFields" style="display: none;">
+                                    <hr class="my-3">
+                                    <h6 class="mb-3 text-success">
+                                        <i class="fas fa-building me-2"></i>Company Information
+                                    </h6>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="company_name" class="form-label">Company Name</label>
+                                                <input type="text" 
+                                                       class="form-control @error('company_name') is-invalid @enderror" 
+                                                       id="company_name" 
+                                                       name="company_name" 
+                                                       value="{{ old('company_name', $user->company_name) }}">
+                                                @error('company_name')
+                                                    <div class="invalid-feedback">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="company_address" class="form-label">Company Address</label>
+                                                <input type="text" 
+                                                       class="form-control @error('company_address') is-invalid @enderror" 
+                                                       id="company_address" 
+                                                       name="company_address" 
+                                                       value="{{ old('company_address', $user->company_address) }}">
+                                                @error('company_address')
+                                                    <div class="invalid-feedback">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <!-- Page Access Section -->
@@ -290,9 +395,36 @@
             }
         }
         
+        function toggleAccountTypeFields() {
+            const accountType = document.getElementById('account_type').value;
+            const individualFields = document.getElementById('individualFields');
+            const companyFields = document.getElementById('companyFields');
+            
+            if (accountType === 'individual') {
+                individualFields.style.display = 'block';
+                companyFields.style.display = 'none';
+                
+                // Clear company fields
+                document.getElementById('company_name').value = '';
+                document.getElementById('company_address').value = '';
+            } else if (accountType === 'company') {
+                individualFields.style.display = 'none';
+                companyFields.style.display = 'block';
+                
+                // Clear individual fields
+                document.getElementById('address').value = '';
+                document.getElementById('gender').value = '';
+                document.getElementById('property_type').value = '';
+            } else {
+                individualFields.style.display = 'none';
+                companyFields.style.display = 'none';
+            }
+        }
+        
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', function() {
             togglePageAccessOptions();
+            toggleAccountTypeFields();
         });
     </script>
 </body>
