@@ -66,16 +66,25 @@ class ClientRequestController extends Controller
             $recipientType = ($request->request_type == 'user') ? 'User' : 'Client';
             $subject = "Plant Request #{$request->id} - Quotation from Salenga Farm";
             
-            // Attempt to send email using Laravel Mail (Gmail SMTP)
+            // Attempt to send email using Brevo API
             $emailSent = false;
             $errorMessage = '';
             
             try {
-                Log::info('Attempting to send email via Gmail SMTP', [
+                Log::info('Attempting to send email via Brevo API', [
                     'request_id' => $request->id,
                     'recipient' => $request->email,
                     'type' => $recipientType
                 ]);
+                
+                // Initialize Brevo service
+                $brevoService = new BrevoEmailService();
+                
+                // Render the email HTML
+                $emailView = view('emails.plant-request', [
+                    'request' => $request,
+                    'recipientType' => $recipientType
+                ])->render();
                 
                 // Attach PDF only for client requests (not user requests)
                 $attachmentPath = null;
@@ -83,32 +92,39 @@ class ClientRequestController extends Controller
                     $attachmentPath = $request->pdf_path;
                 }
                 
-                // Send email using Laravel Mail
-                Mail::send('emails.plant-request', [
-                    'request' => $request,
-                    'recipientType' => $recipientType
-                ], function ($message) use ($request, $subject, $attachmentPath) {
-                    $message->to($request->email)
-                            ->subject($subject);
-                    
-                    // Attach PDF for client requests
-                    if ($attachmentPath && Storage::exists($attachmentPath)) {
-                        $message->attach(Storage::path($attachmentPath));
-                    }
-                });
+                // Send email using Brevo API
+                $result = $brevoService->sendEmail(
+                    $request->email,
+                    $subject,
+                    $emailView,
+                    config('mail.from.address'),
+                    config('mail.from.name'),
+                    $attachmentPath
+                );
                 
-                $emailSent = true;
-                Log::info('Gmail SMTP email sent successfully', [
-                    'request_id' => $request->id,
-                    'recipient' => $request->email,
-                    'has_pdf' => !empty($attachmentPath)
-                ]);
+                if ($result['success']) {
+                    $emailSent = true;
+                    Log::info('Brevo API email sent successfully', [
+                        'request_id' => $request->id,
+                        'recipient' => $request->email,
+                        'messageId' => $result['messageId'] ?? 'unknown',
+                        'has_pdf' => !empty($attachmentPath)
+                    ]);
+                } else {
+                    $emailSent = false;
+                    $errorMessage = $result['error'] ?? 'Unknown Brevo API error';
+                    Log::error('Brevo API email sending failed', [
+                        'error' => $errorMessage,
+                        'request_id' => $request->id,
+                        'recipient' => $request->email
+                    ]);
+                }
                 
             } catch (\Exception $mailException) {
                 $emailSent = false;
                 $errorMessage = $mailException->getMessage();
                 
-                Log::error('Gmail SMTP email sending failed', [
+                Log::error('Brevo API email sending exception', [
                     'error' => $mailException->getMessage(),
                     'trace' => $mailException->getTraceAsString(),
                     'request_id' => $request->id,
@@ -151,27 +167,30 @@ class ClientRequestController extends Controller
                 // Email failed, provide detailed error message
                 $errorDetails = '';
                 
-                // Check for common Gmail authentication errors
-                if (strpos($errorMessage, 'Username and Password not accepted') !== false) {
-                    $errorDetails = ' Please check your Gmail App Password configuration. You may need to generate a new App Password from your Google Account settings.';
-                } elseif (strpos($errorMessage, 'authentication') !== false) {
-                    $errorDetails = ' Please verify your email configuration and credentials.';
+                // Check for common Brevo API errors
+                if (strpos($errorMessage, 'Invalid') !== false || strpos($errorMessage, 'api-key') !== false) {
+                    $errorDetails = ' Please check your Brevo API configuration.';
+                } elseif (strpos($errorMessage, 'rate') !== false || strpos($errorMessage, 'limit') !== false) {
+                    $errorDetails = ' Daily email limit may have been reached.';
+                } elseif (strpos($errorMessage, 'Invalid email') !== false) {
+                    $errorDetails = ' The recipient email address appears to be invalid.';
                 }
                 
-                $errorMessage = "Failed to send email to {$recipientType} ({$request->email}).{$errorDetails}";
+                $fullErrorMessage = "Failed to send email to {$recipientType} ({$request->email}).{$errorDetails}";
                 
                 // Check if this is an AJAX request
                 if (request()->expectsJson() || request()->ajax()) {
                     Log::info('Returning JSON error response');
                     return response()->json([
                         'success' => false,
-                        'message' => $errorMessage,
+                        'message' => $fullErrorMessage,
+                        'error_details' => $errorMessage,
                         'activeTab' => $activeTab
                     ], 422);
                 }
                 
                 Log::info('Returning redirect error response');
-                return redirect()->route('requests.index')->with('error', $errorMessage)->with('activeTab', $activeTab);
+                return redirect()->route('requests.index')->with('error', $fullErrorMessage)->with('activeTab', $activeTab);
             }
             
         } catch (\Exception $e) {
@@ -935,6 +954,111 @@ class ClientRequestController extends Controller
             $request->name,
             $subject,
             $htmlContent
+        );
+    }
+
+    /**
+     * Export requests to Excel or CSV
+     */
+    public function export(Request $request)
+    {
+        $format = $request->get('format', 'xlsx'); // xlsx or csv
+        $type = $request->get('type', 'all'); // all, client, user
+        
+        // Get requests based on type
+        $query = PlantRequest::orderBy('request_date', 'desc');
+        
+        if ($type === 'client') {
+            $query->where(function($q) {
+                $q->whereNull('request_type')->orWhere('request_type', 'client');
+            });
+        } elseif ($type === 'user') {
+            $query->where('request_type', 'user');
+        }
+        
+        $requests = $query->get();
+        
+        // Prepare headers
+        $headers = [
+            'Request ID',
+            'Date',
+            'Type',
+            'Client Name',
+            'Email',
+            'Phone',
+            'Status',
+            'Pricing',
+            'Items Count',
+            'Items Summary',
+            'Due Date',
+            'Response Sent'
+        ];
+        
+        // Prepare data rows
+        $data = [];
+        foreach ($requests as $req) {
+            // Get items summary
+            $items = $req->items_json ?? [];
+            $itemsCount = count($items);
+            $itemsSummary = '';
+            if ($itemsCount > 0) {
+                $itemNames = array_map(function($item) {
+                    $qty = isset($item['quantity']) ? $item['quantity'] . 'x ' : '';
+                    return $qty . ($item['name'] ?? 'Unknown');
+                }, array_slice($items, 0, 3)); // First 3 items
+                $itemsSummary = implode(', ', $itemNames);
+                if ($itemsCount > 3) {
+                    $itemsSummary .= ' +' . ($itemsCount - 3) . ' more';
+                }
+            }
+            
+            $data[] = [
+                'REQ-' . str_pad($req->id, 5, '0', STR_PAD_LEFT),
+                $req->request_date ? $req->request_date->format('Y-m-d H:i') : '',
+                $req->request_type === 'user' ? 'User Inquiry' : 'Client RFQ',
+                $req->name ?? '',
+                $req->email ?? '',
+                $req->phone ?? '',
+                ucfirst($req->status ?? 'pending'),
+                $req->pricing ?? 'None',
+                $itemsCount,
+                $itemsSummary,
+                $req->due_date ? $req->due_date->format('Y-m-d') : '',
+                $req->response_sent_at ? $req->response_sent_at->format('Y-m-d H:i') : 'Not sent'
+            ];
+        }
+        
+        // Add summary row
+        $totalRequests = $requests->count();
+        $pendingCount = $requests->where('status', 'pending')->count();
+        $sentCount = $requests->where('status', 'sent')->count();
+        $completedCount = $requests->where('status', 'completed')->count();
+        
+        $data[] = []; // Empty row
+        $data[] = [
+            'SUMMARY',
+            '',
+            '',
+            '',
+            '',
+            '',
+            'Total: ' . $totalRequests,
+            'Pending: ' . $pendingCount,
+            'Sent: ' . $sentCount,
+            'Completed: ' . $completedCount,
+            '',
+            ''
+        ];
+        
+        // Use ExportService to generate file
+        $exportService = new \App\Services\ExportService();
+        $filename = $type === 'all' ? 'all_requests_export' : $type . '_requests_export';
+        return $exportService->export(
+            $data,
+            $headers,
+            $filename,
+            $format,
+            'Plant Requests'
         );
     }
 }

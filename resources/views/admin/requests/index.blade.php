@@ -30,6 +30,58 @@
             <h1 class="h3">Plant Requests</h1>
             <p class="text-muted">Manage plant requests from both clients and users</p>
         </div>
+        <!-- Export Dropdown with Nested Submenus -->
+        <div class="dropdown">
+            <button class="btn btn-success dropdown-toggle" type="button" id="exportDropdownRequests" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+                <i class="fas fa-file-export me-1"></i>Export
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="exportDropdownRequests">
+                <!-- All Requests -->
+                <li class="dropdown-submenu">
+                    <a class="dropdown-item" href="#" data-submenu-toggle>
+                        <i class="fas fa-list me-2 text-primary"></i>All Requests
+                    </a>
+                    <ul class="dropdown-menu submenu">
+                        <li><a class="dropdown-item" href="{{ route('requests.export', ['format' => 'xlsx', 'type' => 'all']) }}">
+                            <i class="fas fa-file-excel me-2 text-success"></i>Excel (.xlsx)
+                        </a></li>
+                        <li><a class="dropdown-item" href="{{ route('requests.export', ['format' => 'csv', 'type' => 'all']) }}">
+                            <i class="fas fa-file-csv me-2 text-info"></i>CSV (.csv)
+                        </a></li>
+                    </ul>
+                </li>
+                
+                <!-- Client RFQ -->
+                <li class="dropdown-submenu">
+                    <a class="dropdown-item" href="#" data-submenu-toggle>
+                        <i class="fas fa-building me-2 text-success"></i>Client RFQ
+                    </a>
+                    <ul class="dropdown-menu submenu">
+                        <li><a class="dropdown-item" href="{{ route('requests.export', ['format' => 'xlsx', 'type' => 'client']) }}">
+                            <i class="fas fa-file-excel me-2 text-success"></i>Excel (.xlsx)
+                        </a></li>
+                        <li><a class="dropdown-item" href="{{ route('requests.export', ['format' => 'csv', 'type' => 'client']) }}">
+                            <i class="fas fa-file-csv me-2 text-info"></i>CSV (.csv)
+                        </a></li>
+                    </ul>
+                </li>
+                
+                <!-- Client Inquiry -->
+                <li class="dropdown-submenu">
+                    <a class="dropdown-item" href="#" data-submenu-toggle>
+                        <i class="fas fa-users me-2 text-warning"></i>Client Inquiry
+                    </a>
+                    <ul class="dropdown-menu submenu">
+                        <li><a class="dropdown-item" href="{{ route('requests.export', ['format' => 'xlsx', 'type' => 'user']) }}">
+                            <i class="fas fa-file-excel me-2 text-success"></i>Excel (.xlsx)
+                        </a></li>
+                        <li><a class="dropdown-item" href="{{ route('requests.export', ['format' => 'csv', 'type' => 'user']) }}">
+                            <i class="fas fa-file-csv me-2 text-info"></i>CSV (.csv)
+                        </a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
     </div>
 
     <!-- Notification Container -->
@@ -593,6 +645,99 @@
         }).on('mouseleave', '.push-notification', function() {
             $(this).css('transform', 'translateY(0) scale(1)');
         });
+        
+        // ===== CUSTOM NESTED DROPDOWN FUNCTIONALITY =====
+        // Handle nested dropdown menus (Bootstrap 5 doesn't support this natively)
+        console.log('Initializing nested dropdowns...');
+        const dropdownSubmenus = document.querySelectorAll('.dropdown-submenu');
+        console.log('Found dropdown-submenu elements:', dropdownSubmenus.length);
+        
+        dropdownSubmenus.forEach(function(submenu, index) {
+            const toggle = submenu.querySelector('[data-submenu-toggle]');
+            const submenuDropdown = submenu.querySelector('.submenu');
+            
+            console.log(`Submenu ${index}:`, {
+                toggle: toggle,
+                submenuDropdown: submenuDropdown,
+                hasToggle: !!toggle,
+                hasSubmenu: !!submenuDropdown
+            });
+            
+            if (!toggle || !submenuDropdown) {
+                console.warn(`Submenu ${index} missing toggle or dropdown!`);
+                return;
+            }
+            
+            // Click handler for both mobile and desktop
+            toggle.addEventListener('click', function(e) {
+                console.log('Toggle clicked!', e.target);
+                e.preventDefault();
+                e.stopPropagation();
+                e.stopImmediatePropagation();
+                
+                // Close other submenus
+                document.querySelectorAll('.dropdown-submenu .submenu.show').forEach(function(otherSubmenu) {
+                    if (otherSubmenu !== submenuDropdown) {
+                        otherSubmenu.classList.remove('show');
+                        console.log('Closed other submenu');
+                    }
+                });
+                
+                // Toggle this submenu
+                const wasShowing = submenuDropdown.classList.contains('show');
+                if (wasShowing) {
+                    submenuDropdown.classList.remove('show');
+                    console.log('Submenu hidden');
+                } else {
+                    submenuDropdown.classList.add('show');
+                    console.log('Submenu shown');
+                }
+                
+                return false;
+            }, true);
+        });
+        
+        // Prevent clicks inside submenus from closing the main dropdown
+        document.querySelectorAll('.dropdown-submenu .submenu').forEach(function(submenu) {
+            submenu.addEventListener('click', function(e) {
+                e.stopPropagation();
+                console.log('Submenu clicked, propagation stopped');
+            });
+        });
+        
+        // Close all submenus when main dropdown closes
+        const mainDropdown = document.getElementById('exportDropdownRequests');
+        console.log('Main dropdown element:', mainDropdown);
+        if (mainDropdown) {
+            mainDropdown.addEventListener('hidden.bs.dropdown', function() {
+                console.log('Main dropdown closed, closing all submenus');
+                document.querySelectorAll('.dropdown-submenu .submenu.show').forEach(function(submenu) {
+                    submenu.classList.remove('show');
+                });
+            });
+        }
+        
+        console.log('Nested dropdown initialization complete');
+        
+        // ===== EXPORT LOADING INDICATOR =====
+        // Add loading indicator to export links
+        $('.dropdown-submenu .submenu a').on('click', function(e) {
+            const link = $(this);
+            const icon = link.find('i');
+            
+            if (icon.length) {
+                // Store original icon classes
+                const originalClasses = icon.attr('class');
+                
+                // Change to loading spinner
+                icon.attr('class', 'fas fa-spinner fa-spin me-2');
+                
+                // Restore original icon after 3 seconds (download should have started by then)
+                setTimeout(function() {
+                    icon.attr('class', originalClasses);
+                }, 3000);
+            }
+        });
     });
 </script>
 
@@ -616,16 +761,68 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 </script>
-</body>
-</html>set('css/push-notifications.css') }}?v={{ time() }}" rel="stylesheet">
+
+<!-- CSS for custom nested dropdowns -->
 <style>
-/* Override global card height constraint from public.css */
-#client-requests .card,
-#user-requests .card {
-    height: auto !important;
-    min-height: calc(100vh - 200px) !important;
+/* Nested dropdown structure */
+.dropdown-submenu {
+    position: relative;
 }
 
+/* Make submenus expand inline (below parent) for both mobile and desktop */
+.dropdown-submenu .submenu {
+    position: static !important;
+    transform: none !important;
+    margin-left: 1rem;
+    margin-top: 0.5rem;
+    box-shadow: none;
+    border-left: 3px solid #198754;
+    background-color: #f8f9fa;
+    display: none;
+}
+
+.dropdown-submenu .submenu.show {
+    display: block;
+}
+
+/* Add arrow indicator using CSS - positioned inline with text */
+.dropdown-submenu > a[data-submenu-toggle] {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.dropdown-submenu > a[data-submenu-toggle]::after {
+    content: "\f078"; /* FontAwesome chevron-down */
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    font-size: 0.75rem;
+    opacity: 0.6;
+    margin-left: auto;
+    padding-left: 1rem;
+    transition: transform 0.2s ease;
+}
+
+.dropdown-submenu > a[data-submenu-toggle]:hover::after {
+    opacity: 1;
+}
+
+/* Rotate arrow when submenu is open */
+.dropdown-submenu .submenu.show + a[data-submenu-toggle]::after,
+.dropdown-submenu:has(.submenu.show) > a[data-submenu-toggle]::after {
+    transform: rotate(180deg);
+}
+
+/* Ensure proper z-index */
+.dropdown-menu {
+    z-index: 1050;
+}
+
+.dropdown-submenu .submenu {
+    z-index: 1051;
+}
+
+/* Fix for client and user requests card body */
 #client-requests .card-body,
 #user-requests .card-body {
     height: auto !important;
@@ -700,123 +897,192 @@ document.addEventListener('DOMContentLoaded', function() {
     margin-bottom: 1rem;
 }
 
-.push-notification.hide {
+.push-notification-hide {
     transform: translateY(-100%);
     opacity: 0;
     margin-bottom: 0;
-    pointer-events: none;
+    transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
-/* Content push effect */
-.content-pushed {
-    transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-.content-pushed.push-down {
-    transform: translateY(0);
-}
-
-.content-pushed.push-up {
-    transform: translateY(-60px);
-}
-
-/* Enhanced notification styling */
-.push-notification .btn-close {
-    filter: brightness(0) invert(1);
-    opacity: 0.8;
-    transition: opacity 0.2s ease;
-}
-
-.push-notification .btn-close:hover {
+.push-notification.btn-close-hover {
     opacity: 1;
     transform: scale(1.1);
 }
 
-/* Alert type specific styling */
-.alert-success {
-    background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
-    color: #155724;
-    border-left: 4px solid #28a745;
-}
-
-.alert-danger {
-    background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+/* Alert type colors */
+.alert-type {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: #721c24;
     border-left: 4px solid #dc3545;
 }
 
 .alert-warning {
-    background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
     color: #856404;
     border-left: 4px solid #ffc107;
 }
 
-/* Mobile responsive table improvements */
+.alert-success {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    color: #155724;
+    border-left: 4px solid #28a745;
+}
+
+.alert-info {
+    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+    color: #0c5460;
+    border-left: 4px solid #17a2b8;
+}
+
+/* Mobile styles */
 @media (max-width: 768px) {
-    /* Make table scrollable horizontally */
-    .requests-table-container {
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-    }
-    
-    /* Reduce table font size on mobile */
     .table {
         font-size: 0.75rem;
     }
     
-    .table th,
-    .table td {
+    .table th, .table td {
         padding: 0.5rem 0.3rem;
         white-space: nowrap;
     }
     
-    /* Make action buttons smaller on mobile */
-    .table .btn-sm {
-        padding: 0.25rem 0.4rem;
+    .btn-sm {
         font-size: 0.7rem;
+        padding: 0.25rem 0.5rem;
     }
     
-    .table .btn-sm i {
-        font-size: 0.8rem;
+    .modal-z-index {
+        z-index: 10000 !important;
     }
     
-    /* Adjust badge size */
-    .table .badge {
-        font-size: 0.65rem;
-        padding: 0.25em 0.5em;
+    .modal-backdrop {
+        z-index: 9999 !important;
     }
     
-    /* Tab navigation improvements */
-    .nav-tabs .nav-link {
-        font-size: 0.85rem;
-        padding: 0.5rem 0.75rem;
+    /* Ensure modals appear above everything on mobile */
+    .delete-request-btn {
+        position: relative;
+        z-index: 1;
+        cursor: pointer;
     }
-    
-    .nav-tabs .nav-link i {
-        font-size: 0.9rem;
+    /* Push notification hide animation */
+    .push-notification.hide {
+        transform: translateY(-100%);
+        opacity: 0;
+        margin-bottom: 0;
+        pointer-events: none;
     }
-    
-    .nav-tabs .badge {
-        font-size: 0.7rem;
-        padding: 0.25em 0.5em;
-    }
-}
 
-/* Ensure modals appear above everything on mobile */
-.modal {
-    z-index: 10000 !important;
-}
+    /* Content push effect */
+    .content-pushed {
+        transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
 
-.modal-backdrop {
-    z-index: 9999 !important;
-}
+    .content-pushed.push-down {
+        transform: translateY(0);
+    }
 
-/* Make sure delete buttons are clickable */
-.delete-request-btn {
-    position: relative;
-    z-index: 1;
-    cursor: pointer;
+    .content-pushed.push-up {
+        transform: translateY(-60px);
+    }
+
+    /* Enhanced notification styling */
+    .push-notification .btn-close {
+        filter: brightness(0) invert(1);
+        opacity: 0.8;
+        transition: opacity 0.2s ease;
+    }
+
+    .push-notification .btn-close:hover {
+        opacity: 1;
+        transform: scale(1.1);
+    }
+
+    /* Alert type specific styling */
+    .alert-success {
+        background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+        color: #155724;
+        border-left: 4px solid #28a745;
+    }
+
+    .alert-danger {
+        background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+        color: #721c24;
+        border-left: 4px solid #dc3545;
+    }
+
+    .alert-warning {
+        background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+        color: #856404;
+        border-left: 4px solid #ffc107;
+    }
+
+    /* Mobile responsive table improvements */
+    @media (max-width: 768px) {
+        /* Make table scrollable horizontally */
+        .requests-table-container {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        /* Reduce table font size on mobile */
+        .table {
+            font-size: 0.75rem;
+        }
+        
+        .table th,
+        .table td {
+            padding: 0.5rem 0.3rem;
+            white-space: nowrap;
+        }
+        
+        /* Make action buttons smaller on mobile */
+        .table .btn-sm {
+            padding: 0.25rem 0.4rem;
+            font-size: 0.7rem;
+        }
+        
+        .table .btn-sm i {
+            font-size: 0.8rem;
+        }
+        
+        /* Adjust badge size */
+        .table .badge {
+            font-size: 0.65rem;
+            padding: 0.25em 0.5em;
+        }
+        
+        /* Tab navigation improvements */
+        .nav-tabs .nav-link {
+            font-size: 0.85rem;
+            padding: 0.5rem 0.75rem;
+        }
+        
+        .nav-tabs .nav-link i {
+            font-size: 0.9rem;
+        }
+        
+        .nav-tabs .badge {
+            font-size: 0.7rem;
+            padding: 0.25em 0.5em;
+        }
+    }
+
+    /* Ensure modals appear above everything on mobile */
+    .modal {
+        z-index: 10000 !important;
+    }
+
+    .modal-backdrop {
+        z-index: 9999 !important;
+    }
+
+    /* Make sure delete buttons are clickable */
+    .delete-request-btn {
+        position: relative;
+        z-index: 1;
+        cursor: pointer;
+    }
 }
 </style>
-
-<script>
+</body>
+</html>
