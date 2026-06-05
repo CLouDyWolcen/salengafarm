@@ -211,6 +211,195 @@ endif;
 unset($__errorArgs, $__bag); ?>
                                         </div>
                                     </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="account_type" class="form-label">Account Type *</label>
+                                            <select class="form-select <?php $__errorArgs = ['account_type'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>" 
+                                                    id="account_type" 
+                                                    name="account_type" 
+                                                    required
+                                                    onchange="toggleAccountTypeFields()">
+                                                <option value="">Select Account Type</option>
+                                                <option value="individual" <?php echo e(old('account_type', $user->account_type) == 'individual' ? 'selected' : ''); ?>>Individual</option>
+                                                <option value="company" <?php echo e(old('account_type', $user->account_type) == 'company' ? 'selected' : ''); ?>>Company</option>
+                                            </select>
+                                            <?php $__errorArgs = ['account_type'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                                <div class="invalid-feedback"><?php echo e($message); ?></div>
+                                            <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Individual Fields -->
+                                <div id="individualFields" style="display: none;">
+                                    <hr class="my-3">
+                                    <h6 class="mb-3 text-primary">
+                                        <i class="fas fa-user me-2"></i>Individual Information
+                                    </h6>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="address" class="form-label">Personal Address</label>
+                                                <input type="text" 
+                                                       class="form-control <?php $__errorArgs = ['address'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>" 
+                                                       id="address" 
+                                                       name="address" 
+                                                       value="<?php echo e(old('address', $user->address)); ?>">
+                                                <?php $__errorArgs = ['address'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                                    <div class="invalid-feedback"><?php echo e($message); ?></div>
+                                                <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="gender" class="form-label">Gender</label>
+                                                <select class="form-select <?php $__errorArgs = ['gender'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>" 
+                                                        id="gender" 
+                                                        name="gender">
+                                                    <option value="">Select Gender</option>
+                                                    <option value="male" <?php echo e(old('gender', $user->gender) == 'male' ? 'selected' : ''); ?>>Male</option>
+                                                    <option value="female" <?php echo e(old('gender', $user->gender) == 'female' ? 'selected' : ''); ?>>Female</option>
+                                                    <option value="other" <?php echo e(old('gender', $user->gender) == 'other' ? 'selected' : ''); ?>>Other</option>
+                                                </select>
+                                                <?php $__errorArgs = ['gender'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                                    <div class="invalid-feedback"><?php echo e($message); ?></div>
+                                                <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="property_type" class="form-label">Property Type</label>
+                                                <input type="text" 
+                                                       class="form-control <?php $__errorArgs = ['property_type'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>" 
+                                                       id="property_type" 
+                                                       name="property_type" 
+                                                       value="<?php echo e(old('property_type', $user->property_type)); ?>">
+                                                <?php $__errorArgs = ['property_type'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                                    <div class="invalid-feedback"><?php echo e($message); ?></div>
+                                                <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Company Fields -->
+                                <div id="companyFields" style="display: none;">
+                                    <hr class="my-3">
+                                    <h6 class="mb-3 text-success">
+                                        <i class="fas fa-building me-2"></i>Company Information
+                                    </h6>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="company_name" class="form-label">Company Name</label>
+                                                <input type="text" 
+                                                       class="form-control <?php $__errorArgs = ['company_name'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>" 
+                                                       id="company_name" 
+                                                       name="company_name" 
+                                                       value="<?php echo e(old('company_name', $user->company_name)); ?>">
+                                                <?php $__errorArgs = ['company_name'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                                    <div class="invalid-feedback"><?php echo e($message); ?></div>
+                                                <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="company_address" class="form-label">Company Address</label>
+                                                <input type="text" 
+                                                       class="form-control <?php $__errorArgs = ['company_address'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>" 
+                                                       id="company_address" 
+                                                       name="company_address" 
+                                                       value="<?php echo e(old('company_address', $user->company_address)); ?>">
+                                                <?php $__errorArgs = ['company_address'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                                    <div class="invalid-feedback"><?php echo e($message); ?></div>
+                                                <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <!-- Page Access Section -->
@@ -361,9 +550,36 @@ unset($__errorArgs, $__bag); ?>
             }
         }
         
+        function toggleAccountTypeFields() {
+            const accountType = document.getElementById('account_type').value;
+            const individualFields = document.getElementById('individualFields');
+            const companyFields = document.getElementById('companyFields');
+            
+            if (accountType === 'individual') {
+                individualFields.style.display = 'block';
+                companyFields.style.display = 'none';
+                
+                // Clear company fields
+                document.getElementById('company_name').value = '';
+                document.getElementById('company_address').value = '';
+            } else if (accountType === 'company') {
+                individualFields.style.display = 'none';
+                companyFields.style.display = 'block';
+                
+                // Clear individual fields
+                document.getElementById('address').value = '';
+                document.getElementById('gender').value = '';
+                document.getElementById('property_type').value = '';
+            } else {
+                individualFields.style.display = 'none';
+                companyFields.style.display = 'none';
+            }
+        }
+        
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', function() {
             togglePageAccessOptions();
+            toggleAccountTypeFields();
         });
     </script>
 </body>

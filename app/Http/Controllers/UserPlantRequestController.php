@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\PlantRequest;
 use App\Models\Plant;
+use App\Services\AuditService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
@@ -77,6 +78,13 @@ class UserPlantRequestController extends Controller
             $plantRequest->status = 'pending';
             $plantRequest->request_type = 'user'; // Keep as 'user' type for simple inquiries
             $plantRequest->save();
+
+            // Audit log
+            AuditService::logRequestCreated($plantRequest->id, [
+                'email' => $plantRequest->email,
+                'name' => $plantRequest->name,
+                'request_type' => $plantRequest->request_type,
+            ]);
             
             // Generate PDF
             $this->generateUserRequestPdf($plantRequest->id);

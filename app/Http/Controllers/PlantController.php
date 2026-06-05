@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Plant;
+use App\Services\AuditService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -54,6 +55,14 @@ class PlantController extends Controller
 
             Log::info('Plant created', ['id' => $plant->id, 'name' => $plant->name, 'category' => $plant->category]);
 
+            // Audit log
+            AuditService::logPlantCreated($plant->id, [
+                'name' => $plant->name,
+                'category' => $plant->category,
+                'quantity' => $plant->quantity,
+                'price' => $plant->price,
+            ]);
+
             return response()->json([
                 'message' => 'Plant added successfully',
                 'plant' => $plant
@@ -75,6 +84,14 @@ class PlantController extends Controller
     public function update(Request $request, Plant $plant)
     {
         try {
+            // Capture old values before update
+            $oldData = [
+                'name' => $plant->name,
+                'category' => $plant->category,
+                'quantity' => $plant->quantity,
+                'price' => $plant->price,
+            ];
+
             // Validate the request
             $validated = $request->validate([
                 'name' => 'required|string|max:255',
@@ -110,6 +127,19 @@ class PlantController extends Controller
                 'quantity' => $validated['quantity'] ?? 0
             ]);
 
+            // Capture new values after update
+            $newData = [
+                'name' => $plant->name,
+                'category' => $plant->category,
+                'quantity' => $plant->quantity,
+                'price' => $plant->price,
+            ];
+
+            // Audit log if something changed
+            if ($oldData != $newData) {
+                AuditService::logPlantUpdated($plant->id, $oldData, $newData);
+            }
+
             return response()->json([
                 'message' => 'Plant updated successfully',
                 'plant' => $plant
@@ -132,7 +162,19 @@ class PlantController extends Controller
     public function destroy(Plant $plant)
     {
         try {
+            // Capture plant data before deletion
+            $plantData = [
+                'name' => $plant->name,
+                'category' => $plant->category,
+                'quantity' => $plant->quantity,
+                'price' => $plant->price,
+            ];
+
             $plant->delete();
+
+            // Audit log
+            AuditService::logPlantDeleted($plant->id, $plantData);
+
             return response()->json(['message' => 'Plant deleted successfully']);
         } catch (\Exception $e) {
             Log::error('Error deleting plant: ' . $e->getMessage());
@@ -176,7 +218,29 @@ class PlantController extends Controller
             }
 
             // Update all selected plants
-            Plant::whereIn('id', $request->ids)->update($updateData);
+            $plants = Plant::whereIn('id', $request->ids)->get();
+            
+            // Capture old values and update each plant
+            foreach ($plants as $plant) {
+                $oldData = [
+                    'name' => $plant->name,
+                    'quantity' => $plant->quantity,
+                    'price' => $plant->price,
+                ];
+                
+                $plant->update($updateData);
+                
+                $newData = [
+                    'name' => $plant->name,
+                    'quantity' => $plant->quantity,
+                    'price' => $plant->price,
+                ];
+                
+                // Audit log if something changed
+                if ($oldData != $newData) {
+                    AuditService::logPlantUpdated($plant->id, $oldData, $newData);
+                }
+            }
 
             return response()->json([
                 'message' => 'Plants updated successfully'

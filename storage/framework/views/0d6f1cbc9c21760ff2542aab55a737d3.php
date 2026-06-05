@@ -52,7 +52,29 @@
                                     <input type="text" id="searchInput" class="form-control" placeholder="Search by name, code, or scientific name" style="font-size: 0.9rem; padding: 0.4rem 0.75rem;">
                             </div>
                                 <div class="d-flex gap-2 mb-2">
-                                    <button id="addBtn" class="btn btn-success btn-sm">Add New Plant</button>
+                                    <!-- Export Dropdown -->
+                                    <div class="dropdown">
+                                        <button class="btn btn-success btn-sm dropdown-toggle" type="button" id="exportDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="fas fa-file-export me-1"></i>Export
+                                        </button>
+                                        <ul class="dropdown-menu" aria-labelledby="exportDropdown">
+                                            <li>
+                                                <a class="dropdown-item" href="<?php echo e(route('plants.export', ['format' => 'xlsx'])); ?>">
+                                                    <i class="fas fa-file-excel me-2 text-success"></i>Excel (.xlsx)
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item" href="<?php echo e(route('plants.export', ['format' => 'csv'])); ?>">
+                                                    <i class="fas fa-file-csv me-2 text-info"></i>CSV (.csv)
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    
+                                    <button id="addBtn" class="btn btn-primary btn-sm">
+                                        <i class="fas fa-plus me-1"></i>Add New Plant
+                                    </button>
+                                    
                                 <div id="bulkActionButtons" class="d-none d-inline">
                                         <button id="bulkEditBtn" class="btn btn-primary btn-sm">
                                         <i class="fas fa-edit"></i> Edit

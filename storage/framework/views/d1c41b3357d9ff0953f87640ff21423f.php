@@ -147,6 +147,20 @@
                         <span id="button-loader" class="spinner" style="display: none;"></span>
                     </button>
 
+                    <!-- OR Divider -->
+                    <div class="divider-container">
+                        <div class="divider-line"></div>
+                        <div class="divider-text">- OR -</div>
+                        <div class="divider-line"></div>
+                    </div>
+                    
+                    <!-- Social Login Buttons -->
+                    <div class="social-login-container">
+                        <a href="<?php echo e(route('socialite.redirect', ['provider' => 'google'])); ?>" class="social-btn google-btn">
+                            <i class="fab fa-google"></i> Sign up using Google
+                        </a>
+                    </div>
+
                     <div class="mt-4 flex justify-between items-center">
                         <p class="text-sm text-gray-600">
                             Already have an account? 
@@ -389,6 +403,64 @@
         
         .text-primary:hover {
             text-decoration: underline;
+        }
+        
+        /* Divider styling */
+        .divider-container {
+            display: flex;
+            align-items: center;
+            margin: 1.25rem 0;
+            width: 100%;
+        }
+        
+        .divider-line {
+            flex-grow: 1;
+            height: 1px;
+            background-color: #e5e7eb;
+        }
+        
+        .divider-text {
+            padding: 0 1rem;
+            color: #6b7280;
+            font-size: 0.875rem;
+            white-space: nowrap;
+        }
+        
+        /* Social login button */
+        .social-login-container {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            width: 100%;
+            margin-bottom: 1rem;
+        }
+        
+        .social-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s;
+            gap: 0.5rem;
+            color: #ffffff;
+        }
+        
+        .google-btn {
+            background-color: #ea4335;
+        }
+        
+        .google-btn:hover {
+            background-color: #d33426;
+        }
+        
+        .social-btn i {
+            font-size: 1rem;
         }
         
         /* Responsive adjustments */

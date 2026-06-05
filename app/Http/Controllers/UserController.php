@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Services\AuditService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
@@ -79,7 +80,14 @@ class UserController extends Controller
         // Give them access to all pages by default (same as registration)
         $validated['page_access'] = json_encode(['dashboard', 'plant_guide', 'site_data']);
 
-        User::create($validated);
+        $user = User::create($validated);
+
+        // Audit log
+        AuditService::logUserCreated($user->id, [
+            'name' => $user->first_name . ' ' . $user->last_name,
+            'email' => $user->email,
+            'role' => $user->role,
+        ]);
 
         return redirect()->route('users.index')->with('success', 'Client account created successfully');
     }
@@ -91,6 +99,9 @@ class UserController extends Controller
             'is_client' => 'boolean'
         ]);
 
+        // Capture old role
+        $oldRole = $user->role;
+
         $updateData = ['role' => $request->role];
         
         $wasClient = $user->is_client;
@@ -100,6 +111,11 @@ class UserController extends Controller
         }
 
         $user->update($updateData);
+        
+        // Audit log if role changed
+        if ($oldRole !== $request->role) {
+            AuditService::logRoleChanged($user->id, $oldRole, $request->role);
+        }
         
         // If user was just made a client, send notification
         if (!$wasClient && $request->is_client) {
@@ -118,7 +134,18 @@ class UserController extends Controller
 
     public function destroy(User $user)
     {
+        // Capture user data before deletion
+        $userData = [
+            'name' => $user->first_name . ' ' . $user->last_name,
+            'email' => $user->email,
+            'role' => $user->role,
+        ];
+
         $user->delete();
+
+        // Audit log
+        AuditService::logUserDeleted($user->id, $userData);
+
         return redirect()->route('users.index')->with('success', 'User deleted successfully');
     }
 
@@ -193,7 +220,26 @@ class UserController extends Controller
             'page_access_json' => $validated['page_access'],
         ]);
 
+        // Capture old values
+        $oldData = [
+            'name' => $user->first_name . ' ' . $user->last_name,
+            'email' => $user->email,
+            'role' => $user->role,
+        ];
+
         $user->update($validated);
+
+        // Capture new values
+        $newData = [
+            'name' => $user->first_name . ' ' . $user->last_name,
+            'email' => $user->email,
+            'role' => $user->role,
+        ];
+
+        // Audit log if something changed
+        if ($oldData != $newData) {
+            AuditService::logUserUpdated($user->id, $oldData, $newData);
+        }
 
         // Log the user after update
         Log::info('User after update:', [

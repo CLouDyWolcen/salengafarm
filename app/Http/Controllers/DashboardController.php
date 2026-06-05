@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Plant;
 use App\Models\Sale;
+use App\Services\AuditService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -128,8 +129,29 @@ class DashboardController extends Controller
 
         foreach ($updates as $update) {
             if (isset($update['plant_id'], $update['quantity'])) {
-                Plant::where('id', $update['plant_id'])
-                    ->update(['quantity' => $update['quantity']]);
+                $plant = Plant::find($update['plant_id']);
+                
+                if ($plant) {
+                    // Capture old value
+                    $oldData = [
+                        'name' => $plant->name,
+                        'quantity' => $plant->quantity,
+                    ];
+                    
+                    // Update the plant
+                    $plant->update(['quantity' => $update['quantity']]);
+                    
+                    // Capture new value
+                    $newData = [
+                        'name' => $plant->name,
+                        'quantity' => $plant->quantity,
+                    ];
+                    
+                    // Audit log if changed
+                    if ($oldData['quantity'] != $newData['quantity']) {
+                        AuditService::logPlantUpdated($plant->id, $oldData, $newData);
+                    }
+                }
             }
         }
 

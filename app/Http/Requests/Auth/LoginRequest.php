@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Auth;
 
 use App\Models\User;
+use App\Services\AuditService;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
@@ -76,6 +77,9 @@ class LoginRequest extends FormRequest
         // Otherwise, attempt normal authentication
         if (!Auth::attempt($credentials, $this->boolean('remember'))) {
             RateLimiter::hit($this->throttleKey(), 60); // Add explicit 60 second decay time
+
+            // Log failed login attempt
+            AuditService::logFailedLogin($this->email);
 
             throw ValidationException::withMessages([
                 'email' => trans('auth.failed'),

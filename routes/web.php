@@ -15,6 +15,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\UserDashboardController;
 use App\Http\Controllers\SystemLogController;
+use App\Http\Controllers\AuditLogController;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -231,6 +232,12 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/admin/logs/fetch', [SystemLogController::class, 'fetchLogs'])->name('admin.logs.fetch');
         Route::post('/admin/logs/clear', [SystemLogController::class, 'clear'])->name('admin.logs.clear');
         Route::get('/admin/logs/download', [SystemLogController::class, 'download'])->name('admin.logs.download');
+        
+        // Audit Trail (Super Admin only)
+        Route::get('/admin/audit-logs', [AuditLogController::class, 'index'])->name('admin.audit-logs.index');
+        Route::get('/admin/audit-logs/fetch', [AuditLogController::class, 'fetchLogs'])->name('admin.audit-logs.fetch');
+        Route::get('/admin/audit-logs/{id}', [AuditLogController::class, 'show'])->name('admin.audit-logs.show');
+        Route::get('/admin/audit-logs/export', [AuditLogController::class, 'export'])->name('admin.audit-logs.export');
     });
 
     // Admin and Manager routes

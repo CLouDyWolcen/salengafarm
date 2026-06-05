@@ -2988,6 +2988,12 @@
 
     // Show alert when locked RFQ button is clicked
     function showProfileIncompleteAlert() {
+        <?php if(auth()->guard()->check()): ?>
+        const profilePercentage = <?php echo e(auth()->user()->getProfileCompletionPercentage()); ?>;
+        <?php else: ?>
+        const profilePercentage = 0;
+        <?php endif; ?>
+        
         Swal.fire({
             icon: 'warning',
             title: '<strong style="color: #333; font-size: 1.5rem;">Profile Incomplete</strong>',
@@ -3004,12 +3010,12 @@
                                 border-left: 4px solid #ffc107;">
                         <div style="font-size: 0.85rem; color: #666; margin-bottom: 0.5rem;">Profile Completion</div>
                         <div style="font-size: 1.75rem; font-weight: bold; color: #28a745; margin-bottom: 0.5rem;">
-                            <?php echo e(auth()->user()->getProfileCompletionPercentage()); ?>%
+                            ${profilePercentage}%
                         </div>
                         <div class="progress" style="height: 6px; border-radius: 10px; background-color: #e9ecef;">
                             <div class="progress-bar bg-success" role="progressbar" 
-                                 style="width: <?php echo e(auth()->user()->getProfileCompletionPercentage()); ?>%; border-radius: 10px;"
-                                 aria-valuenow="<?php echo e(auth()->user()->getProfileCompletionPercentage()); ?>" 
+                                 style="width: ${profilePercentage}%; border-radius: 10px;"
+                                 aria-valuenow="${profilePercentage}" 
                                  aria-valuemin="0" 
                                  aria-valuemax="100">
                             </div>

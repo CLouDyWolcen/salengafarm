@@ -132,7 +132,75 @@
                     </span>
                 <?php endif; ?>
             </a>
-            <a href="<?php echo e(route('site-visits.create')); ?>" class="btn btn-success">
+            <!-- Export Dropdown with Nested Submenus -->
+            <div class="dropdown">
+                <button class="btn btn-success dropdown-toggle" type="button" id="exportDropdownSiteVisits" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+                    <i class="fas fa-file-export me-1"></i>Export
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="exportDropdownSiteVisits">
+                    <!-- All Site Visits -->
+                    <li class="dropdown-submenu">
+                        <a class="dropdown-item" href="#" data-submenu-toggle>
+                            <i class="fas fa-list me-2 text-primary"></i>All Site Visits
+                        </a>
+                        <ul class="dropdown-menu submenu">
+                            <li><a class="dropdown-item" href="<?php echo e(route('site-visits.export', ['format' => 'xlsx', 'status' => 'all'])); ?>">
+                                <i class="fas fa-file-excel me-2 text-success"></i>Excel (.xlsx)
+                            </a></li>
+                            <li><a class="dropdown-item" href="<?php echo e(route('site-visits.export', ['format' => 'csv', 'status' => 'all'])); ?>">
+                                <i class="fas fa-file-csv me-2 text-info"></i>CSV (.csv)
+                            </a></li>
+                        </ul>
+                    </li>
+                    
+                    <!-- Pending Site Visits -->
+                    <li class="dropdown-submenu">
+                        <a class="dropdown-item" href="#" data-submenu-toggle>
+                            <i class="fas fa-clock me-2 text-warning"></i>Pending
+                        </a>
+                        <ul class="dropdown-menu submenu">
+                            <li><a class="dropdown-item" href="<?php echo e(route('site-visits.export', ['format' => 'xlsx', 'status' => 'pending'])); ?>">
+                                <i class="fas fa-file-excel me-2 text-success"></i>Excel (.xlsx)
+                            </a></li>
+                            <li><a class="dropdown-item" href="<?php echo e(route('site-visits.export', ['format' => 'csv', 'status' => 'pending'])); ?>">
+                                <i class="fas fa-file-csv me-2 text-info"></i>CSV (.csv)
+                            </a></li>
+                        </ul>
+                    </li>
+                    
+                    <!-- Completed Site Visits -->
+                    <li class="dropdown-submenu">
+                        <a class="dropdown-item" href="#" data-submenu-toggle>
+                            <i class="fas fa-check-circle me-2 text-success"></i>Completed
+                        </a>
+                        <ul class="dropdown-menu submenu">
+                            <li><a class="dropdown-item" href="<?php echo e(route('site-visits.export', ['format' => 'xlsx', 'status' => 'completed'])); ?>">
+                                <i class="fas fa-file-excel me-2 text-success"></i>Excel (.xlsx)
+                            </a></li>
+                            <li><a class="dropdown-item" href="<?php echo e(route('site-visits.export', ['format' => 'csv', 'status' => 'completed'])); ?>">
+                                <i class="fas fa-file-csv me-2 text-info"></i>CSV (.csv)
+                            </a></li>
+                        </ul>
+                    </li>
+                    
+                    <!-- Follow-up Site Visits -->
+                    <li class="dropdown-submenu">
+                        <a class="dropdown-item" href="#" data-submenu-toggle>
+                            <i class="fas fa-redo me-2 text-info"></i>Follow-up
+                        </a>
+                        <ul class="dropdown-menu submenu">
+                            <li><a class="dropdown-item" href="<?php echo e(route('site-visits.export', ['format' => 'xlsx', 'status' => 'follow_up'])); ?>">
+                                <i class="fas fa-file-excel me-2 text-success"></i>Excel (.xlsx)
+                            </a></li>
+                            <li><a class="dropdown-item" href="<?php echo e(route('site-visits.export', ['format' => 'csv', 'status' => 'follow_up'])); ?>">
+                                <i class="fas fa-file-csv me-2 text-info"></i>CSV (.csv)
+                            </a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            
+            <a href="<?php echo e(route('site-visits.create')); ?>" class="btn btn-primary">
                 <i class="fas fa-plus me-2"></i>Add New Site Visit
             </a>
         </div>
@@ -700,8 +768,141 @@ document.addEventListener('DOMContentLoaded', function() {
             overlay.classList.remove('active');
         });
     }
+    
+    // ===== CUSTOM NESTED DROPDOWN FUNCTIONALITY =====
+    // Handle nested dropdown menus for Site Visits export
+    const dropdownSubmenus = document.querySelectorAll('.dropdown-submenu');
+    
+    dropdownSubmenus.forEach(function(submenu) {
+        const toggle = submenu.querySelector('[data-submenu-toggle]');
+        const submenuDropdown = submenu.querySelector('.submenu');
+        
+        if (!toggle || !submenuDropdown) return;
+        
+        // Click handler for both mobile and desktop
+        toggle.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            e.stopImmediatePropagation();
+            
+            // Close other submenus
+            document.querySelectorAll('.dropdown-submenu .submenu.show').forEach(function(otherSubmenu) {
+                if (otherSubmenu !== submenuDropdown) {
+                    otherSubmenu.classList.remove('show');
+                }
+            });
+            
+            // Toggle this submenu
+            const wasShowing = submenuDropdown.classList.contains('show');
+            if (wasShowing) {
+                submenuDropdown.classList.remove('show');
+            } else {
+                submenuDropdown.classList.add('show');
+            }
+            
+            return false;
+        }, true);
+    });
+    
+    // Prevent clicks inside submenus from closing the main dropdown
+    document.querySelectorAll('.dropdown-submenu .submenu').forEach(function(submenu) {
+        submenu.addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
+    });
+    
+    // Close all submenus when main dropdown closes
+    const mainDropdown = document.getElementById('exportDropdownSiteVisits');
+    if (mainDropdown) {
+        mainDropdown.addEventListener('hidden.bs.dropdown', function() {
+            document.querySelectorAll('.dropdown-submenu .submenu.show').forEach(function(submenu) {
+                submenu.classList.remove('show');
+            });
+        });
+    }
+    
+    // ===== EXPORT LOADING INDICATOR =====
+    // Add loading indicator to export links
+    document.querySelectorAll('.dropdown-submenu .submenu a').forEach(function(link) {
+        link.addEventListener('click', function(e) {
+            const icon = this.querySelector('i');
+            if (icon) {
+                // Store original icon classes
+                const originalClasses = icon.className;
+                
+                // Change to loading spinner
+                icon.className = 'fas fa-spinner fa-spin me-2';
+                
+                // Restore original icon after 3 seconds (download should have started by then)
+                setTimeout(function() {
+                    icon.className = originalClasses;
+                }, 3000);
+            }
+        });
+    });
 });
 </script>
+
+<!-- CSS for custom nested dropdowns -->
+<style>
+/* Nested dropdown structure */
+.dropdown-submenu {
+    position: relative;
+}
+
+/* Make submenus expand inline (below parent) for both mobile and desktop */
+.dropdown-submenu .submenu {
+    position: static !important;
+    transform: none !important;
+    margin-left: 1rem;
+    margin-top: 0.5rem;
+    box-shadow: none;
+    border-left: 3px solid #198754;
+    background-color: #f8f9fa;
+    display: none;
+}
+
+.dropdown-submenu .submenu.show {
+    display: block;
+}
+
+/* Add arrow indicator using CSS - positioned inline with text */
+.dropdown-submenu > a[data-submenu-toggle] {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.dropdown-submenu > a[data-submenu-toggle]::after {
+    content: "\f078"; /* FontAwesome chevron-down */
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    font-size: 0.75rem;
+    opacity: 0.6;
+    margin-left: auto;
+    padding-left: 1rem;
+    transition: transform 0.2s ease;
+}
+
+.dropdown-submenu > a[data-submenu-toggle]:hover::after {
+    opacity: 1;
+}
+
+/* Rotate arrow when submenu is open */
+.dropdown-submenu .submenu.show + a[data-submenu-toggle]::after,
+.dropdown-submenu:has(.submenu.show) > a[data-submenu-toggle]::after {
+    transform: rotate(180deg);
+}
+
+/* Ensure proper z-index */
+.dropdown-menu {
+    z-index: 1050;
+}
+
+.dropdown-submenu .submenu {
+    z-index: 1051;
+}
+</style>
 </body>
 </html>
 <?php /**PATH C:\CODING\my_Inventory\resources\views/site-visits/index.blade.php ENDPATH**/ ?>

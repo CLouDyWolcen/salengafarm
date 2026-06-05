@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use App\Models\Plant;
 use App\Models\Sale;
+use App\Services\AuditService;
 
 class WalkInSalesController extends Controller
 {
@@ -102,6 +103,14 @@ class WalkInSalesController extends Controller
                 $sale->notes = $notes;
                 $sale->sale_date = now();
                 $sale->save();
+                
+                // Audit log
+                AuditService::logSaleCreated($sale->id, [
+                    'plant_id' => $sale->plant_id,
+                    'quantity' => $sale->quantity,
+                    'total_price' => $sale->total_price,
+                    'customer_name' => $sale->customer_name,
+                ]);
                 
                 // Update plant stock
                 $plant = Plant::find($item['plant_id']);

@@ -119,10 +119,10 @@
                         <h6 class="text-success mb-3"><i class="fas fa-camera me-2"></i>Property Photos</h6>
                         <div class="d-flex flex-wrap">
                             <?php $__currentLoopData = $request->photos; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $photo): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                <img src="<?php echo e(Storage::url($photo)); ?>" 
+                                <img src="<?php echo e(asset('storage/' . $photo)); ?>" 
                                      alt="Property Photo" 
                                      class="photo-thumbnail mb-2 me-2"
-                                     onclick="viewPhoto('<?php echo e(Storage::url($photo)); ?>')">
+                                     onclick="viewPhoto('<?php echo e(asset('storage/' . $photo)); ?>')">
                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                         </div>
                     <?php else: ?>

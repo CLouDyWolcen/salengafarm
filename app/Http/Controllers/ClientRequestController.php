@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\PlantRequest;
+use App\Services\AuditService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
@@ -551,8 +552,18 @@ class ClientRequestController extends Controller
             if ($request->pdf_path && Storage::exists($request->pdf_path)) {
                 Storage::delete($request->pdf_path);
             }
+
+            // Capture request data before deletion
+            $requestData = [
+                'email' => $request->email,
+                'request_type' => $request->request_type,
+                'status' => $request->status,
+            ];
             
             $request->delete();
+
+            // Audit log
+            AuditService::logRequestDeleted($request->id, $requestData);
             
             Log::info('Request deleted successfully', [
                 'request_id' => $request->id,
@@ -883,6 +894,9 @@ class ClientRequestController extends Controller
             $request->response_sent_at = now();
             $request->responded_by = auth()->id();
             $request->save();
+
+            // Audit log
+            AuditService::logResponseSent($request->id);
             
             // Create in-app notification for user with comprehensive logging
             Log::info('SendResponse - Creating notification', [

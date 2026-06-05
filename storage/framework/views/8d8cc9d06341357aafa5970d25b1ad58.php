@@ -1202,7 +1202,26 @@
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <div class="d-flex justify-content-end">
+                            <div class="d-flex justify-content-end gap-2">
+                                <!-- Export Dropdown -->
+                                <div class="dropdown">
+                                    <button class="btn btn-success btn-sm dropdown-toggle" type="button" id="exportDropdownPOS" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="fas fa-file-export me-1"></i>Export
+                                    </button>
+                                    <ul class="dropdown-menu" aria-labelledby="exportDropdownPOS">
+                                        <li>
+                                            <a class="dropdown-item" href="#" onclick="exportPOSSales('xlsx'); return false;">
+                                                <i class="fas fa-file-excel me-2 text-success"></i>Excel (.xlsx)
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="#" onclick="exportPOSSales('csv'); return false;">
+                                                <i class="fas fa-file-csv me-2 text-info"></i>CSV (.csv)
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                                
                                 <button class="btn btn-danger btn-sm" id="bulk-delete-btn" disabled>
                                     <i class="fas fa-trash me-1"></i>Delete Selected
                                 </button>
@@ -1385,6 +1404,21 @@
             }
         }
     });
+    
+    
+    // Global function for exporting POS sales
+    function exportPOSSales(format) {
+        const startDate = $('#start-date').val();
+        const endDate = $('#end-date').val();
+        
+        // Build export URL with current filters
+        let url = '<?php echo e(route("walk-in.export")); ?>?format=' + format;
+        if (startDate) url += '&start_date=' + startDate;
+        if (endDate) url += '&end_date=' + endDate;
+        
+        // Trigger download
+        window.location.href = url;
+    }
     
     // Global function for POS quick filters (must be outside document.ready for onclick to work)
     function applyPOSQuickFilter(filter) {

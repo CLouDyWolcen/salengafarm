@@ -437,6 +437,9 @@
                                 <button class="btn btn-info text-white" id="viewSystemLogsBtn">
                                     <i class="fas fa-file-alt me-2"></i>System Logs
                                 </button>
+                                <button class="btn btn-success text-white" id="viewAuditTrailBtn">
+                                    <i class="fas fa-clipboard-list me-2"></i>Audit Trail
+                                </button>
                                 <button class="btn btn-success text-white" id="viewSalesRecordsBtn">
                                     <i class="fas fa-receipt me-2"></i>Sales Records
                                 </button>
@@ -1315,6 +1318,368 @@
         });
     </script>
 
+    <!-- Audit Trail Modal (Super Admin Only) -->
+    <div class="modal fade" id="auditTrailModal" tabindex="-1">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title"><i class="fas fa-clipboard-list me-2"></i>Audit Trail</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Statistics -->
+                    <div class="row mb-3">
+                        <div class="col-md-3">
+                            <div class="card bg-primary text-white">
+                                <div class="card-body p-2">
+                                    <small>Total Logs Today</small>
+                                    <h4 class="mb-0" id="totalLogsToday">0</h4>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card bg-success text-white">
+                                <div class="card-body p-2">
+                                    <small>Active Users Today</small>
+                                    <h4 class="mb-0" id="activeUsersToday">0</h4>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card bg-warning text-white">
+                                <div class="card-body p-2">
+                                    <small>Failed Logins</small>
+                                    <h4 class="mb-0" id="failedLoginsToday">0</h4>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card bg-danger text-white">
+                                <div class="card-body p-2">
+                                    <small>Critical Actions</small>
+                                    <h4 class="mb-0" id="criticalActionsToday">0</h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Filters -->
+                    <div class="row mb-3">
+                        <div class="col-md-3">
+                            <label class="form-label small">Date Range</label>
+                            <select class="form-select form-select-sm" id="auditDateRange">
+                                <option value="today">Today</option>
+                                <option value="last_7_days" selected>Last 7 Days</option>
+                                <option value="last_30_days">Last 30 Days</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label small">Action Type</label>
+                            <select class="form-select form-select-sm" id="auditActionType">
+                                <option value="">All Actions</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label small">Search</label>
+                            <input type="text" class="form-control form-control-sm" id="auditSearch" placeholder="Email, IP, Action...">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label small">&nbsp;</label>
+                            <button class="btn btn-primary btn-sm w-100" onclick="loadAuditLogs()">
+                                <i class="fas fa-filter me-1"></i>Apply
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Audit Logs Table -->
+                    <div class="table-responsive" style="max-height: 400px; overflow-y: auto; overflow-x: auto;">
+                        <style>
+                            #auditLogsTableBody tr:hover {
+                                background-color: #f8f9fa !important;
+                                outline: none !important;
+                                box-shadow: none !important;
+                            }
+                            #auditLogsTableBody tr {
+                                outline: none !important;
+                            }
+                            #auditLogsTableBody tr:focus {
+                                outline: none !important;
+                                box-shadow: none !important;
+                            }
+                            
+                            /* Mobile responsive */
+                            @media (max-width: 768px) {
+                                #auditTrailModal .modal-dialog {
+                                    margin: 0.5rem;
+                                }
+                                #auditTrailModal table {
+                                    font-size: 0.75rem;
+                                }
+                                #auditTrailModal th,
+                                #auditTrailModal td {
+                                    padding: 0.25rem !important;
+                                }
+                                #auditTrailModal .btn-sm {
+                                    padding: 0.15rem 0.3rem;
+                                    font-size: 0.7rem;
+                                }
+                            }
+                        </style>
+                        <table class="table table-sm table-hover">
+                            <thead class="sticky-top bg-light">
+                                <tr>
+                                    <th style="width: 15%; min-width: 120px;">Time</th>
+                                    <th style="width: 20%; min-width: 150px;">User</th>
+                                    <th style="width: 20%; min-width: 120px;">Action</th>
+                                    <th style="width: 15%; min-width: 100px;">Entity</th>
+                                    <th style="width: 15%; min-width: 100px;">IP</th>
+                                    <th style="width: 15%; min-width: 80px;">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="auditLogsTableBody">
+                                <tr>
+                                    <td colspan="6" class="text-center">
+                                        <div class="spinner-border spinner-border-sm" role="status">
+                                            <span class="visually-hidden">Loading...</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-success btn-sm" onclick="exportAuditLogs()">
+                        <i class="fas fa-file-csv me-1"></i>Export CSV
+                    </button>
+                    <button class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Audit Log Details Modal -->
+    <div class="modal fade" id="auditLogDetailsModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-info-circle me-2"></i>Log Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="auditLogDetailsContent">
+                    <!-- Details loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Audit Trail Functions
+        let currentAuditFilters = {};
+
+        function loadAuditLogs() {
+            const dateRange = document.getElementById('auditDateRange').value;
+            const actionType = document.getElementById('auditActionType').value;
+            const search = document.getElementById('auditSearch').value;
+
+            currentAuditFilters = {
+                date_range: dateRange,
+                action_type: actionType,
+                search: search
+            };
+
+            fetch(`/admin/audit-logs/fetch?${new URLSearchParams(currentAuditFilters)}`)
+                .then(response => response.json())
+                .then(data => {
+                    // Update statistics
+                    document.getElementById('totalLogsToday').textContent = data.stats.total_logs;
+                    document.getElementById('activeUsersToday').textContent = data.stats.unique_users;
+                    document.getElementById('failedLoginsToday').textContent = data.stats.failed_logins;
+                    document.getElementById('criticalActionsToday').textContent = data.stats.critical_actions;
+
+                    // Populate action type filter if empty
+                    const actionTypeSelect = document.getElementById('auditActionType');
+                    if (actionTypeSelect.options.length === 1 && data.actionTypes) {
+                        data.actionTypes.forEach(action => {
+                            const option = document.createElement('option');
+                            option.value = action;
+                            option.textContent = action;
+                            actionTypeSelect.appendChild(option);
+                        });
+                    }
+
+                    // Update table
+                    const tbody = document.getElementById('auditLogsTableBody');
+                    if (data.logs.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted">No audit logs found</td></tr>';
+                        return;
+                    }
+
+                    tbody.innerHTML = data.logs.map(log => {
+                        const badge = getRoleBadge(log.user_role);
+                        const timestamp = new Date(log.created_at);
+                        
+                        return `
+                            <tr>
+                                <td><small>${timestamp.toLocaleString()}</small></td>
+                                <td>
+                                    <div><small>${log.user_email}</small></div>
+                                    ${badge}
+                                </td>
+                                <td>
+                                    <div><strong>${log.action}</strong></div>
+                                    ${log.action.includes('Deleted') || log.action.includes('Role Changed') ? '<i class="fas fa-exclamation-triangle text-danger ms-1"></i>' : ''}
+                                    ${log.action === 'Login Failed' ? '<i class="fas fa-lock text-warning ms-1"></i>' : ''}
+                                </td>
+                                <td>
+                                    ${log.entity_type ? log.entity_type + (log.entity_id ? ' #' + log.entity_id : '') : '-'}
+                                </td>
+                                <td><code style="font-size: 0.8rem;">${log.ip_address}</code></td>
+                                <td>
+                                    <button class="btn btn-sm btn-info" onclick="viewLogDetails(${log.id})">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        `;
+                    }).join('');
+                })
+                .catch(error => {
+                    console.error('Error loading audit logs:', error);
+                    document.getElementById('auditLogsTableBody').innerHTML = 
+                        '<tr><td colspan="6" class="text-center text-danger">Error loading logs</td></tr>';
+                });
+        }
+
+        function getRoleBadge(role) {
+            const colors = {
+                'super_admin': 'danger',
+                'admin': 'primary',
+                'client': 'success',
+                'guest': 'secondary'
+            };
+            return `<span class="badge bg-${colors[role] || 'secondary'}">${role}</span>`;
+        }
+
+        function viewLogDetails(logId) {
+            fetch(`/admin/audit-logs/${logId}`)
+                .then(response => response.json())
+                .then(data => {
+                    const log = data.log;
+                    let changesHtml = '';
+                    
+                    // Show changes in a cleaner way
+                    if (log.old_values && log.new_values) {
+                        const oldVals = typeof log.old_values === 'string' ? JSON.parse(log.old_values) : log.old_values;
+                        const newVals = typeof log.new_values === 'string' ? JSON.parse(log.new_values) : log.new_values;
+                        
+                        changesHtml = '<hr><h6>Changes:</h6><div class="table-responsive"><table class="table table-sm table-bordered">';
+                        changesHtml += '<thead class="table-light"><tr><th style="width:25%">Field</th><th style="width:35%">Before</th><th style="width:5%"></th><th style="width:35%">After</th></tr></thead><tbody>';
+                        
+                        Object.keys(newVals).forEach(key => {
+                            const oldVal = oldVals[key] !== undefined ? oldVals[key] : 'N/A';
+                            const newVal = newVals[key];
+                            
+                            if (oldVal != newVal) {
+                                changesHtml += `
+                                    <tr>
+                                        <td><strong>${key.replace(/_/g, ' ').toUpperCase()}</strong></td>
+                                        <td><span class="badge bg-secondary">${oldVal}</span></td>
+                                        <td class="text-center"><i class="fas fa-arrow-right text-primary"></i></td>
+                                        <td><span class="badge bg-success">${newVal}</span></td>
+                                    </tr>
+                                `;
+                            }
+                        });
+                        
+                        changesHtml += '</tbody></table></div>';
+                    } else if (log.new_values && !log.old_values) {
+                        // New record created
+                        const newVals = typeof log.new_values === 'string' ? JSON.parse(log.new_values) : log.new_values;
+                        changesHtml = '<hr><h6>New Record Details:</h6><div class="table-responsive"><table class="table table-sm table-bordered">';
+                        changesHtml += '<tbody>';
+                        
+                        Object.keys(newVals).forEach(key => {
+                            changesHtml += `
+                                <tr>
+                                    <td style="width:30%"><strong>${key.replace(/_/g, ' ').toUpperCase()}</strong></td>
+                                    <td><span class="badge bg-success">${newVals[key]}</span></td>
+                                </tr>
+                            `;
+                        });
+                        
+                        changesHtml += '</tbody></table></div>';
+                    } else if (log.old_values && !log.new_values) {
+                        // Record deleted
+                        const oldVals = typeof log.old_values === 'string' ? JSON.parse(log.old_values) : log.old_values;
+                        changesHtml = '<hr><h6>Deleted Record Details:</h6><div class="table-responsive"><table class="table table-sm table-bordered">';
+                        changesHtml += '<tbody>';
+                        
+                        Object.keys(oldVals).forEach(key => {
+                            changesHtml += `
+                                <tr>
+                                    <td style="width:30%"><strong>${key.replace(/_/g, ' ').toUpperCase()}</strong></td>
+                                    <td><span class="badge bg-danger">${oldVals[key]}</span></td>
+                                </tr>
+                            `;
+                        });
+                        
+                        changesHtml += '</tbody></table></div>';
+                    }
+                    
+                    const content = `
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <strong>User:</strong><br>${log.user_email}<br>
+                                ${getRoleBadge(log.user_role)}
+                            </div>
+                            <div class="col-md-6">
+                                <strong>Timestamp:</strong><br>${new Date(log.created_at).toLocaleString()}
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <strong>Action:</strong><br>${log.action}
+                            </div>
+                            <div class="col-md-6">
+                                <strong>Entity:</strong><br>
+                                ${log.entity_type ? log.entity_type + (log.entity_id ? ' #' + log.entity_id : '') : 'N/A'}
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <strong>IP Address:</strong><br><code>${log.ip_address}</code>
+                            </div>
+                            <div class="col-md-6">
+                                <strong>URL:</strong><br><small class="text-break">${log.url || 'N/A'}</small>
+                            </div>
+                        </div>
+                        ${changesHtml}
+                    `;
+                    
+                    document.getElementById('auditLogDetailsContent').innerHTML = content;
+                    const modal = new bootstrap.Modal(document.getElementById('auditLogDetailsModal'));
+                    modal.show();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Failed to load log details');
+                });
+        }
+
+        function exportAuditLogs() {
+            const params = new URLSearchParams(currentAuditFilters);
+            window.location.href = `/admin/audit-logs/export?${params}`;
+        }
+
+        // Open audit trail modal
+        document.getElementById('viewAuditTrailBtn')?.addEventListener('click', function() {
+            const modal = new bootstrap.Modal(document.getElementById('auditTrailModal'));
+            modal.show();
+            loadAuditLogs();
+        });
+    </script>
+
     <!-- Sales Records Modal (Super Admin Only) -->
     <div class="modal fade" id="salesRecordsModal" tabindex="-1">
         <div class="modal-dialog modal-xl modal-dialog-scrollable">
@@ -1406,6 +1771,25 @@
                             <div class="col-md-4">
                                 <label class="form-label small mb-1">&nbsp;</label>
                                 <div class="d-flex gap-2">
+                                    <!-- Export Dropdown -->
+                                    <div class="dropdown flex-fill">
+                                        <button class="btn btn-success btn-sm dropdown-toggle w-100" type="button" id="exportDropdownDashboard" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="fas fa-file-export me-1"></i>Export
+                                        </button>
+                                        <ul class="dropdown-menu" aria-labelledby="exportDropdownDashboard">
+                                            <li>
+                                                <a class="dropdown-item" href="#" onclick="exportDashboardSales('xlsx'); return false;">
+                                                    <i class="fas fa-file-excel me-2 text-success"></i>Excel (.xlsx)
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item" href="#" onclick="exportDashboardSales('csv'); return false;">
+                                                    <i class="fas fa-file-csv me-2 text-info"></i>CSV (.csv)
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    
                                     <button class="btn btn-success btn-sm flex-fill" onclick="loadSalesRecords()">
                                         <i class="fas fa-filter"></i> Apply Custom
                                     </button>
@@ -1452,6 +1836,20 @@
     <script>
         // Sales Records Functions
         let currentSalesFilter = 'all'; // Default to all time
+        
+        // Export dashboard sales function
+        function exportDashboardSales(format) {
+            const startDate = $('#salesStartDate').val();
+            const endDate = $('#salesEndDate').val();
+            
+            // Build export URL with current filters
+            let url = '<?php echo e(route("walk-in.export")); ?>?format=' + format;
+            if (startDate) url += '&start_date=' + startDate;
+            if (endDate) url += '&end_date=' + endDate;
+            
+            // Trigger download
+            window.location.href = url;
+        }
         
         function applySalesQuickFilter(filter) {
             currentSalesFilter = filter;
