@@ -31,6 +31,35 @@ class AuditLog extends Model
     ];
 
     /**
+     * Prevent updates - audit logs are immutable
+     */
+    public function save(array $options = [])
+    {
+        // Only allow creation, not updates
+        if ($this->exists) {
+            throw new \RuntimeException('Audit logs cannot be modified once created.');
+        }
+        
+        return parent::save($options);
+    }
+
+    /**
+     * Prevent deletion - audit logs are immutable
+     */
+    public function delete()
+    {
+        throw new \RuntimeException('Audit logs cannot be deleted.');
+    }
+
+    /**
+     * Prevent force deletion - audit logs are immutable
+     */
+    public function forceDelete()
+    {
+        throw new \RuntimeException('Audit logs cannot be deleted.');
+    }
+
+    /**
      * Relationship to User
      */
     public function user(): BelongsTo

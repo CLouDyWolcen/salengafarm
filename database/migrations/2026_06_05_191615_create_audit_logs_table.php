@@ -37,26 +37,9 @@ return new class extends Migration
             $table->index('created_at');
         });
 
-        // Create triggers to prevent modifications (immutability)
-        DB::unprepared('
-            CREATE TRIGGER prevent_audit_log_update
-            BEFORE UPDATE ON audit_logs
-            FOR EACH ROW
-            BEGIN
-                SIGNAL SQLSTATE "45000" 
-                SET MESSAGE_TEXT = "Audit logs cannot be modified";
-            END
-        ');
-
-        DB::unprepared('
-            CREATE TRIGGER prevent_audit_log_delete
-            BEFORE DELETE ON audit_logs
-            FOR EACH ROW
-            BEGIN
-                SIGNAL SQLSTATE "45000" 
-                SET MESSAGE_TEXT = "Audit logs cannot be deleted";
-            END
-        ');
+        // Note: Triggers are not created here due to MySQL privilege restrictions on managed databases
+        // Immutability is enforced at the application level through the AuditLog model
+        // The model prevents updates and deletes by overriding the save() and delete() methods
     }
 
     /**
@@ -64,11 +47,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        // Drop triggers first
-        DB::unprepared('DROP TRIGGER IF EXISTS prevent_audit_log_update');
-        DB::unprepared('DROP TRIGGER IF EXISTS prevent_audit_log_delete');
-        
-        // Drop table
         Schema::dropIfExists('audit_logs');
     }
 };
