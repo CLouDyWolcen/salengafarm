@@ -209,6 +209,14 @@ class AuditService
     }
 
     /**
+     * Log file access (download/view)
+     */
+    public static function logFileAccess(int $encryptedFileId, string $action, string $filename): void
+    {
+        self::log("File {$action}", 'EncryptedFile', $encryptedFileId, null, ['filename' => $filename]);
+    }
+
+    /**
      * Filter sensitive data from arrays
      */
     private static function filterSensitiveData(array $data): array

@@ -1445,9 +1445,20 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-success btn-sm" onclick="exportAuditLogs()">
-                        <i class="fas fa-file-csv me-1"></i>Export CSV
-                    </button>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-success btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" id="exportAuditBtn" style="min-width: 90px;">
+                            <span class="export-text"><i class="fas fa-file-export me-1"></i>Export</span>
+                            <span class="export-loading d-none"><i class="fas fa-spinner fa-spin me-1"></i>Exporting...</span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#" onclick="exportAuditLogs('xlsx'); return false;">
+                                <i class="fas fa-file-excel me-2 text-success"></i>Excel (.xlsx)
+                            </a></li>
+                            <li><a class="dropdown-item" href="#" onclick="exportAuditLogs('csv'); return false;">
+                                <i class="fas fa-file-csv me-2 text-info"></i>CSV (.csv)
+                            </a></li>
+                        </ul>
+                    </div>
                     <button class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
@@ -1663,9 +1674,28 @@
                 });
         }
 
-        function exportAuditLogs() {
+        function exportAuditLogs(format = 'csv') {
+            const exportBtn = document.getElementById('exportAuditBtn');
+            const exportText = exportBtn.querySelector('.export-text');
+            const loadingText = exportBtn.querySelector('.export-loading');
+            
+            // Show loading text, hide normal text
+            exportText.classList.add('d-none');
+            loadingText.classList.remove('d-none');
+            exportBtn.disabled = true;
+            
             const params = new URLSearchParams(currentAuditFilters);
+            params.append('format', format);
+            
+            // Trigger download
             window.location.href = `/admin/audit-logs/export?${params}`;
+            
+            // Hide loading after download starts (2 seconds delay)
+            setTimeout(() => {
+                exportText.classList.remove('d-none');
+                loadingText.classList.add('d-none');
+                exportBtn.disabled = false;
+            }, 2000);
         }
 
         // Open audit trail modal

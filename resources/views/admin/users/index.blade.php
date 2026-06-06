@@ -14,6 +14,128 @@
     <link href="{{ asset('css/push-notifications.css') }}?v={{ time() }}" rel="stylesheet">
     <link href="{{ asset('css/responsive-fixes.css') }}?v={{ time() }}" rel="stylesheet">
     <style>
+        /* ========================================
+           CUSTOM CHECKBOX STYLING (Bootstrap-independent)
+           ======================================== */
+        
+        /* Base custom checkbox - Perfect square on all devices */
+        input[type="checkbox"].custom-checkbox {
+            /* Remove all browser defaults */
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            
+            /* Perfect square dimensions */
+            width: 20px;
+            height: 20px;
+            min-width: 20px;
+            min-height: 20px;
+            max-width: 20px;
+            max-height: 20px;
+            
+            /* Force square aspect ratio */
+            aspect-ratio: 1 / 1;
+            flex-shrink: 0;
+            
+            /* Visual styling */
+            border: 2px solid #6c757d;
+            border-radius: 4px;
+            background-color: #ffffff;
+            cursor: pointer;
+            
+            /* Positioning */
+            position: relative;
+            display: inline-block;
+            vertical-align: middle;
+            margin: 0;
+            padding: 0;
+            
+            /* Smooth transition */
+            transition: all 0.2s ease;
+        }
+        
+        /* Hover state */
+        input[type="checkbox"].custom-checkbox:hover {
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
+        }
+        
+        /* Focus state for accessibility */
+        input[type="checkbox"].custom-checkbox:focus {
+            outline: none;
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+        }
+        
+        /* Checked state */
+        input[type="checkbox"].custom-checkbox:checked {
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+        }
+        
+        /* Checkmark using ::after pseudo-element */
+        input[type="checkbox"].custom-checkbox:checked::after {
+            content: '';
+            position: absolute;
+            left: 6px;
+            top: 2px;
+            width: 5px;
+            height: 10px;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+        
+        /* Indeterminate state (for select-all) */
+        input[type="checkbox"].custom-checkbox:indeterminate {
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+        }
+        
+        input[type="checkbox"].custom-checkbox:indeterminate::after {
+            content: '';
+            position: absolute;
+            left: 3px;
+            top: 8px;
+            width: 12px;
+            height: 2px;
+            background-color: white;
+            transform: none;
+            border: none;
+        }
+        
+        /* Disabled state */
+        input[type="checkbox"].custom-checkbox:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        /* Mobile-specific adjustments */
+        @media (max-width: 576px) {
+            input[type="checkbox"].custom-checkbox {
+                /* Slightly larger for better touch targets on mobile */
+                width: 22px;
+                height: 22px;
+                min-width: 22px;
+                min-height: 22px;
+                max-width: 22px;
+                max-height: 22px;
+            }
+            
+            input[type="checkbox"].custom-checkbox:checked::after {
+                left: 7px;
+                top: 3px;
+                width: 5px;
+                height: 10px;
+            }
+            
+            input[type="checkbox"].custom-checkbox:indeterminate::after {
+                left: 4px;
+                top: 9px;
+                width: 12px;
+            }
+        }
+        
         /* Button Sizing Fixes */
         /* Make Export and Add New User buttons same size */
         .btn.btn-success {
@@ -291,10 +413,14 @@
                 white-space: nowrap !important;
             }
             
-            /* Adjust checkbox size for touch targets */
-            .user-checkbox, #select-all-users {
-                width: 20px !important;
-                height: 20px !important;
+            /* Ensure checkbox column is properly sized */
+            .user-table-card .table th:first-child,
+            .user-table-card .table td:first-child {
+                width: 50px !important;
+                min-width: 50px !important;
+                max-width: 50px !important;
+                text-align: center !important;
+                padding: 0.5rem 0.3rem !important;
             }
             
             /* Compact table cells on mobile */
@@ -314,37 +440,87 @@
                 font-size: 0.9rem !important;
             }
             
-            /* Adjust title size */
+            /* Adjust title size and spacing */
             h2 {
-                font-size: 1.25rem !important;
+                font-size: 1.15rem !important;
+                margin-bottom: 0.5rem !important;
             }
             
-            /* Stack search and filter vertically */
+            /* Reduce button text size */
+            .btn.btn-success {
+                font-size: 0.75rem;
+                padding: 0.4rem 0.6rem;
+            }
+            
+            /* Stack search and filter vertically with minimal spacing */
             .d-flex.gap-2.mb-3 {
                 flex-direction: column !important;
+                gap: 0.4rem !important;
+                margin-bottom: 0.35rem !important;
             }
             
             #searchInput, #roleFilter {
                 max-width: 100% !important;
                 width: 100% !important;
+                height: 38px !important;
+                font-size: 0.85rem !important;
             }
             
-            /* Statistics cards - 2 columns on mobile */
+            /* Statistics cards - 2 columns on mobile with compact sizing */
             .user-stats-row .col-md-3 {
                 flex: 0 0 50%;
                 max-width: 50%;
+                padding: 0.2rem !important;
+                margin-bottom: 0 !important;
             }
             
+            .user-stats-row .card {
+                margin-bottom: 0 !important;
+            }
+            
+            /* Force smaller padding on mobile by overriding Bootstrap p-2 class */
             .user-stats-row .card-body {
-                padding: 0.75rem !important;
+                padding: 0.35rem !important;
             }
             
+            /* Compact text in stat cards */
             .user-stats-row h4 {
-                font-size: 1.25rem !important;
+                font-size: 0.95rem !important;
+                margin-bottom: 0 !important;
             }
             
-            .user-stats-row .small {
-                font-size: 0.75rem !important;
+            .user-stats-row p.small,
+            .user-stats-row .text-muted {
+                font-size: 0.6rem !important;
+                margin-bottom: 0 !important;
+            }
+            
+            /* Compact icon containers */
+            .user-stats-row .rounded {
+                padding: 0.3rem !important;
+                width: 30px !important;
+                height: 30px !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+            }
+            
+            /* Compact icon sizing */
+            .user-stats-row i.fa-lg {
+                font-size: 1rem !important;
+            }
+            
+            /* Remove bottom spacing from stat columns - THIS IS KEY */
+            .user-stats-row .user-stat-col {
+                margin-bottom: 0 !important;
+                padding-bottom: 0 !important;
+            }
+            
+            /* Remove ANY bottom spacing from the last row of cards */
+            .user-stats-row .col-md-3:nth-child(3),
+            .user-stats-row .col-md-3:nth-child(4) {
+                margin-bottom: 0 !important;
+                padding-bottom: 0 !important;
             }
         }
         
@@ -372,6 +548,57 @@
         /* Statistics row - small bottom margin */
         .user-stats-row {
             margin-bottom: 0.75rem !important;
+        }
+        
+        /* Scrollable Users Table Container - Fixed Headers like Inventory */
+        .users-table-container {
+            min-height: calc(100vh - 230px) !important;
+            max-height: calc(100vh - 230px) !important;
+            overflow-y: auto !important;
+            overflow-x: auto !important;
+            position: relative;
+        }
+        
+        /* Sticky table headers for users table */
+        .users-table-container thead {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background-color: #ffffff;
+        }
+        
+        .users-table-container thead th {
+            background-color: #ffffff !important;
+            box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Responsive height adjustments for users table */
+        @media (max-width: 1199px) {
+            .users-table-container {
+                min-height: calc(100vh - 260px) !important;
+                max-height: calc(100vh - 260px) !important;
+            }
+        }
+        
+        @media (max-width: 991px) {
+            .users-table-container {
+                min-height: calc(100vh - 300px) !important;
+                max-height: calc(100vh - 300px) !important;
+            }
+        }
+        
+        @media (max-width: 767px) {
+            .users-table-container {
+                min-height: calc(100vh - 370px) !important;
+                max-height: calc(100vh - 370px) !important;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .users-table-container {
+                min-height: calc(100vh - 420px) !important;
+                max-height: calc(100vh - 420px) !important;
+            }
         }
         
         /* Remove bottom margin from stat columns */
@@ -405,19 +632,43 @@
             margin-bottom: 0 !important;
         }
         
+        /* Mobile-specific: Remove ALL gaps between stats and table */
+        @media (max-width: 767px) {
+            .notification-container {
+                display: none !important;
+            }
+            
+            .user-stats-row {
+                margin-bottom: 0 !important;
+                padding-bottom: 0 !important;
+            }
+            
+            .user-table-card {
+                margin-top: 0 !important;
+                padding-top: 0 !important;
+            }
+            
+            /* Remove card top margin on mobile */
+            .user-table-card.card {
+                margin-top: 0 !important;
+            }
+        }
+        
         /* Mobile-specific improvements */
         @media (max-width: 767px) {
             /* Add padding to main content on mobile */
             .main-content {
-                padding-left: 15px !important;
-                padding-right: 15px !important;
+                padding-left: 10px !important;
+                padding-right: 10px !important;
             }
             
-            /* Title and button row */
+            /* Title and button row with reduced spacing */
             .d-flex.justify-content-between.align-items-center {
                 flex-direction: column !important;
                 align-items: flex-start !important;
-                gap: 1rem;
+                gap: 0.5rem;
+                margin-top: 10px !important;
+                margin-bottom: 0.5rem !important;
             }
             
             /* Keep Export and Add User buttons side by side with proper sizing */
@@ -513,17 +764,25 @@
         }
         
         @media (max-width: 767px) {
-            /* Mobile: normal spacing */
+            /* Mobile: Small gap between statistics and table */
             .user-stats-row {
-                margin-bottom: 1rem !important;
+                margin-bottom: 0.5rem !important;
+                padding-bottom: 0 !important;
             }
             
             .user-stat-col {
-                margin-bottom: 0.75rem !important;
+                margin-bottom: 0 !important;
+                padding-bottom: 0 !important;
+            }
+            
+            /* Remove Bootstrap's row bottom margin */
+            .user-stats-row.row {
+                margin-bottom: 0.5rem !important;
+                --bs-gutter-y: 0 !important;
             }
             
             .user-table-card {
-                margin-top: 0.5rem !important;
+                margin-top: 0 !important;
             }
             
             /* Ensure table scrolls horizontally on mobile - OVERRIDE responsive-fixes.css */
@@ -757,12 +1016,12 @@
                     <!-- User Accounts Section -->
                     <div class="card user-table-card">
                         <div class="card-body">
-                            <div class="table-responsive">
+                            <div class="table-responsive users-table-container">
                                 <table class="table table-hover">
                                     <thead>
                                         <tr>
                                             <th style="width: 50px; text-align: center;">
-                                                <input type="checkbox" id="select-all-users" class="form-check-input" style="width: 18px; height: 18px; cursor: pointer;">
+                                                <input type="checkbox" id="select-all-users" class="custom-checkbox">
                                             </th>
                                             <th style="width: 60px;">No.</th>
                                             <th style="width: 150px;">First Name</th>
@@ -777,7 +1036,7 @@
                                         @forelse($users as $index => $user)
                                         <tr data-user-id="{{ $user->id }}">
                                             <td style="text-align: center;">
-                                                <input type="checkbox" class="form-check-input user-checkbox" value="{{ $user->id }}" style="width: 18px; height: 18px; cursor: pointer;">
+                                                <input type="checkbox" class="custom-checkbox user-checkbox" value="{{ $user->id }}">
                                             </td>
                                             <td style="text-align: left;">{{ $index + 1 }}</td>
                                             <td style="text-align: left;">{{ $user->first_name }}</td>

@@ -129,7 +129,7 @@
     </div>
     @endif
     
-    <!-- Sidebar Footer: Profile Card and Logout -->
+    <!-- Sidebar Footer: Profile Card with Logout -->
     @auth
     <div class="sidebar-footer">
         <a href="/profile/edit" class="sidebar-profile-card-link" title="Profile">
@@ -148,10 +148,10 @@
                 </div>
             </div>
         </a>
-        <form id="sidebar-logout-form" action="{{ route('logout') }}" method="POST" style="display:inline;">
+        <form id="sidebar-logout-form" action="{{ route('logout') }}" method="POST" style="display:inline; width: 100%;">
             @csrf
-            <button type="button" class="nav-link sidebar-link sidebar-logout-link" id="logout-btn" title="Logout">
-                <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
+            <button type="button" class="nav-link sidebar-link sidebar-logout-link" id="logout-btn" title="Logout" style="width: 100%; text-align: left; border: none; background: transparent;">
+                <i class="fas fa-sign-out-alt me-2 text-danger"></i> <span>Logout</span>
             </button>
         </form>
     </div>

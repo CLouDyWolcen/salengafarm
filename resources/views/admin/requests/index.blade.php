@@ -13,6 +13,8 @@
     <link href="{{ asset('css/push-notifications.css') }}?v={{ time() }}" rel="stylesheet">
     <link href="{{ asset('css/no-hover.css') }}?v={{ time() }}" rel="stylesheet">
     <link href="{{ asset('css/responsive-fixes.css') }}" rel="stylesheet">
+    <!-- SweetAlert2 for AlertSystem -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 </head>
 <body class="bg-light">
     <div id="sidebarOverlay"></div>
@@ -116,7 +118,7 @@
         <li class="nav-item" role="presentation">
             <button class="nav-link active" id="client-tab" data-bs-toggle="tab" data-bs-target="#client-requests"
                     type="button" role="tab" aria-controls="client-requests" aria-selected="true">
-                <i class="fas fa-building me-2"></i>Client Requests
+                <i class="fas fa-building me-2"></i>Client RFQ
                 <span class="badge bg-primary ms-2">{{ count($clientRequests) }}</span>
             </button>
         </li>
@@ -131,7 +133,7 @@
 
     <!-- Tab Content -->
     <div class="tab-content" id="requestTabContent">
-        <!-- Client Requests Tab -->
+        <!-- Client RFQ Tab -->
         <div class="tab-pane fade show active" id="client-requests" role="tabpanel" aria-labelledby="client-tab">
             <div class="card">
                 <div class="card-body">
@@ -337,12 +339,23 @@
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="{{ asset('js/push-notifications-global.js') }}?v=fadefix{{ time() }}"></script>
 <script src="{{ asset('js/alerts.js') }}?v={{ time() }}"></script>
 <script src="{{ asset('js/push-notifications.js') }}?v={{ time() }}"></script>
 
 <script>
     $(document).ready(function() {
+        // Check URL hash for tab navigation
+        if (window.location.hash) {
+            const hash = window.location.hash;
+            if (hash === '#user-requests') {
+                $('#user-tab').tab('show');
+            } else if (hash === '#client-requests') {
+                $('#client-tab').tab('show');
+            }
+        }
+        
         // Check if we should activate a specific tab
         @if(session('activeTab'))
         const activeTab = '{{ session("activeTab") }}';

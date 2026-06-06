@@ -64,14 +64,9 @@ class SiteVisitController extends Controller
         ]);
 
         $file = $validated['file'];
-        $path = $file->store('site-visits', 'public');
-        $entry = [
-            'path' => $path,
-            'original_name' => $file->getClientOriginalName(),
-            'type' => $file->getMimeType(),
-            'uploaded_by' => Auth::id(),
-            'uploaded_at' => now()->toDateTimeString(),
-        ];
+        
+        // Encrypt and store the file
+        $entry = $this->encryptAndStoreFile($file);
 
         $clientData = $siteVisit->client_data_checklist ?? [];
         // Ensure array (handle legacy string JSON)
@@ -302,14 +297,9 @@ class SiteVisitController extends Controller
         ]);
 
         $file = $validated['file'];
-        $path = $file->store('site-visits', 'public');
-        $entry = [
-            'path' => $path,
-            'original_name' => $file->getClientOriginalName(),
-            'type' => $file->getMimeType(),
-            'uploaded_by' => Auth::id(),
-            'uploaded_at' => now()->toDateTimeString(),
-        ];
+        
+        // Encrypt and store the file
+        $entry = $this->encryptAndStoreFile($file);
 
         $proposal = $siteVisit->proposal_checklist ?? [];
         if (!is_array($proposal)) {
@@ -544,12 +534,7 @@ class SiteVisitController extends Controller
             $mediaFiles = [];
             if ($request->hasFile('media_files')) {
                 foreach ($request->file('media_files') as $file) {
-                    $path = $file->store('site-visits', 'public');
-                    $mediaFiles[] = [
-                        'path' => $path,
-                        'original_name' => $file->getClientOriginalName(),
-                        'type' => $file->getMimeType()
-                    ];
+                    $mediaFiles[] = $this->encryptAndStoreFile($file);
                 }
             }
             $validated['media_files'] = $mediaFiles;
@@ -560,12 +545,7 @@ class SiteVisitController extends Controller
                 foreach ($request->file('clients_data') as $itemKey => $files) {
                     foreach ($files as $file) {
                         if (!$file) { continue; }
-                        $path = $file->store('site-visits', 'public');
-                        $clientDataFiles[$itemKey][] = [
-                            'path' => $path,
-                            'original_name' => $file->getClientOriginalName(),
-                            'type' => $file->getMimeType()
-                        ];
+                        $clientDataFiles[$itemKey][] = $this->encryptAndStoreFile($file);
                     }
                 }
             }
@@ -577,12 +557,7 @@ class SiteVisitController extends Controller
                 foreach ($request->file('proposal_documents') as $itemKey => $files) {
                     foreach ($files as $file) {
                         if (!$file) { continue; }
-                        $path = $file->store('site-visits', 'public');
-                        $proposalDocFiles[$itemKey][] = [
-                            'path' => $path,
-                            'original_name' => $file->getClientOriginalName(),
-                            'type' => $file->getMimeType()
-                        ];
+                        $proposalDocFiles[$itemKey][] = $this->encryptAndStoreFile($file);
                     }
                 }
             }
@@ -871,12 +846,7 @@ class SiteVisitController extends Controller
             $existingFiles = $siteVisit->media_files ?? [];
             if ($request->hasFile('media_files')) {
                 foreach ($request->file('media_files') as $file) {
-                    $path = $file->store('site-visits', 'public');
-                    $existingFiles[] = [
-                        'path' => $path,
-                        'original_name' => $file->getClientOriginalName(),
-                        'type' => $file->getMimeType()
-                    ];
+                    $existingFiles[] = $this->encryptAndStoreFile($file);
                 }
             }
             $validated['media_files'] = $existingFiles;
@@ -887,12 +857,7 @@ class SiteVisitController extends Controller
                 foreach ($request->file('clients_data') as $itemKey => $files) {
                     foreach ($files as $file) {
                         if (!$file) { continue; }
-                        $path = $file->store('site-visits', 'public');
-                        $existingClientData[$itemKey][] = [
-                            'path' => $path,
-                            'original_name' => $file->getClientOriginalName(),
-                            'type' => $file->getMimeType()
-                        ];
+                        $existingClientData[$itemKey][] = $this->encryptAndStoreFile($file);
                     }
                 }
             }
@@ -904,12 +869,7 @@ class SiteVisitController extends Controller
                 foreach ($request->file('proposal_documents') as $itemKey => $files) {
                     foreach ($files as $file) {
                         if (!$file) { continue; }
-                        $path = $file->store('site-visits', 'public');
-                        $existingProposalDocs[$itemKey][] = [
-                            'path' => $path,
-                            'original_name' => $file->getClientOriginalName(),
-                            'type' => $file->getMimeType()
-                        ];
+                        $existingProposalDocs[$itemKey][] = $this->encryptAndStoreFile($file);
                     }
                 }
             }
@@ -1424,5 +1384,65 @@ class SiteVisitController extends Controller
             $format,
             'Site Visits'
         );
+    }
+
+    /**
+     * Helper method to encrypt and store an uploaded file for site visits
+     * @param \Illuminate\Http\UploadedFile $file
+     * @return array File entry with encrypted path
+     */
+    protected function encryptAndStoreFile($file): array
+    {
+        $originalFilename = $file->getClientOriginalName();
+        
+        // Store file in default storage (not public)
+        $tempPath = $file->store('site-visits-temp');
+        
+        // Encrypt the file
+        $encryptionService = app(\App\Services\EncryptionService::class);
+        $encryptResult = $encryptionService->encryptFile(
+            $tempPath,
+            $originalFilename,
+            Auth::id()
+        );
+        
+        // Use encrypted path if successful
+        $storagePath = $encryptResult['success'] ?? false ? $encryptResult['encrypted_path'] : $tempPath;
+        $encryptedFileId = $encryptResult['encrypted_file_id'] ?? null;
+        
+        return [
+            'path' => $storagePath,
+            'original_name' => $originalFilename,
+            'type' => $file->getMimeType(),
+            'uploaded_by' => Auth::id(),
+            'uploaded_at' => now()->toDateTimeString(),
+            'encrypted_file_id' => $encryptedFileId,
+            'is_encrypted' => $encryptResult['success'] ?? false,
+        ];
+    }
+
+    /**
+     * Download/view a Site Visit file securely (with decryption if encrypted)
+     * @param int $encryptedFileId The ID from encrypted_files table
+     */
+    public function downloadFile($encryptedFileId)
+    {
+        $encryptionService = app(\App\Services\EncryptionService::class);
+        
+        // Check if file is encrypted
+        $encryptedFile = \App\Models\EncryptedFile::find($encryptedFileId);
+        
+        if (!$encryptedFile) {
+            abort(404, 'File not found');
+        }
+        
+        // Authorization check - TODO: Verify user has access to this site visit
+        // For now, allow authenticated users
+        if (!Auth::check()) {
+            abort(403, 'Unauthorized');
+        }
+        
+        // Stream the decrypted file
+        return $encryptionService->streamDecryptedFile($encryptedFileId);
     }
 }

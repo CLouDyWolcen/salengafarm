@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\PlantRequest;
 use App\Models\Plant;
+use App\Models\User;
+use App\Models\Notification;
 use App\Services\AuditService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -89,6 +91,18 @@ class UserPlantRequestController extends Controller
             // Generate PDF
             $this->generateUserRequestPdf($plantRequest->id);
             
+            // Create notifications for all admins and super admins
+            $admins = User::where('role', 'admin')->orWhere('role', 'super_admin')->get();
+            foreach ($admins as $admin) {
+                Notification::create([
+                    'user_id' => $admin->id,
+                    'type' => 'new_request',
+                    'title' => 'New Plant Inquiry',
+                    'message' => 'New inquiry from ' . $plantRequest->name,
+                    'link' => route('admin.requests.view', $plantRequest->id),
+                ]);
+            }
+            
             if ($request->expectsJson()) {
                 return response()->json([
                     'message' => 'Your plant inquiry has been submitted successfully!',
@@ -124,14 +138,32 @@ class UserPlantRequestController extends Controller
             // Create PDF
             $pdf = PDF::loadView('pdf.user-request', compact('request'));
             
-            // Save PDF
+            // Save PDF temporarily
             $filename = 'user_request_' . $id . '.pdf';
             $path = 'pdfs/' . $filename;
             
             Storage::put($path, $pdf->output());
             
-            // Update plant request with PDF path
-            $request->pdf_path = $path;
+            // Encrypt the PDF file
+            $encryptionService = app(\App\Services\EncryptionService::class);
+            $encryptResult = $encryptionService->encryptFile($path, $filename, null); // System generated (no specific user)
+            
+            // Update plant request with encrypted PDF path
+            if ($encryptResult['success']) {
+                $request->pdf_path = $encryptResult['encrypted_path'];
+                Log::info('User inquiry PDF encrypted successfully', [
+                    'request_id' => $request->id,
+                    'encrypted_file_id' => $encryptResult['encrypted_file_id']
+                ]);
+            } else {
+                // Fallback to unencrypted if encryption fails
+                $request->pdf_path = $path;
+                Log::warning('User inquiry PDF encryption failed, using unencrypted path', [
+                    'request_id' => $request->id,
+                    'error' => $encryptResult['error'] ?? 'Unknown'
+                ]);
+            }
+            
             $request->save();
             
             return true;
@@ -162,6 +194,16 @@ class UserPlantRequestController extends Controller
             $request->refresh();
         }
         
+        // Check if file is encrypted
+        $encryptionService = app(\App\Services\EncryptionService::class);
+        $encryptedFile = $encryptionService->getEncryptedFileByPath($request->pdf_path);
+        
+        if ($encryptedFile) {
+            // File is encrypted - use secure download
+            return $encryptionService->streamDecryptedFile($encryptedFile->id);
+        }
+        
+        // Fallback: old unencrypted file
         return Storage::download($request->pdf_path, 'plant_inquiry_' . $id . '.pdf');
     }
 

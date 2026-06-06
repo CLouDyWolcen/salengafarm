@@ -326,9 +326,15 @@
                     <div class="request-header">
                         <h2>Request Details #{{ $request->id }}</h2>
                         <div class="header-actions">
-                            <a href="{{ route('requests.index') }}" class="btn btn-outline-secondary">
-                                <i class="fas fa-arrow-left me-1"></i>Back to List
-                            </a>
+                            @if($request->request_type === 'user')
+                                <a href="{{ route('requests.index') }}#user-requests" class="btn btn-outline-secondary">
+                                    <i class="fas fa-arrow-left me-1"></i>Back to Client Inquiry
+                                </a>
+                            @else
+                                <a href="{{ route('requests.index') }}" class="btn btn-outline-secondary">
+                                    <i class="fas fa-arrow-left me-1"></i>Back to Client RFQ
+                                </a>
+                            @endif
                             <button id="printRequestBtn" class="btn btn-outline-primary">
                                 <i class="fas fa-print me-1"></i>Print
                             </button>

@@ -307,8 +307,11 @@
                                                             @php
                                                                 $fileName = $f['original_name'];
                                                                 $displayName = strlen($fileName) > 20 ? substr($fileName, 0, 17) . '...' : $fileName;
+                                                                $fileUrl = isset($f['encrypted_file_id']) && $f['encrypted_file_id']
+                                                                    ? route('site-visits.download-file', $f['encrypted_file_id'])
+                                                                    : asset('storage/' . $f['path']);
                                                             @endphp
-                                                            <a href="{{ asset('storage/' . $f['path']) }}" 
+                                                            <a href="{{ $fileUrl }}" 
                                                                target="_blank" 
                                                                class="file-link-mobile" 
                                                                data-full-name="{{ $fileName }}">{{ $displayName }}</a>
@@ -321,16 +324,17 @@
                                     </td>
                                     <td style="width: 280px; padding: 0.4rem; font-size: 0.8rem; border: 1px solid #dee2e6; white-space: normal; word-wrap: break-word; vertical-align: middle;">
                                         @if($canUpload)
-                                            <form action="{{ route('site-visits.client-data.upload', ['siteVisit' => $siteVisit->id, 'itemKey' => $key]) }}" method="POST" enctype="multipart/form-data">
+                                            <form action="{{ route('site-visits.client-data.upload', ['siteVisit' => $siteVisit->id, 'itemKey' => $key]) }}" method="POST" enctype="multipart/form-data" class="client-data-upload-form">
                                                 @csrf
                                                 <div class="d-flex flex-column gap-2">
-                                                    <div class="position-relative">
-                                                        <input type="file" name="file" id="file-{{ $key }}" class="d-none" required>
-                                                        <button type="button" class="btn btn-outline-secondary btn-sm w-100" onclick="document.getElementById('file-{{ $key }}').click()" style="font-size: 0.7rem; padding: 0.2rem 0.4rem;">
-                                                            <i class="fas fa-paperclip me-1"></i><span class="file-name-display">Select File</span>
-                                                        </button>
-                                                    </div>
-                                                    <button class="btn btn-success btn-sm w-100" type="submit" style="font-size: 0.7rem; padding: 0.2rem 0.4rem;"><i class="fas fa-upload me-1"></i>Upload</button>
+                                                    <input type="file" name="file" id="file-{{ $key }}" class="file-input-cd d-none" required>
+                                                    <button type="button" class="btn btn-outline-secondary btn-sm w-100 select-file-btn" onclick="document.getElementById('file-{{ $key }}').click()" style="font-size: 0.7rem; padding: 0.2rem 0.4rem;">
+                                                        <i class="fas fa-paperclip me-1"></i><span class="btn-text">Select File</span>
+                                                    </button>
+                                                    <button class="btn btn-success btn-sm w-100 upload-btn" type="submit" style="font-size: 0.7rem; padding: 0.2rem 0.4rem;">
+                                                        <span class="btn-content"><i class="fas fa-upload me-1"></i>Upload</span>
+                                                        <span class="spinner-border spinner-border-sm d-none" role="status" style="width: 0.8rem; height: 0.8rem;"></span>
+                                                    </button>
                                                 </div>
                                                 @if($key === 'drone_map')
                                                     <small class="text-muted d-block mt-1" style="font-size: 0.65rem;">Allowed: pdf, jpg, jpeg, png, mp4, mov. Max 20MB.</small>
@@ -338,13 +342,6 @@
                                                     <small class="text-muted d-block mt-1" style="font-size: 0.65rem;">Allowed: pdf, jpg, jpeg, png. Max 20MB.</small>
                                                 @endif
                                             </form>
-                                            <script>
-                                                document.getElementById('file-{{ $key }}').addEventListener('change', function(e) {
-                                                    const fileName = e.target.files[0]?.name || 'Select File';
-                                                    const displayName = fileName.length > 20 ? fileName.substring(0, 17) + '...' : fileName;
-                                                    this.closest('form').querySelector('.file-name-display').textContent = displayName;
-                                                });
-                                            </script>
                                         @else
                                             @if(!$isOpen)
                                                 <span class="text-muted" style="font-size: 0.75rem;">Uploads not open yet.</span>
@@ -426,8 +423,13 @@
                                         @else
                                             <ul class="mb-0" style="padding-left: 1.2rem;">
                                                 @foreach($files as $f)
+                                                    @php
+                                                        $fileUrl = isset($f['encrypted_file_id']) && $f['encrypted_file_id']
+                                                            ? route('site-visits.download-file', $f['encrypted_file_id'])
+                                                            : asset('storage/' . $f['path']);
+                                                    @endphp
                                                     <li style="font-size: 0.75rem; margin-bottom: 0.2rem;">
-                                                        <a href="{{ asset('storage/' . $f['path']) }}" target="_blank">{{ $f['original_name'] }}</a>
+                                                        <a href="{{ $fileUrl }}" target="_blank">{{ $f['original_name'] }}</a>
                                                         <small class="text-muted" style="font-size: 0.7rem;">({{ $f['type'] }})</small>
                                                     </li>
                                                 @endforeach
@@ -625,6 +627,52 @@
                         tooltip.remove();
                         tooltip = null;
                     }
+                });
+            });
+            
+            // Client Data file upload handling - change button text and background color
+            document.querySelectorAll('.file-input-cd').forEach(input => {
+                input.addEventListener('change', function() {
+                    const form = this.closest('.client-data-upload-form');
+                    const selectBtn = form.querySelector('.select-file-btn');
+                    const btnText = selectBtn.querySelector('.btn-text');
+                    
+                    if (this.files.length > 0) {
+                        const filename = this.files[0].name;
+                        const displayName = filename.length > 20 ? filename.substring(0, 17) + '...' : filename;
+                        
+                        // Change button to light green background and show filename
+                        selectBtn.classList.remove('btn-outline-secondary');
+                        selectBtn.classList.add('btn-outline-success');
+                        selectBtn.style.backgroundColor = '#d1e7dd';
+                        selectBtn.style.borderColor = '#198754';
+                        selectBtn.style.color = '#0f5132';
+                        btnText.textContent = displayName;
+                    } else {
+                        // Reset button
+                        selectBtn.classList.remove('btn-outline-success');
+                        selectBtn.classList.add('btn-outline-secondary');
+                        selectBtn.style.backgroundColor = '';
+                        selectBtn.style.borderColor = '';
+                        selectBtn.style.color = '';
+                        btnText.textContent = 'Select File';
+                    }
+                });
+            });
+            
+            // Upload button loading spinner
+            document.querySelectorAll('.client-data-upload-form').forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    const uploadBtn = this.querySelector('.upload-btn');
+                    const btnContent = uploadBtn.querySelector('.btn-content');
+                    const spinner = uploadBtn.querySelector('.spinner-border');
+                    
+                    // Show spinner, hide text
+                    btnContent.classList.add('d-none');
+                    spinner.classList.remove('d-none');
+                    
+                    // Disable button to prevent double submission
+                    uploadBtn.disabled = true;
                 });
             });
         });

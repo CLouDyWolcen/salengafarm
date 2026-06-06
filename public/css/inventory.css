@@ -412,9 +412,9 @@ body {
 /* Search Bar */
 .search-bar {
     background-color: #f8f9fa;
-    padding: 20px;
+    padding: 12px;
     border-radius: 8px;
-    margin-bottom: 20px;
+    margin-bottom: 12px;
 }
 
 /* Table Styles */
@@ -1524,4 +1524,45 @@ h4, .h4 { font-size: 1.1rem; }
     * {
         max-width: 100%;
     }
+}
+
+
+/* Scrollable Inventory Table Container - Fixed Headers */
+.inventory-table-container {
+    min-height: calc(100vh - 280px) !important;
+    max-height: calc(100vh - 280px) !important;
+    overflow-y: auto !important;
+    overflow-x: auto !important;
+    position: relative;
+}
+
+/* Sticky table headers for inventory */
+.inventory-table-container thead {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background-color: #ffffff;
+}
+
+.inventory-table-container thead th {
+    background-color: #ffffff !important;
+    box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.1);
+}
+
+/* Bulk Action Buttons Alignment */
+#bulkActionButtons .d-flex {
+    align-items: center;
+}
+
+#bulkActionButtons .btn {
+    min-width: 90px;
+    justify-content: center;
+}
+
+#addBtn {
+    min-width: 130px;
+}
+
+#exportDropdown {
+    min-width: 100px;
 }

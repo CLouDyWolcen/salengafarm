@@ -387,6 +387,13 @@
                                                 </span>
                                             </td>
                                             <td>
+                                                @if($inquiry->pdf_path)
+                                                    <a href="{{ route('user.plant-request.download-pdf', $inquiry->id) }}" 
+                                                       class="action-icon action-icon-success" 
+                                                       title="Download PDF">
+                                                        <i class="fas fa-download"></i>
+                                                    </a>
+                                                @endif
                                                 @if($inquiry->status === 'responded' && $inquiry->response_sent_at)
                                                     <a href="{{ route('user.inquiry.response', $inquiry->id) }}" 
                                                        class="action-icon action-icon-primary" 
@@ -477,11 +484,10 @@
                                                 </span>
                                             </td>
                                             <td>
-                                                @if($request->status === 'responded' && $request->pdf_path)
-                                                    <a href="{{ asset('storage/' . $request->pdf_path) }}" 
+                                                @if($request->pdf_path)
+                                                    <a href="{{ route('user.plant-request.download-pdf', $request->id) }}" 
                                                        class="action-icon action-icon-success" 
-                                                       title="Download PDF"
-                                                       target="_blank">
+                                                       title="Download PDF">
                                                         <i class="fas fa-download"></i>
                                                     </a>
                                                 @endif

@@ -630,13 +630,19 @@
                         <h5><i class="fas fa-camera me-2"></i>Media Files</h5>
                         <div class="media-gallery">
                             @foreach($siteVisit->media_files as $index => $file)
+                                @php
+                                    // Use secure download route for encrypted files, fallback to public storage for old files
+                                    $fileUrl = isset($file['encrypted_file_id']) && $file['encrypted_file_id'] 
+                                        ? route('site-visits.download-file', $file['encrypted_file_id'])
+                                        : asset('storage/' . $file['path']);
+                                @endphp
                                 <div class="media-item">
                                     @if(str_starts_with($file['type'], 'image/'))
-                                        <img src="{{ asset('storage/' . $file['path']) }}" alt="{{ $file['original_name'] }}" 
+                                        <img src="{{ $fileUrl }}" alt="{{ $file['original_name'] }}" 
                                              class="img-fluid" data-bs-toggle="modal" data-bs-target="#mediaModal{{ $index }}">
                                     @elseif(str_starts_with($file['type'], 'video/'))
                                         <video controls class="w-100">
-                                            <source src="{{ asset('storage/' . $file['path']) }}" type="{{ $file['type'] }}">
+                                            <source src="{{ $fileUrl }}" type="{{ $file['type'] }}">
                                             Your browser does not support the video tag.
                                         </video>
                                     @endif
@@ -655,7 +661,7 @@
                                                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                                 </div>
                                                 <div class="modal-body text-center">
-                                                    <img src="{{ asset('storage/' . $file['path']) }}" alt="{{ $file['original_name'] }}" 
+                                                    <img src="{{ $fileUrl }}" alt="{{ $file['original_name'] }}" 
                                                          class="img-fluid">
                                                 </div>
                                             </div>
@@ -722,8 +728,13 @@
                                             @else
                                                 <ul class="mb-0">
                                                     @foreach($files as $f)
+                                                        @php
+                                                            $fileUrl = isset($f['encrypted_file_id']) && $f['encrypted_file_id']
+                                                                ? route('site-visits.download-file', $f['encrypted_file_id'])
+                                                                : asset('storage/' . $f['path']);
+                                                        @endphp
                                                         <li>
-                                                            <a href="{{ asset('storage/' . $f['path']) }}" target="_blank">{{ $f['original_name'] }}</a>
+                                                            <a href="{{ $fileUrl }}" target="_blank">{{ $f['original_name'] }}</a>
                                                             <small class="text-muted">({{ $f['type'] }})</small>
                                                         </li>
                                                     @endforeach
@@ -732,12 +743,23 @@
                                         </td>
                                         <td>
                                             @if($canUploadClientData)
-                                                <form action="{{ route('site-visits.client-data.upload', ['siteVisit' => $siteVisit->id, 'itemKey' => $key]) }}" method="POST" enctype="multipart/form-data">
+                                                <form action="{{ route('site-visits.client-data.upload', ['siteVisit' => $siteVisit->id, 'itemKey' => $key]) }}" method="POST" enctype="multipart/form-data" class="client-data-upload-form">
                                                     @csrf
-                                                    <div class="input-group input-group-sm upload-group">
-                                                        <input type="file" name="file" class="form-control" required>
-                                                        <button class="btn btn-success" type="submit"><i class="fas fa-upload me-1"></i>Upload</button>
+                                                    <div class="mb-2">
+                                                        <input type="file" name="file" class="form-control form-control-sm file-input-cd" id="file-{{ $key }}" required style="display: none;">
+                                                        <button type="button" class="btn btn-outline-secondary btn-sm w-100 select-file-btn" onclick="document.getElementById('file-{{ $key }}').click()">
+                                                            <i class="fas fa-paperclip me-1"></i><span class="btn-text">Select File</span>
+                                                        </button>
                                                     </div>
+                                                    <div class="selected-file-display mb-2 p-2 bg-light rounded d-none" style="font-size: 0.85rem;">
+                                                        <i class="fas fa-file text-success me-1"></i>
+                                                        <span class="selected-filename text-truncate d-inline-block" style="max-width: 200px;"></span>
+                                                    </div>
+                                                    <button class="btn btn-success btn-sm w-100 upload-btn" type="submit" disabled>
+                                                        <span class="btn-content"><i class="fas fa-upload me-1"></i>Upload</span>
+                                                        <span class="spinner-border spinner-border-sm d-none" role="status"></span>
+                                                    </button>
+                                                    <small class="text-muted d-block mt-1">Allowed: pdf, jpg, jpeg, png. Max 20MB</small>
                                                 </form>
                                             @else
                                                 <span class="text-muted">No permission to upload.</span>
@@ -828,8 +850,13 @@
                                             @else
                                                 <ul class="mb-0">
                                                     @foreach($files as $f)
+                                                        @php
+                                                            $fileUrl = isset($f['encrypted_file_id']) && $f['encrypted_file_id']
+                                                                ? route('site-visits.download-file', $f['encrypted_file_id'])
+                                                                : asset('storage/' . $f['path']);
+                                                        @endphp
                                                         <li>
-                                                            <a href="{{ asset('storage/' . $f['path']) }}" target="_blank">{{ $f['original_name'] }}</a>
+                                                            <a href="{{ $fileUrl }}" target="_blank">{{ $f['original_name'] }}</a>
                                                             <small class="text-muted">({{ $f['type'] }})</small>
                                                         </li>
                                                     @endforeach
@@ -838,12 +865,23 @@
                                         </td>
                                         <td>
                                             @if($isAdmin)
-                                                <form action="{{ route('site-visits.proposal.upload', ['siteVisit' => $siteVisit->id, 'itemKey' => $key]) }}" method="POST" enctype="multipart/form-data">
+                                                <form action="{{ route('site-visits.proposal.upload', ['siteVisit' => $siteVisit->id, 'itemKey' => $key]) }}" method="POST" enctype="multipart/form-data" class="proposal-upload-form">
                                                     @csrf
-                                                    <div class="input-group input-group-sm upload-group">
-                                                        <input type="file" name="file" class="form-control" required>
-                                                        <button class="btn btn-success" type="submit"><i class="fas fa-upload me-1"></i>Upload</button>
+                                                    <div class="mb-2">
+                                                        <input type="file" name="file" class="form-control form-control-sm file-input-proposal" id="file-proposal-{{ $key }}" required style="display: none;">
+                                                        <button type="button" class="btn btn-outline-secondary btn-sm w-100 select-file-btn" onclick="document.getElementById('file-proposal-{{ $key }}').click()">
+                                                            <i class="fas fa-paperclip me-1"></i><span class="btn-text">Select File</span>
+                                                        </button>
                                                     </div>
+                                                    <div class="selected-file-display mb-2 p-2 bg-light rounded d-none" style="font-size: 0.85rem;">
+                                                        <i class="fas fa-file text-success me-1"></i>
+                                                        <span class="selected-filename text-truncate d-inline-block" style="max-width: 200px;"></span>
+                                                    </div>
+                                                    <button class="btn btn-success btn-sm w-100 upload-btn" type="submit" disabled>
+                                                        <span class="btn-content"><i class="fas fa-upload me-1"></i>Upload</span>
+                                                        <span class="spinner-border spinner-border-sm d-none" role="status"></span>
+                                                    </button>
+                                                    <small class="text-muted d-block mt-1">Allowed: pdf, jpg, jpeg, png, xlsx. Max 20MB</small>
                                                 </form>
                                             @else
                                                 <span class="text-muted">Admin upload only.</span>
@@ -1016,6 +1054,92 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', initMap);
+    </script>
+
+    <script>
+        // Client Data file upload handling
+        document.querySelectorAll('.file-input-cd').forEach(input => {
+            input.addEventListener('change', function() {
+                const form = this.closest('.client-data-upload-form');
+                const selectBtn = form.querySelector('.select-file-btn');
+                const uploadBtn = form.querySelector('.upload-btn');
+                const fileDisplay = form.querySelector('.selected-file-display');
+                const filenameSpan = form.querySelector('.selected-filename');
+                
+                if (this.files.length > 0) {
+                    const filename = this.files[0].name;
+                    
+                    // Update select button to show selected
+                    selectBtn.classList.remove('btn-outline-secondary');
+                    selectBtn.classList.add('btn-outline-success');
+                    selectBtn.querySelector('.btn-text').textContent = 'Change File';
+                    
+                    // Show filename display
+                    filenameSpan.textContent = filename;
+                    fileDisplay.classList.remove('d-none');
+                    
+                    // Enable upload button
+                    uploadBtn.disabled = false;
+                } else {
+                    // Reset if no file
+                    selectBtn.classList.remove('btn-outline-success');
+                    selectBtn.classList.add('btn-outline-secondary');
+                    selectBtn.querySelector('.btn-text').textContent = 'Select File';
+                    fileDisplay.classList.add('d-none');
+                    uploadBtn.disabled = true;
+                }
+            });
+        });
+
+        // Proposal Document file upload handling
+        document.querySelectorAll('.file-input-proposal').forEach(input => {
+            input.addEventListener('change', function() {
+                const form = this.closest('.proposal-upload-form');
+                const selectBtn = form.querySelector('.select-file-btn');
+                const uploadBtn = form.querySelector('.upload-btn');
+                const fileDisplay = form.querySelector('.selected-file-display');
+                const filenameSpan = form.querySelector('.selected-filename');
+                
+                if (this.files.length > 0) {
+                    const filename = this.files[0].name;
+                    
+                    // Update select button to show selected
+                    selectBtn.classList.remove('btn-outline-secondary');
+                    selectBtn.classList.add('btn-outline-success');
+                    selectBtn.querySelector('.btn-text').textContent = 'Change File';
+                    
+                    // Show filename display
+                    filenameSpan.textContent = filename;
+                    fileDisplay.classList.remove('d-none');
+                    
+                    // Enable upload button
+                    uploadBtn.disabled = false;
+                } else {
+                    // Reset if no file
+                    selectBtn.classList.remove('btn-outline-success');
+                    selectBtn.classList.add('btn-outline-secondary');
+                    selectBtn.querySelector('.btn-text').textContent = 'Select File';
+                    fileDisplay.classList.add('d-none');
+                    uploadBtn.disabled = true;
+                }
+            });
+        });
+
+        // Upload button loading spinner (for both Client Data and Proposal)
+        document.querySelectorAll('.client-data-upload-form, .proposal-upload-form').forEach(form => {
+            form.addEventListener('submit', function(e) {
+                const uploadBtn = this.querySelector('.upload-btn');
+                const btnContent = uploadBtn.querySelector('.btn-content');
+                const spinner = uploadBtn.querySelector('.spinner-border');
+                
+                // Show spinner, hide text
+                btnContent.classList.add('d-none');
+                spinner.classList.remove('d-none');
+                
+                // Disable button to prevent double submission
+                uploadBtn.disabled = true;
+            });
+        });
     </script>
 </body>
 </html>

@@ -3922,15 +3922,31 @@ console.log('Loading modal form submission handler');
                             const quantityInput = cells[2].querySelector('input[type="number"]');
                             const quantity = quantityInput ? parseInt(quantityInput.value) || 1 : 1;
                             
-                            console.log(`Row ${index}: name="${plantName}", code="${plantCode}", qty=${quantity}`);
+                            // Get height, spread, spacing values
+                            const heightInput = cells[3] ? cells[3].querySelector('input[type="number"]') : null;
+                            const spreadInput = cells[4] ? cells[4].querySelector('input[type="number"]') : null;
+                            const spacingInput = cells[5] ? cells[5].querySelector('input[type="number"]') : null;
+                            
+                            const height = heightInput && heightInput.value ? parseInt(heightInput.value) : '';
+                            const spread = spreadInput && spreadInput.value ? parseInt(spreadInput.value) : '';
+                            const spacing = spacingInput && spacingInput.value ? parseInt(spacingInput.value) : '';
+                            
+                            console.log(`Row ${index}: name="${plantName}", code="${plantCode}", qty=${quantity}, height=${height}, spread=${spread}, spacing=${spacing}`);
                             
                             if (plantName && plantName !== '') {
-                                plantsToSubmit.push({
+                                const plant = {
                                     name: plantName,
                                     code: plantCode,
                                     quantity: quantity,
                                     id: plantCode || plantName.replace(/\s+/g, '_').toUpperCase()
-                                });
+                                };
+                                
+                                // Only add height/spread/spacing if values are provided
+                                if (height !== '') plant.height = height;
+                                if (spread !== '') plant.spread = spread;
+                                if (spacing !== '') plant.spacing = spacing;
+                                
+                                plantsToSubmit.push(plant);
                             }
                         }
                     });
@@ -3950,7 +3966,7 @@ console.log('Loading modal form submission handler');
                     
                     // Show loading state
                     const originalText = this.innerHTML;
-                    this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+                    this.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Submitting...';
                     this.disabled = true;
                     
                     // Prepare request data
@@ -3964,6 +3980,9 @@ console.log('Loading modal form submission handler');
                             name: plant.name,
                             code: plant.code || plant.id,
                             quantity: plant.quantity || 1,
+                            height: plant.height || '',
+                            spread: plant.spread || '',
+                            spacing: plant.spacing || '',
                             id: plant.id
                         }))),
                         preferred_delivery_date: null, // Optional

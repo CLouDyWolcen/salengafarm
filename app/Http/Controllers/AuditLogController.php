@@ -199,7 +199,7 @@ class AuditLogController extends Controller
     }
 
     /**
-     * Export audit logs to CSV
+     * Export audit logs to CSV or Excel
      */
     public function export(Request $request)
     {
@@ -207,6 +207,9 @@ class AuditLogController extends Controller
         if (Auth::user()->role !== 'super_admin') {
             abort(403, 'Unauthorized access');
         }
+
+        // Get format (default to csv for backward compatibility)
+        $format = $request->get('format', 'csv');
 
         // Apply same filters as index
         $dateRange = $request->get('date_range', 'last_7_days');
@@ -262,48 +265,43 @@ class AuditLogController extends Controller
         // Get all logs (no pagination for export)
         $logs = $query->orderBy('created_at', 'desc')->get();
 
-        // Generate CSV
-        $filename = 'audit_logs_' . date('Y-m-d_His') . '.csv';
+        // Prepare data for export
         $headers = [
-            'Content-Type' => 'text/csv',
-            'Content-Disposition' => "attachment; filename=\"$filename\"",
+            'ID',
+            'Timestamp',
+            'User Email',
+            'User Role',
+            'Action',
+            'Entity Type',
+            'Entity ID',
+            'IP Address',
+            'Changes'
         ];
 
-        $callback = function () use ($logs) {
-            $file = fopen('php://output', 'w');
+        $data = [];
+        foreach ($logs as $log) {
+            $data[] = [
+                $log->id,
+                $log->created_at->format('Y-m-d H:i:s'),
+                $log->user_email,
+                $log->user_role,
+                $log->action,
+                $log->entity_type ?? '',
+                $log->entity_id ?? '',
+                $log->ip_address,
+                $log->getChangesDescription(),
+            ];
+        }
 
-            // CSV header
-            fputcsv($file, [
-                'ID',
-                'Timestamp',
-                'User Email',
-                'User Role',
-                'Action',
-                'Entity Type',
-                'Entity ID',
-                'IP Address',
-                'Changes'
-            ]);
-
-            // CSV rows
-            foreach ($logs as $log) {
-                fputcsv($file, [
-                    $log->id,
-                    $log->created_at->format('Y-m-d H:i:s'),
-                    $log->user_email,
-                    $log->user_role,
-                    $log->action,
-                    $log->entity_type ?? '',
-                    $log->entity_id ?? '',
-                    $log->ip_address,
-                    $log->getChangesDescription(),
-                ]);
-            }
-
-            fclose($file);
-        };
-
-        return response()->stream($callback, 200, $headers);
+        // Use ExportService for both formats
+        $exportService = app(\App\Services\ExportService::class);
+        return $exportService->export(
+            $data,
+            $headers,
+            'audit_logs',
+            $format,
+            'Audit Logs'
+        );
     }
 
     /**

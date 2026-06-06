@@ -438,14 +438,32 @@ class ClientRequestController extends Controller
                       ->setOptions($options)
                       ->setPaper('a4', 'portrait');
             
-            // Save PDF to storage
+            // Save PDF to storage temporarily
             $filename = 'rfq_' . $id . '_' . time() . '.pdf';
             $path = 'pdfs/' . $filename;
             
             Storage::put($path, $pdf->output());
             
-            // Update request with PDF path
-            $request->pdf_path = $path;
+            // Encrypt the PDF file
+            $encryptionService = app(\App\Services\EncryptionService::class);
+            $encryptResult = $encryptionService->encryptFile($path, $filename, null); // System generated (no specific user)
+            
+            // Update request with encrypted PDF path
+            if ($encryptResult['success']) {
+                $request->pdf_path = $encryptResult['encrypted_path'];
+                Log::info('PDF encrypted successfully', [
+                    'request_id' => $request->id,
+                    'encrypted_file_id' => $encryptResult['encrypted_file_id']
+                ]);
+            } else {
+                // Fallback to unencrypted if encryption fails
+                $request->pdf_path = $path;
+                Log::warning('PDF encryption failed, using unencrypted path', [
+                    'request_id' => $request->id,
+                    'error' => $encryptResult['error'] ?? 'Unknown'
+                ]);
+            }
+            
             $request->save();
             
             return $path;
@@ -474,7 +492,16 @@ class ClientRequestController extends Controller
                 $request->refresh(); // Refresh to get the updated pdf_path
             }
             
-            // Return the PDF for download
+            // Check if file is encrypted
+            $encryptionService = app(\App\Services\EncryptionService::class);
+            $encryptedFile = $encryptionService->getEncryptedFileByPath($request->pdf_path);
+            
+            if ($encryptedFile) {
+                // File is encrypted - use secure download
+                return $encryptionService->streamDecryptedFile($encryptedFile->id);
+            }
+            
+            // Fallback: old unencrypted file
             return Storage::download($request->pdf_path, 'RFQ_' . $id . '.pdf');
         } catch (\Exception $e) {
             Log::error('Failed to download PDF: ' . $e->getMessage());
@@ -502,7 +529,16 @@ class ClientRequestController extends Controller
                 $request->refresh(); // Refresh to get the updated pdf_path
             }
             
-            // Return the PDF for viewing
+            // Check if file is encrypted
+            $encryptionService = app(\App\Services\EncryptionService::class);
+            $encryptedFile = $encryptionService->getEncryptedFileByPath($request->pdf_path);
+            
+            if ($encryptedFile) {
+                // File is encrypted - use secure view
+                return $encryptionService->viewDecryptedFile($encryptedFile->id);
+            }
+            
+            // Fallback: old unencrypted file
             return response()->file(Storage::path($request->pdf_path));
         } catch (\Exception $e) {
             Log::error('Failed to view PDF: ' . $e->getMessage());

@@ -236,8 +236,8 @@ Route::middleware(['auth'])->group(function () {
         // Audit Trail (Super Admin only)
         Route::get('/admin/audit-logs', [AuditLogController::class, 'index'])->name('admin.audit-logs.index');
         Route::get('/admin/audit-logs/fetch', [AuditLogController::class, 'fetchLogs'])->name('admin.audit-logs.fetch');
-        Route::get('/admin/audit-logs/{id}', [AuditLogController::class, 'show'])->name('admin.audit-logs.show');
         Route::get('/admin/audit-logs/export', [AuditLogController::class, 'export'])->name('admin.audit-logs.export');
+        Route::get('/admin/audit-logs/{id}', [AuditLogController::class, 'show'])->name('admin.audit-logs.show');
     });
 
     // Admin and Manager routes
@@ -320,6 +320,12 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/requests/download-pdf/{id}', [ClientRequestController::class, 'downloadPdf'])->name('requests.download-pdf');
     Route::get('/requests/view-pdf/{id}', [ClientRequestController::class, 'viewPdf'])->name('requests.view-pdf');
     
+    // Secure encrypted file routes
+    Route::get('/secure-file/download/{id}', [App\Http\Controllers\SecureFileController::class, 'download'])
+        ->name('secure-file.download');
+    Route::get('/secure-file/view/{id}', [App\Http\Controllers\SecureFileController::class, 'view'])
+        ->name('secure-file.view');
+    
     // Site Visit Checklists: allow client to upload Client's Data and approve Proposal; admin checks enforced in controller
     Route::post('/site-visits/{siteVisit}/client-data/{itemKey}/upload', [SiteVisitController::class, 'uploadClientData'])
         ->name('site-visits.client-data.upload');
@@ -329,6 +335,11 @@ Route::middleware(['auth'])->group(function () {
         ->name('site-visits.client-data.bulk-delete');
     Route::post('/site-visits/{siteVisit}/client-data/{itemKey}/status', [SiteVisitController::class, 'setClientDataItemStatus'])
         ->name('site-visits.client-data.status');
+    
+    // Secure file download for encrypted site visit files
+    Route::get('/site-visits/files/{encryptedFileId}', [SiteVisitController::class, 'downloadFile'])
+        ->name('site-visits.download-file');
+        
     Route::post('/site-visits/{siteVisit}/proposal/{itemKey}/upload', [SiteVisitController::class, 'uploadProposalItem'])
         ->name('site-visits.proposal.upload');
     Route::post('/site-visits/{siteVisit}/proposal/approval', [SiteVisitController::class, 'setProposalApproval'])

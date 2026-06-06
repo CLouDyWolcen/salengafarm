@@ -231,18 +231,6 @@
             The plants listed above are currently available at Salenga Farm. This document confirms the availability of the requested plants based on your inquiry.</p>
         </div>
 
-        <div class="client-invitation">
-            <h4>🌿 INTERESTED IN ORDERING?</h4>
-            <p><strong>Become a Client:</strong> If you would like to place an order for these plants, we invite you to register as a client with Salenga Farm. As a registered client, you will receive:</p>
-            <ul style="margin: 5px 0; padding-left: 20px;">
-                <li>Detailed pricing and quotations</li>
-                <li>Priority order processing</li>
-                <li>Delivery arrangements</li>
-                <li>Ongoing support for your plant needs</li>
-            </ul>
-            <p><strong>To become a client:</strong> Please contact us at salengafarm@example.com or reply to this email expressing your interest. We will guide you through a simple verification process to set up your client account.</p>
-        </div>
-
         <div class="footer">
             <p>This is an automatically generated availability document. For any questions or to place an order, please contact us at info@salengafarm.com</p>
             <p>Request ID: {{ $request->id }} | Generated on: {{ now()->format('F d, Y H:i:s') }}</p>

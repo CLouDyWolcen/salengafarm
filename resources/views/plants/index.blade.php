@@ -44,13 +44,13 @@
                 @endif
 
                 <!-- Search Bar -->
-                    <div class="search-bar mb-4" style="padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                    <div class="search-bar mb-2" style="padding: 0.75rem; border-radius: 8px;">
                         <div class="row g-2 align-items-end">
                         <div class="col-md-4">
                                 <div class="mb-2">
                                     <input type="text" id="searchInput" class="form-control" placeholder="Search by name, code, or scientific name" style="font-size: 0.9rem; padding: 0.4rem 0.75rem;">
                             </div>
-                                <div class="d-flex gap-2 mb-2">
+                                <div class="d-flex gap-2 mb-2 flex-wrap align-items-center">
                                     <!-- Export Dropdown -->
                                     <div class="dropdown">
                                         <button class="btn btn-success btn-sm dropdown-toggle" type="button" id="exportDropdown" data-bs-toggle="dropdown" aria-expanded="false">
@@ -71,20 +71,22 @@
                                     </div>
                                     
                                     <button id="addBtn" class="btn btn-primary btn-sm">
-                                        <i class="fas fa-plus me-1"></i>Add New Plant
+                                        <i class="fas fa-plus"></i> Add New Plant
                                     </button>
                                     
-                                <div id="bulkActionButtons" class="d-none d-inline">
-                                        <button id="bulkEditBtn" class="btn btn-primary btn-sm">
-                                        <i class="fas fa-edit"></i> Edit
-                                    </button>
-                                        <button id="cancelSelectionBtn" class="btn btn-secondary btn-sm">
-                                        <i class="fas fa-times"></i> Cancel
-                                    </button>
-                                        <button id="bulkDeleteBtn" class="btn btn-danger btn-sm">
-                                        <i class="fas fa-trash"></i> Delete Selected
-                                    </button>
-                                </div>
+                                    <div id="bulkActionButtons" class="d-none">
+                                        <div class="d-flex gap-2">
+                                            <button id="bulkEditBtn" class="btn btn-primary btn-sm">
+                                                <i class="fas fa-edit"></i> Edit
+                                            </button>
+                                            <button id="cancelSelectionBtn" class="btn btn-secondary btn-sm">
+                                                <i class="fas fa-times"></i> Cancel
+                                            </button>
+                                            <button id="bulkDeleteBtn" class="btn btn-danger btn-sm">
+                                                <i class="fas fa-trash"></i> Delete
+                                            </button>
+                                        </div>
+                                    </div>
                             </div>
                         </div>
                         <div class="col-md-8">
@@ -140,7 +142,7 @@
                 </div>
 
                 <!-- Bulk Edit Section (Initially Hidden) -->
-                <div id="bulkEditSection" class="card mb-3 d-none">
+                <div id="bulkEditSection" class="card mb-2 d-none">
                     <div class="card-header bg-light">
                         <h6 class="mb-0">Bulk Edit Selected Plants</h6>
                     </div>
@@ -180,6 +182,7 @@
                 </div>
 
                 <!-- Plants Table -->
+                <div class="table-responsive inventory-table-container">
                     <table class="table" id="plantsTable" style="font-size: 0.8rem;">
                     <thead>
                         <tr>
