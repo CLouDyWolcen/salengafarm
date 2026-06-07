@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\ConfirmablePasswordController;
 use App\Http\Controllers\Auth\EmailVerificationNotificationController;
 use App\Http\Controllers\Auth\EmailVerificationPromptController;
+use App\Http\Controllers\Auth\MfaController;
 use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
@@ -16,6 +17,14 @@ Route::middleware('guest')->group(function () {
         ->name('register');
 
     Route::post('register', [RegisteredUserController::class, 'store']);
+    
+    // Email verification routes (after registration)
+    Route::get('verify-email-code', [\App\Http\Controllers\Auth\EmailVerificationCodeController::class, 'show'])
+        ->name('verification.code.show');
+    Route::post('verify-email-code', [\App\Http\Controllers\Auth\EmailVerificationCodeController::class, 'verify'])
+        ->name('verification.code.verify');
+    Route::post('verify-email-code/resend', [\App\Http\Controllers\Auth\EmailVerificationCodeController::class, 'resend'])
+        ->name('verification.code.resend');
 
     Route::get('login', [AuthenticatedSessionController::class, 'create'])
         ->name('login');
@@ -56,4 +65,17 @@ Route::middleware('auth')->group(function () {
 
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
         ->name('logout');
+
+    // MFA Routes - explicitly bypass MFA verification middleware to prevent loops
+    Route::prefix('mfa')->name('mfa.')->group(function () {
+        // Verification routes (needed during MFA challenge)
+        Route::get('/verify', [MfaController::class, 'showVerify'])->name('verify');
+        Route::post('/verify', [MfaController::class, 'verify'])->name('verify.post');
+        Route::post('/resend', [MfaController::class, 'resend'])->name('resend');
+        
+        // Management routes (for profile settings - require MFA verification)
+        Route::get('/enable', [MfaController::class, 'showEnable'])->name('enable');
+        Route::post('/enable', [MfaController::class, 'enable'])->name('enable.post');
+        Route::post('/disable', [MfaController::class, 'disable'])->name('disable');
+    });
 });

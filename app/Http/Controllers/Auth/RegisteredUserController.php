@@ -93,6 +93,7 @@ class RegisteredUserController extends Controller
             'role' => 'client', // Set default role to client (green badge)
             'account_type' => 'individual', // Default to individual
             'profile_completed' => false, // Profile not complete yet
+            'email_verified_at' => null, // NOT verified yet
             'page_access' => json_encode([
                 'dashboard',
                 'my_requests',
@@ -101,11 +102,38 @@ class RegisteredUserController extends Controller
             ]), // Give full page access to all client pages (as array, not object)
         ]);
 
-        Auth::login($user);
+        // Generate 6-digit verification code
+        $code = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+        
+        // Store code in cache for 10 minutes
+        $cacheKey = "email_verification_{$user->email}";
+        \Illuminate\Support\Facades\Cache::put($cacheKey, $code, now()->addMinutes(10));
+        
+        // Log the code for testing (remove in production!)
+        \Illuminate\Support\Facades\Log::info('===== REGISTRATION VERIFICATION CODE =====', [
+            'email' => $user->email,
+            'CODE' => $code,
+            'expires_in' => '10 minutes'
+        ]);
+        
+        // Send verification email
+        $brevoService = new \App\Services\BrevoEmailService();
+        $brevoService->sendRegistrationCode(
+            $user->email,
+            $code,
+            $user->first_name ?? $user->email
+        );
+        
+        // Store user email in session for verification
+        session(['email_to_verify' => $user->email]);
+        
+        \Illuminate\Support\Facades\Log::info('Registration verification code sent', [
+            'email' => $user->email,
+            'ip' => $request->ip()
+        ]);
 
-        // Skip email verification event to avoid SMTP timeout
-        // event(new Registered($user));
-
-        return redirect('/');
+        // Redirect to verification page (don't log in yet)
+        return redirect()->route('verification.code.show')
+            ->with('success', 'Account created! Please check your email for the verification code.');
     }
 }

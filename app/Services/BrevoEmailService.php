@@ -16,12 +16,22 @@ class BrevoEmailService
 
     public function __construct()
     {
-        $apiKey = env('BREVO_API_KEY');
+        // Try config first, then fall back to env
+        $apiKey = config('services.brevo.api_key', env('BREVO_API_KEY'));
         $this->isConfigured = !empty($apiKey);
         
         if ($this->isConfigured) {
             $config = Configuration::getDefaultConfiguration()->setApiKey('api-key', $apiKey);
             $this->apiInstance = new TransactionalEmailsApi(new Client(), $config);
+            
+            Log::info('BrevoEmailService configured', [
+                'api_key_set' => !empty($apiKey),
+                'mode' => 'production'
+            ]);
+        } else {
+            Log::warning('BrevoEmailService NOT configured - using local development mode', [
+                'api_key_exists' => !empty($apiKey)
+            ]);
         }
     }
 
@@ -100,5 +110,87 @@ class BrevoEmailService
     public function isConfigured()
     {
         return $this->isConfigured;
+    }
+
+    /**
+     * Send MFA verification code via email
+     * 
+     * @param string $email
+     * @param string $code
+     * @param string $userName
+     * @return array
+     */
+    public function sendMfaCode(string $email, string $code, string $userName = 'User')
+    {
+        $subject = 'Your Verification Code - Salenga Farm';
+        
+        $htmlContent = view('emails.mfa-code', [
+            'code' => $code,
+            'userName' => $userName,
+            'expiresIn' => 5 // minutes
+        ])->render();
+        
+        $result = $this->sendEmail(
+            $email,
+            $subject,
+            $htmlContent,
+            config('mail.from.address'),
+            config('mail.from.name')
+        );
+        
+        if ($result['success']) {
+            Log::info('MFA code sent successfully', [
+                'email' => $email,
+                'message_id' => $result['messageId'] ?? 'unknown'
+            ]);
+        } else {
+            Log::error('Failed to send MFA code', [
+                'email' => $email,
+                'error' => $result['error'] ?? 'unknown'
+            ]);
+        }
+        
+        return $result['success'];
+    }
+
+    /**
+     * Send registration email verification code
+     * 
+     * @param string $email
+     * @param string $code
+     * @param string $userName
+     * @return bool
+     */
+    public function sendRegistrationCode(string $email, string $code, string $userName = 'User')
+    {
+        $subject = 'Verify Your Email Address - Salenga Farm';
+        
+        $htmlContent = view('emails.registration-code', [
+            'code' => $code,
+            'userName' => $userName,
+            'expiresIn' => 10 // minutes
+        ])->render();
+        
+        $result = $this->sendEmail(
+            $email,
+            $subject,
+            $htmlContent,
+            config('mail.from.address'),
+            config('mail.from.name')
+        );
+        
+        if ($result['success']) {
+            Log::info('Registration verification code sent successfully', [
+                'email' => $email,
+                'message_id' => $result['messageId'] ?? 'unknown'
+            ]);
+        } else {
+            Log::error('Failed to send registration verification code', [
+                'email' => $email,
+                'error' => $result['error'] ?? 'unknown'
+            ]);
+        }
+        
+        return $result['success'];
     }
 }

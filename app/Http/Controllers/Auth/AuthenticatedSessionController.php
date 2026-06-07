@@ -29,9 +29,27 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        $user = Auth::user();
+
         // Log successful login
         AuditService::logLogin($request->email);
 
+        // Check if MFA is enabled for this user
+        if ($user->mfa_enabled) {
+            $mfaService = app(\App\Services\MfaService::class);
+            $sent = $mfaService->sendCode($user);
+            
+            if ($sent) {
+                return redirect()->route('mfa.verify')
+                    ->with('success', 'A verification code has been sent to your email.');
+            } else {
+                // If email fails, log them in anyway but show warning
+                return redirect()->intended(session('redirect_to', route('dashboard')))
+                    ->with('warning', 'Unable to send verification code. Please check your email settings.');
+            }
+        }
+
+        // Normal login flow (MFA not enabled)
         return redirect()->intended(session('redirect_to', route('dashboard')));
     }
 
@@ -42,6 +60,10 @@ class AuthenticatedSessionController extends Controller
     {
         // Log logout before destroying session
         AuditService::logLogout();
+
+        // Clear MFA session if exists
+        $mfaService = app(\App\Services\MfaService::class);
+        $mfaService->clearSession();
 
         Auth::guard('web')->logout();
 

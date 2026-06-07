@@ -46,6 +46,8 @@ class User extends Authenticatable implements MustVerifyEmail
         'is_client',
         'page_access',
         'profile_completed',
+        'mfa_enabled',
+        'mfa_enabled_at',
     ];
 
     /**
@@ -69,6 +71,8 @@ class User extends Authenticatable implements MustVerifyEmail
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'is_client' => 'boolean',
+            'mfa_enabled' => 'boolean',
+            'mfa_enabled_at' => 'datetime',
         ];
     }
 
@@ -286,5 +290,23 @@ class User extends Authenticatable implements MustVerifyEmail
     public function isProfileComplete(): bool
     {
         return $this->getProfileCompletionPercentage() === 100;
+    }
+
+    /**
+     * Check if MFA is enabled for this user.
+     *
+     * @return bool
+     */
+    public function hasMfaEnabled(): bool
+    {
+        return (bool) $this->mfa_enabled;
+    }
+
+    /**
+     * Get MFA attempts for this user.
+     */
+    public function mfaAttempts()
+    {
+        return $this->hasMany(MfaAttempt::class);
     }
 }

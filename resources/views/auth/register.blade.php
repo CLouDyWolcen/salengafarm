@@ -134,8 +134,10 @@
                     </div>
 
                     <button type="submit" id="register-button" class="sign-in-btn">
-                        <span id="button-text">Create Account</span>
-                        <span id="button-loader" class="spinner" style="display: none;"></span>
+                        <span class="btn-text">Create Account</span>
+                        <span class="btn-spinner" style="display: none;">
+                            <span class="spinner-border spinner-border-sm me-2" role="status"></span>Processing...
+                        </span>
                     </button>
 
                     <!-- OR Divider -->
@@ -370,10 +372,19 @@
             border: none;
             cursor: pointer;
             transition: background-color 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
         
         .sign-in-btn:hover {
             background-color: #1F2937;
+        }
+        
+        .sign-in-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
         }
         
         /* Error message styling */
@@ -474,10 +485,9 @@
         // Form submission with loading screen
         document.addEventListener('DOMContentLoaded', function() {
             const form = document.querySelector('form');
-            const buttonText = document.getElementById('button-text');
-            const buttonLoader = document.getElementById('button-loader');
+            const registerButton = document.getElementById('register-button');
             
-            if (form) {
+            if (form && registerButton) {
                 form.addEventListener('submit', function(e) {
                     // Basic client-side validation first
                     const password = document.getElementById('password').value;
@@ -487,15 +497,13 @@
                         return; // Let the form validation handle this error
                     }
                     
-                    // Show button spinner
-                    buttonText.textContent = 'Processing...';
-                    buttonLoader.style.display = 'inline-block';
-                    document.getElementById('register-button').disabled = true;
+                    const btnText = registerButton.querySelector('.btn-text');
+                    const btnSpinner = registerButton.querySelector('.btn-spinner');
                     
-                    // Show the standardized loading overlay
-                    setTimeout(function() {
-                        LoadingManager.show('Creating Your Account...', 'Please wait while we set up your profile');
-                    }, 300);
+                    // Show spinner with "Processing...", hide normal text
+                    btnText.style.display = 'none';
+                    btnSpinner.style.display = 'inline-block';
+                    registerButton.disabled = true;
                 });
             }
         });
