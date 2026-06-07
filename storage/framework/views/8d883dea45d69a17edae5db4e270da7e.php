@@ -1,23 +1,23 @@
-@php
+<?php
     use Illuminate\Support\Facades\Storage;
     use Illuminate\Support\Facades\Auth;
-@endphp
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ \App\Helpers\BrandHelper::getName() }}</title>
-    <link rel="icon" type="image/x-icon" href="{{ asset('tree-leaf.ico') }}?v=2">
+    <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
+    <title><?php echo e(\App\Helpers\BrandHelper::getName()); ?></title>
+    <link rel="icon" type="image/x-icon" href="<?php echo e(asset('tree-leaf.ico')); ?>?v=2">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
-    <link href="{{ asset('css/public.css') }}?v=3" rel="stylesheet">
-    <link href="{{ asset('css/plant-selection.css') }}?v={{ time() }}" rel="stylesheet">
-    <link href="{{ asset('css/loading.css') }}?v={{ time() }}" rel="stylesheet">
-    <link href="{{ asset('css/push-notifications.css') }}?v={{ time() }}" rel="stylesheet">
-    <link href="{{ asset('css/splash-about.css') }}?v={{ time() }}" rel="stylesheet">
+    <link href="<?php echo e(asset('css/public.css')); ?>?v=3" rel="stylesheet">
+    <link href="<?php echo e(asset('css/plant-selection.css')); ?>?v=<?php echo e(time()); ?>" rel="stylesheet">
+    <link href="<?php echo e(asset('css/loading.css')); ?>?v=<?php echo e(time()); ?>" rel="stylesheet">
+    <link href="<?php echo e(asset('css/push-notifications.css')); ?>?v=<?php echo e(time()); ?>" rel="stylesheet">
+    <link href="<?php echo e(asset('css/splash-about.css')); ?>?v=<?php echo e(time()); ?>" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
 
     <!-- Preloader styles - inline to prevent FOUC -->
@@ -1431,89 +1431,89 @@
 <body class="bg-light">
     <!-- Preloader -->
     <div id="page-preloader">
-        <img src="{{ asset('images/salengap-modified.png') }}" alt="Loading..." class="preloader-logo">
+        <img src="<?php echo e(asset('images/salengap-modified.png')); ?>" alt="Loading..." class="preloader-logo">
     </div>
 
     <!-- Page Content -->
     <div class="page-content">
     <nav class="navbar navbar-expand-lg main-nav">
         <div class="container-fluid">
-            <a class="navbar-brand" href="{{ route('public.plants') }}">
-                <img src="{{ asset('images/salengap-modified.png') }}" alt="Salenga Logo" class="nav-logo">
-                <span class="brand-text">{{ \App\Helpers\BrandHelper::getName() }}</span>
+            <a class="navbar-brand" href="<?php echo e(route('public.plants')); ?>">
+                <img src="<?php echo e(asset('images/salengap-modified.png')); ?>" alt="Salenga Logo" class="nav-logo">
+                <span class="brand-text"><?php echo e(\App\Helpers\BrandHelper::getName()); ?></span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarMain">
-                @if(Auth::check() && !Auth::user()->hasAdminAccess())
+                <?php if(Auth::check() && !Auth::user()->hasAdminAccess()): ?>
                 <!-- Authenticated non-admin users: show centered nav links with page access control -->
                 <ul class="navbar-nav mx-auto">
                     <li class="nav-item">
-                        <a class="nav-link text-white {{ request()->routeIs('public.plants') ? 'active' : '' }}" href="{{ route('public.plants') }}">
+                        <a class="nav-link text-white <?php echo e(request()->routeIs('public.plants') ? 'active' : ''); ?>" href="<?php echo e(route('public.plants')); ?>">
                             <i class="fas fa-home me-1"></i> Home
                         </a>
                     </li>
-                    @if(Auth::user()->hasPageAccess('dashboard'))
+                    <?php if(Auth::user()->hasPageAccess('dashboard')): ?>
                     <li class="nav-item">
-                        <a class="nav-link text-white {{ request()->routeIs('dashboard.user') ? 'active' : '' }}" href="{{ route('dashboard.user') }}">
+                        <a class="nav-link text-white <?php echo e(request()->routeIs('dashboard.user') ? 'active' : ''); ?>" href="<?php echo e(route('dashboard.user')); ?>">
                             <i class="fas fa-gauge me-1"></i> Dashboard
                         </a>
                     </li>
-                    @endif
-                    @if(Auth::user()->hasPageAccess('dashboard'))
+                    <?php endif; ?>
+                    <?php if(Auth::user()->hasPageAccess('dashboard')): ?>
                     <li class="nav-item">
-                        <a class="nav-link text-white {{ request()->routeIs('my-requests.index') ? 'active' : '' }}" href="{{ route('my-requests.index') }}">
+                        <a class="nav-link text-white <?php echo e(request()->routeIs('my-requests.index') ? 'active' : ''); ?>" href="<?php echo e(route('my-requests.index')); ?>">
                             <i class="fas fa-list-check me-1"></i> My Requests
                         </a>
                     </li>
-                    @endif
-                    @if(Auth::user()->hasPageAccess('plant_guide'))
+                    <?php endif; ?>
+                    <?php if(Auth::user()->hasPageAccess('plant_guide')): ?>
                     <li class="nav-item">
-                        <a class="nav-link text-white {{ request()->routeIs('plant-care.*') ? 'active' : '' }}" href="{{ route('plant-care.index') }}">
+                        <a class="nav-link text-white <?php echo e(request()->routeIs('plant-care.*') ? 'active' : ''); ?>" href="<?php echo e(route('plant-care.index')); ?>">
                             <i class="fas fa-leaf me-1"></i> Plant Guide
                         </a>
                     </li>
-                    @endif
-                    @if(Auth::user()->isClient() && Auth::user()->hasPageAccess('site_data'))
+                    <?php endif; ?>
+                    <?php if(Auth::user()->isClient() && Auth::user()->hasPageAccess('site_data')): ?>
                     <li class="nav-item">
-                        <a class="nav-link text-white {{ request()->routeIs('client-data.*') ? 'active' : '' }}" href="{{ route('client-data.index') }}">
-                            @if(!Auth::user()->isProfileComplete())
+                        <a class="nav-link text-white <?php echo e(request()->routeIs('client-data.*') ? 'active' : ''); ?>" href="<?php echo e(route('client-data.index')); ?>">
+                            <?php if(!Auth::user()->isProfileComplete()): ?>
                                 <i class="fas fa-lock me-1"></i>
-                            @else
+                            <?php else: ?>
                                 <i class="fas fa-folder-open me-1"></i>
-                            @endif
+                            <?php endif; ?>
                             Site Data
                         </a>
                     </li>
-                    @endif
+                    <?php endif; ?>
                 </ul>
-                @elseif(Auth::check() && Auth::user()->hasAdminAccess())
+                <?php elseif(Auth::check() && Auth::user()->hasAdminAccess()): ?>
                 <!-- Admin users: show Home and Plant Care nav links -->
                 <ul class="navbar-nav mx-auto">
                     <li class="nav-item">
-                        <a class="nav-link text-white {{ request()->routeIs('public.plants') ? 'active' : '' }}" href="{{ route('public.plants') }}">
+                        <a class="nav-link text-white <?php echo e(request()->routeIs('public.plants') ? 'active' : ''); ?>" href="<?php echo e(route('public.plants')); ?>">
                             <i class="fas fa-home me-1"></i> Home
                         </a>
                     </li>
                     <li class="nav-item">
-                        @if(Auth::user()->role === 'super_admin')
-                            <a class="nav-link text-white {{ request()->routeIs('plant-care.index') || request()->routeIs('plant-care.show') ? 'active' : '' }}" href="{{ route('plant-care.index') }}">
+                        <?php if(Auth::user()->role === 'super_admin'): ?>
+                            <a class="nav-link text-white <?php echo e(request()->routeIs('plant-care.index') || request()->routeIs('plant-care.show') ? 'active' : ''); ?>" href="<?php echo e(route('plant-care.index')); ?>">
                                 <i class="fas fa-leaf me-1"></i> Plant Guide
                             </a>
-                        @else
-                            <a class="nav-link text-white {{ request()->routeIs('plant-care.admin') || request()->routeIs('plant-care.edit') || request()->routeIs('plant-care.show') ? 'active' : '' }}" href="{{ route('plant-care.admin') }}">
+                        <?php else: ?>
+                            <a class="nav-link text-white <?php echo e(request()->routeIs('plant-care.admin') || request()->routeIs('plant-care.edit') || request()->routeIs('plant-care.show') ? 'active' : ''); ?>" href="<?php echo e(route('plant-care.admin')); ?>">
                                 <i class="fas fa-leaf me-1"></i> Plant Guide
                             </a>
-                        @endif
+                        <?php endif; ?>
                     </li>
                 </ul>
-                @else
+                <?php else: ?>
                 <!-- Guests: no centered nav, just spacer -->
                 <div class="flex-grow-1"></div>
-                @endif
+                <?php endif; ?>
                 <div class="user-section d-flex align-items-center">
-                    @auth
+                    <?php if(auth()->guard()->check()): ?>
                         <!-- Notification Bell -->
                         <div class="position-relative me-3">
                             <div class="notification-bell notification-bell-trigger" id="homeNotificationBell" title="Notifications">
@@ -1542,7 +1542,7 @@
                             </div>
                         </div>
                         
-                        @if(auth()->user()->hasAdminAccess())
+                        <?php if(auth()->user()->hasAdminAccess()): ?>
                             <div class="dropdown me-2">
                                 <button class="btn btn-link dropdown-toggle menu-btn px-3 py-1" type="button" id="menuDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="font-size: 0.98rem; font-weight: 500;">
                                     <i class="fas fa-bars menu-icon"></i>
@@ -1550,26 +1550,26 @@
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="menuDropdown">
                                     <!-- Mobile-only nav links (Home, Plant Guide) -->
-                                    <li class="d-md-none"><a class="dropdown-item" href="{{ route('public.plants') }}"><i class="fas fa-home me-2"></i>Home</a></li>
-                                    @if(auth()->user()->role === 'super_admin')
-                                        <li class="d-md-none"><a class="dropdown-item" href="{{ route('plant-care.index') }}"><i class="fas fa-leaf me-2"></i>Plant Guide</a></li>
-                                    @else
-                                        <li class="d-md-none"><a class="dropdown-item" href="{{ route('plant-care.admin') }}"><i class="fas fa-leaf me-2"></i>Plant Guide</a></li>
-                                    @endif
+                                    <li class="d-md-none"><a class="dropdown-item" href="<?php echo e(route('public.plants')); ?>"><i class="fas fa-home me-2"></i>Home</a></li>
+                                    <?php if(auth()->user()->role === 'super_admin'): ?>
+                                        <li class="d-md-none"><a class="dropdown-item" href="<?php echo e(route('plant-care.index')); ?>"><i class="fas fa-leaf me-2"></i>Plant Guide</a></li>
+                                    <?php else: ?>
+                                        <li class="d-md-none"><a class="dropdown-item" href="<?php echo e(route('plant-care.admin')); ?>"><i class="fas fa-leaf me-2"></i>Plant Guide</a></li>
+                                    <?php endif; ?>
                                     <li class="d-md-none"><hr class="dropdown-divider"></li>
                                     
                                     <!-- Desktop nav links (always visible) -->
-                                    <li><a class="dropdown-item" href="{{ route('dashboard') }}"><i class="fas fa-tachometer-alt me-2"></i>Dashboard</a></li>
-                                    <li><a class="dropdown-item" href="{{ route('plants.index') }}"><i class="fas fa-seedling me-2"></i>Inventory</a></li>
-                                    <li><a class="dropdown-item" href="{{ route('requests.index') }}"><i class="fas fa-envelope-open-text me-2"></i>Request</a></li>
-                                    <li><a class="dropdown-item" href="{{ route('walk-in.index') }}"><i class="fas fa-cash-register me-2"></i>Point-of-Sale</a></li>
+                                    <li><a class="dropdown-item" href="<?php echo e(route('dashboard')); ?>"><i class="fas fa-tachometer-alt me-2"></i>Dashboard</a></li>
+                                    <li><a class="dropdown-item" href="<?php echo e(route('plants.index')); ?>"><i class="fas fa-seedling me-2"></i>Inventory</a></li>
+                                    <li><a class="dropdown-item" href="<?php echo e(route('requests.index')); ?>"><i class="fas fa-envelope-open-text me-2"></i>Request</a></li>
+                                    <li><a class="dropdown-item" href="<?php echo e(route('walk-in.index')); ?>"><i class="fas fa-cash-register me-2"></i>Point-of-Sale</a></li>
                                     <li><a class="dropdown-item" href="/site-visits"><i class="fas fa-map-marked-alt me-2"></i>Site Visits</a></li>
-                        @if(auth()->user()->isSuperAdmin())
-                                    <li><a class="dropdown-item" href="{{ route('users.index') }}"><i class="fas fa-users-cog me-2"></i>Users</a></li>
-                        @endif
+                        <?php if(auth()->user()->isSuperAdmin()): ?>
+                                    <li><a class="dropdown-item" href="<?php echo e(route('users.index')); ?>"><i class="fas fa-users-cog me-2"></i>Users</a></li>
+                        <?php endif; ?>
                 </ul>
                             </div>
-                        @else
+                        <?php else: ?>
                             <!-- Regular users: Show Menu on mobile only with their nav links -->
                             <div class="dropdown me-2 d-md-none">
                                 <button class="btn btn-link dropdown-toggle menu-btn px-3 py-1" type="button" id="menuDropdownMobile" data-bs-toggle="dropdown" aria-expanded="false" style="font-size: 0.98rem; font-weight: 500;">
@@ -1577,90 +1577,91 @@
                                     <span class="menu-text">Menu</span>
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="menuDropdownMobile">
-                                    <li><a class="dropdown-item" href="{{ route('public.plants') }}"><i class="fas fa-home me-2"></i>Home</a></li>
-                                    @if(Auth::user()->hasPageAccess('dashboard'))
-                                    <li><a class="dropdown-item" href="{{ route('dashboard.user') }}"><i class="fas fa-gauge me-2"></i>Dashboard</a></li>
-                                    <li><a class="dropdown-item" href="{{ route('my-requests.index') }}"><i class="fas fa-list-check me-2"></i>My Requests</a></li>
-                                    @endif
-                                    @if(Auth::user()->hasPageAccess('plant_guide'))
-                                    <li><a class="dropdown-item" href="{{ route('plant-care.index') }}"><i class="fas fa-leaf me-2"></i>Plant Guide</a></li>
-                                    @endif
-                                    @if(Auth::user()->isClient() && Auth::user()->hasPageAccess('site_data'))
-                                        <li><a class="dropdown-item" href="{{ route('client-data.index') }}">
-                                            @if(!Auth::user()->isProfileComplete())
+                                    <li><a class="dropdown-item" href="<?php echo e(route('public.plants')); ?>"><i class="fas fa-home me-2"></i>Home</a></li>
+                                    <?php if(Auth::user()->hasPageAccess('dashboard')): ?>
+                                    <li><a class="dropdown-item" href="<?php echo e(route('dashboard.user')); ?>"><i class="fas fa-gauge me-2"></i>Dashboard</a></li>
+                                    <li><a class="dropdown-item" href="<?php echo e(route('my-requests.index')); ?>"><i class="fas fa-list-check me-2"></i>My Requests</a></li>
+                                    <?php endif; ?>
+                                    <?php if(Auth::user()->hasPageAccess('plant_guide')): ?>
+                                    <li><a class="dropdown-item" href="<?php echo e(route('plant-care.index')); ?>"><i class="fas fa-leaf me-2"></i>Plant Guide</a></li>
+                                    <?php endif; ?>
+                                    <?php if(Auth::user()->isClient() && Auth::user()->hasPageAccess('site_data')): ?>
+                                        <li><a class="dropdown-item" href="<?php echo e(route('client-data.index')); ?>">
+                                            <?php if(!Auth::user()->isProfileComplete()): ?>
                                                 <i class="fas fa-lock me-2"></i>
-                                            @else
+                                            <?php else: ?>
                                                 <i class="fas fa-folder-open me-2"></i>
-                                            @endif
+                                            <?php endif; ?>
                                             Site Data
                                         </a></li>
-                                    @endif
+                                    <?php endif; ?>
                                 </ul>
                             </div>
-                        @endif
+                        <?php endif; ?>
                     <div class="dropdown">
                             <button class="btn btn-link dropdown-toggle profile-btn px-2 py-1" type="button" id="profileDropdown" data-bs-toggle="dropdown" style="font-size: 0.98rem; min-width: 0;">
-                                @if(auth()->user() && auth()->user()->avatar)
-                                    <img src="{{ asset('storage/' . auth()->user()->avatar) }}" alt="Profile" class="profile-pic" style="width: 28px; height: 28px;">
-                            @else
+                                <?php if(auth()->user() && auth()->user()->avatar): ?>
+                                    <img src="<?php echo e(asset('storage/' . auth()->user()->avatar)); ?>" alt="Profile" class="profile-pic" style="width: 28px; height: 28px;">
+                            <?php else: ?>
                                     <div class="profile-pic-placeholder" style="width: 28px; height: 28px; font-size: 1.2rem;">
                                         <i class="fas fa-user"></i>
                                 </div>
-                            @endif
-                                <span style="font-size: 0.98rem;">{{ auth()->user() ? auth()->user()->name : 'Profile' }}</span>
+                            <?php endif; ?>
+                                <span style="font-size: 0.98rem;"><?php echo e(auth()->user() ? auth()->user()->name : 'Profile'); ?></span>
                         </button>
                             <ul class="dropdown-menu dropdown-menu-end user-dropdown-enhanced">
                             <!-- User Info Header -->
                             <li class="dropdown-header user-info-header">
                                 <div class="user-name">
-                                    <i class="fas fa-user-circle me-2"></i>{{ auth()->user()->first_name }} {{ auth()->user()->last_name }}
+                                    <i class="fas fa-user-circle me-2"></i><?php echo e(auth()->user()->first_name); ?> <?php echo e(auth()->user()->last_name); ?>
+
                                 </div>
-                                <div class="user-email">{{ auth()->user()->email }}</div>
+                                <div class="user-email"><?php echo e(auth()->user()->email); ?></div>
                                 <div class="user-account-type">
-                                    <span class="badge bg-{{ auth()->user()->account_type === 'company' ? 'primary' : 'info' }}">
-                                        <i class="fas fa-{{ auth()->user()->account_type === 'company' ? 'building' : 'user' }} me-1"></i>
-                                        {{ ucfirst(auth()->user()->account_type ?? 'Individual') }} Account
+                                    <span class="badge bg-<?php echo e(auth()->user()->account_type === 'company' ? 'primary' : 'info'); ?>">
+                                        <i class="fas fa-<?php echo e(auth()->user()->account_type === 'company' ? 'building' : 'user'); ?> me-1"></i>
+                                        <?php echo e(ucfirst(auth()->user()->account_type ?? 'Individual')); ?> Account
                                     </span>
                                 </div>
                             </li>
                             
                             <!-- Profile Completion Section -->
-                            @if(!auth()->user()->isProfileComplete())
+                            <?php if(!auth()->user()->isProfileComplete()): ?>
                             <li class="dropdown-item-text profile-completion-section">
                                 <div class="completion-warning">
                                     <i class="fas fa-exclamation-triangle text-warning me-2"></i>
-                                    <span class="completion-text">Profile {{ auth()->user()->getProfileCompletionPercentage() }}% Complete</span>
+                                    <span class="completion-text">Profile <?php echo e(auth()->user()->getProfileCompletionPercentage()); ?>% Complete</span>
                                 </div>
                                 <div class="progress mt-2 mb-2" style="height: 6px;">
                                     <div class="progress-bar bg-warning" role="progressbar" 
-                                         style="width: {{ auth()->user()->getProfileCompletionPercentage() }}%">
+                                         style="width: <?php echo e(auth()->user()->getProfileCompletionPercentage()); ?>%">
                                     </div>
                                 </div>
-                                <a href="{{ route('profile.edit') }}" class="btn btn-sm btn-warning w-100">
+                                <a href="<?php echo e(route('profile.edit')); ?>" class="btn btn-sm btn-warning w-100">
                                     <i class="fas fa-edit me-1"></i>Complete Profile
                                 </a>
                             </li>
-                            @else
+                            <?php else: ?>
                             <li class="dropdown-item-text profile-completion-section">
                                 <div class="completion-success">
                                     <i class="fas fa-check-circle text-success me-2"></i>
                                     <span class="completion-text">Profile Complete</span>
                                 </div>
                             </li>
-                            @endif
+                            <?php endif; ?>
                             
                             <li><hr class="dropdown-divider"></li>
                             
                             <!-- Menu Items -->
                             <li>
-                                    <a class="dropdown-item" href="{{ route('profile.edit') }}">
+                                    <a class="dropdown-item" href="<?php echo e(route('profile.edit')); ?>">
                                     <i class="fas fa-user-edit me-2"></i>Edit Profile
                                 </a>
                             </li>
                                 <li><hr class="dropdown-divider"></li>
                             <li>
-                                    <form id="plants-logout-form" action="{{ route('logout') }}" method="POST" style="margin: 0;">
-                                    @csrf
+                                    <form id="plants-logout-form" action="<?php echo e(route('logout')); ?>" method="POST" style="margin: 0;">
+                                    <?php echo csrf_field(); ?>
                                         <button type="button" class="dropdown-item text-danger" id="plants-logout-btn">
                                         <i class="fas fa-sign-out-alt me-2"></i>Logout
                                     </button>
@@ -1668,15 +1669,15 @@
                             </li>
                         </ul>
                     </div>
-                    @endauth
-                    @guest
-                        <a href="{{ route('login') }}" class="btn btn-outline-light me-2">
+                    <?php endif; ?>
+                    <?php if(auth()->guard()->guest()): ?>
+                        <a href="<?php echo e(route('login')); ?>" class="btn btn-outline-light me-2">
                             <i class="fas fa-user me-1"></i>Login
                         </a>
-                        <a href="{{ route('register') }}" class="btn btn-light">
+                        <a href="<?php echo e(route('register')); ?>" class="btn btn-light">
                             <i class="fas fa-user-plus me-1"></i>Register
                         </a>
-                    @endguest
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
@@ -1687,61 +1688,61 @@
         <!-- Splash Page Content -->
     <div class="splash-page has-scroll" id="splashPage">
         <div class="splash-content">
-            @if(\App\Helpers\BrandHelper::isEsthersGarden())
-                {{-- Esther's Flower Garden - Full Info --}}
-                @php $about = \App\Helpers\BrandHelper::getAboutContent(); @endphp
-                <h1 class="display-4 mb-4">Welcome to {{ $about['title'] }}</h1>
+            <?php if(\App\Helpers\BrandHelper::isEsthersGarden()): ?>
                 
-                {{-- Two Column Layout --}}
+                <?php $about = \App\Helpers\BrandHelper::getAboutContent(); ?>
+                <h1 class="display-4 mb-4">Welcome to <?php echo e($about['title']); ?></h1>
+                
+                
                 <div class="row g-4 mb-4">
-                    {{-- Left Column: About Us & Services --}}
+                    
                     <div class="col-md-6">
-                        {{-- About Us --}}
+                        
                         <div class="about-box mb-4">
-                            <h3 class="h5 fw-bold text-white mb-3">{{ $about['sections']['about']['title'] }}</h3>
-                            <p class="about-description text-justify mb-0">{{ $about['sections']['about']['content'] }}</p>
+                            <h3 class="h5 fw-bold text-white mb-3"><?php echo e($about['sections']['about']['title']); ?></h3>
+                            <p class="about-description text-justify mb-0"><?php echo e($about['sections']['about']['content']); ?></p>
                         </div>
                         
-                        {{-- Services --}}
+                        
                         <div class="about-box">
-                            <h3 class="h5 fw-bold text-white mb-3">{{ $about['sections']['services']['title'] }}</h3>
+                            <h3 class="h5 fw-bold text-white mb-3"><?php echo e($about['sections']['services']['title']); ?></h3>
                             <ul class="list-unstyled services-list about-features">
-                                @foreach($about['sections']['services']['items'] as $service)
-                                    <li class="service-item @if(!$loop->last) border-bottom @endif pb-3 mb-3">
+                                <?php $__currentLoopData = $about['sections']['services']['items']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $service): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <li class="service-item <?php if(!$loop->last): ?> border-bottom <?php endif; ?> pb-3 mb-3">
                                         <div class="d-flex align-items-start">
                                             <div class="service-icon">
-                                                <i class="fas {{ $service['icon'] }} text-success"></i>
+                                                <i class="fas <?php echo e($service['icon']); ?> text-success"></i>
                                             </div>
                                             <div class="service-content">
-                                                <div class="fw-bold service-title">{{ $service['name'] }}</div>
-                                                <div class="service-description text-justify">{{ $service['description'] }}</div>
+                                                <div class="fw-bold service-title"><?php echo e($service['name']); ?></div>
+                                                <div class="service-description text-justify"><?php echo e($service['description']); ?></div>
                                             </div>
                                         </div>
                                     </li>
-                                @endforeach
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                             </ul>
                         </div>
                     </div>
                     
-                    {{-- Right Column: Projects --}}
+                    
                     <div class="col-md-6">
                         <div class="about-box mb-4 projects-gallery">
                             <h3 class="h5 fw-bold text-white mb-3">Projects</h3>
                             <div class="project-images">
                                 <div class="project-item">
-                                    <img src="{{ asset('images/ScrollpageImg/BONHOMIE LIESURE AND RESORT.png') }}" alt="Bonhomie Leisure and Resort" class="project-img">
+                                    <img src="<?php echo e(asset('images/ScrollpageImg/BONHOMIE LIESURE AND RESORT.png')); ?>" alt="Bonhomie Leisure and Resort" class="project-img">
                                     <div class="project-caption">Bonhomie Leisure and Resort</div>
                                 </div>
                                 <div class="project-item">
-                                    <img src="{{ asset('images/ScrollpageImg/LPU Showroom.png') }}" alt="LPU Showroom" class="project-img">
+                                    <img src="<?php echo e(asset('images/ScrollpageImg/LPU Showroom.png')); ?>" alt="LPU Showroom" class="project-img">
                                     <div class="project-caption">LPU Showroom</div>
                                 </div>
                                 <div class="project-item">
-                                    <img src="{{ asset('images/ScrollpageImg/LYCEUM OF THE PHILIPPINES DAVAO CAMPUS.png') }}" alt="Lyceum of the Philippines Davao Campus" class="project-img">
+                                    <img src="<?php echo e(asset('images/ScrollpageImg/LYCEUM OF THE PHILIPPINES DAVAO CAMPUS.png')); ?>" alt="Lyceum of the Philippines Davao Campus" class="project-img">
                                     <div class="project-caption">Lyceum of the Philippines Davao Campus</div>
                                 </div>
                                 <div class="project-item">
-                                    <img src="{{ asset('images/ScrollpageImg/Marihatag Municipal Plaza.png') }}" alt="Marihatag Municipal Plaza" class="project-img">
+                                    <img src="<?php echo e(asset('images/ScrollpageImg/Marihatag Municipal Plaza.png')); ?>" alt="Marihatag Municipal Plaza" class="project-img">
                                     <div class="project-caption">Marihatag Municipal Plaza</div>
                                 </div>
                             </div>
@@ -1749,41 +1750,42 @@
                     </div>
                 </div>
                 
-                {{-- Contact Section (Full Width) --}}
+                
                 <div class="contact-info mb-4">
-                    <h3 class="h5 fw-bold text-white mb-3">{{ $about['sections']['contact']['title'] }}</h3>
-                    <p class="mb-2"><i class="fas fa-envelope me-2"></i>{{ $about['sections']['contact']['email'] }}</p>
+                    <h3 class="h5 fw-bold text-white mb-3"><?php echo e($about['sections']['contact']['title']); ?></h3>
+                    <p class="mb-2"><i class="fas fa-envelope me-2"></i><?php echo e($about['sections']['contact']['email']); ?></p>
                     <p class="mb-2">
                         <i class="fas fa-phone me-2"></i>
-                        @foreach($about['sections']['contact']['phones'] as $phone)
-                            {{ $phone }}@if(!$loop->last) / @endif
-                        @endforeach
+                        <?php $__currentLoopData = $about['sections']['contact']['phones']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $phone): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <?php echo e($phone); ?><?php if(!$loop->last): ?> / <?php endif; ?>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                     </p>
                     <p class="mb-2">
                         <i class="fab fa-facebook me-2"></i>
-                        <a href="{{ $about['sections']['contact']['facebook_url'] }}" target="_blank" class="text-white text-decoration-none">
-                            {{ $about['sections']['contact']['facebook'] }}
+                        <a href="<?php echo e($about['sections']['contact']['facebook_url']); ?>" target="_blank" class="text-white text-decoration-none">
+                            <?php echo e($about['sections']['contact']['facebook']); ?>
+
                         </a>
                     </p>
-                    <p class="mb-0"><i class="fas fa-map-marker-alt me-2"></i>{{ $about['sections']['contact']['address'] }}</p>
+                    <p class="mb-0"><i class="fas fa-map-marker-alt me-2"></i><?php echo e($about['sections']['contact']['address']); ?></p>
                 </div>
                 
-                {{-- Sticky Explore Button --}}
+                
                 <div class="sticky-explore-btn">
                     <button class="scroll-down-btn" onclick="scrollToContent()">
                         <i class="fas fa-chevron-down"></i>
                         Explore Plants
                     </button>
                 </div>
-            @else
-                {{-- Salenga Farm - Welcome with Services & Projects --}}
+            <?php else: ?>
+                
                 <h1 class="display-4">Welcome to Salenga Farm</h1>
                 <p class="lead fw-bold mb-3">Plants, Landscaping, and Outdoor Solutions</p>
                 <p class="lead mb-4">Find quality plants, request landscaping services, and manage your inquiries with ease through our integrated platform.</p>
                 
-                {{-- Two Column Layout --}}
+                
                 <div class="row g-4 mb-4">
-                    {{-- Left Column: Services --}}
+                    
                     <div class="col-md-6">
                         <div class="about-box">
                             <h3 class="h5 fw-bold text-white mb-3">Our Services</h3>
@@ -1836,25 +1838,25 @@
                         </div>
                     </div>
                     
-                    {{-- Right Column: Projects --}}
+                    
                     <div class="col-md-6">
                         <div class="about-box mb-4 projects-gallery">
                             <h3 class="h5 fw-bold text-white mb-3">Projects</h3>
                             <div class="project-images">
                                 <div class="project-item">
-                                    <img src="{{ asset('images/ScrollpageImg/BONHOMIE LIESURE AND RESORT.png') }}" alt="Bonhomie Leisure and Resort" class="project-img">
+                                    <img src="<?php echo e(asset('images/ScrollpageImg/BONHOMIE LIESURE AND RESORT.png')); ?>" alt="Bonhomie Leisure and Resort" class="project-img">
                                     <div class="project-caption">Bonhomie Leisure and Resort</div>
                                 </div>
                                 <div class="project-item">
-                                    <img src="{{ asset('images/ScrollpageImg/LPU Showroom.png') }}" alt="LPU Showroom" class="project-img">
+                                    <img src="<?php echo e(asset('images/ScrollpageImg/LPU Showroom.png')); ?>" alt="LPU Showroom" class="project-img">
                                     <div class="project-caption">LPU Showroom</div>
                                 </div>
                                 <div class="project-item">
-                                    <img src="{{ asset('images/ScrollpageImg/LYCEUM OF THE PHILIPPINES DAVAO CAMPUS.png') }}" alt="Lyceum of the Philippines Davao Campus" class="project-img">
+                                    <img src="<?php echo e(asset('images/ScrollpageImg/LYCEUM OF THE PHILIPPINES DAVAO CAMPUS.png')); ?>" alt="Lyceum of the Philippines Davao Campus" class="project-img">
                                     <div class="project-caption">Lyceum of the Philippines Davao Campus</div>
                                 </div>
                                 <div class="project-item">
-                                    <img src="{{ asset('images/ScrollpageImg/Marihatag Municipal Plaza.png') }}" alt="Marihatag Municipal Plaza" class="project-img">
+                                    <img src="<?php echo e(asset('images/ScrollpageImg/Marihatag Municipal Plaza.png')); ?>" alt="Marihatag Municipal Plaza" class="project-img">
                                     <div class="project-caption">Marihatag Municipal Plaza</div>
                                 </div>
                             </div>
@@ -1862,21 +1864,21 @@
                     </div>
                 </div>
                 
-                {{-- Contact Section (Full Width) --}}
+                
                 <div class="contact-info mb-4">
                     <h3 class="h5 fw-bold text-white mb-3">For Consultation</h3>
                     <p class="mb-2"><i class="fas fa-envelope me-2"></i>salengafarm@example.com</p>
                     <p class="mb-2"><i class="fas fa-phone me-2"></i>Contact us for inquiries</p>
                 </div>
                 
-                {{-- Sticky Explore Button --}}
+                
                 <div class="sticky-explore-btn">
                     <button class="scroll-down-btn" onclick="scrollToContent()">
                         <i class="fas fa-chevron-down"></i>
                         Explore Plants
                     </button>
                 </div>
-            @endif
+            <?php endif; ?>
         </div>
     </div>
 
@@ -1884,23 +1886,23 @@
         <div class="marquee-container">
         <div class="marquee">
             <div class="marquee-content">
-                <img src="{{ asset('images/plantpic/bamboo-p.jpg') }}" alt="Bamboo" class="marquee-img">
-                <img src="{{ asset('images/plantpic/fertilizer-p.jpg') }}" alt="Fertilizer" class="marquee-img">
-                <img src="{{ asset('images/plantpic/grass-p.jpg') }}" alt="Grass" class="marquee-img">
-                <img src="{{ asset('images/plantpic/herbs-pp.jpg') }}" alt="Herbs" class="marquee-img">
-                <img src="{{ asset('images/plantpic/palm-pp.jpg') }}" alt="Palm" class="marquee-img">
-                <img src="{{ asset('images/plantpic/shrubs-p.jpg') }}" alt="Shrubs" class="marquee-img">
-                <img src="{{ asset('images/plantpic/tree-p.jpg') }}" alt="Tree" class="marquee-img">
+                <img src="<?php echo e(asset('images/plantpic/bamboo-p.jpg')); ?>" alt="Bamboo" class="marquee-img">
+                <img src="<?php echo e(asset('images/plantpic/fertilizer-p.jpg')); ?>" alt="Fertilizer" class="marquee-img">
+                <img src="<?php echo e(asset('images/plantpic/grass-p.jpg')); ?>" alt="Grass" class="marquee-img">
+                <img src="<?php echo e(asset('images/plantpic/herbs-pp.jpg')); ?>" alt="Herbs" class="marquee-img">
+                <img src="<?php echo e(asset('images/plantpic/palm-pp.jpg')); ?>" alt="Palm" class="marquee-img">
+                <img src="<?php echo e(asset('images/plantpic/shrubs-p.jpg')); ?>" alt="Shrubs" class="marquee-img">
+                <img src="<?php echo e(asset('images/plantpic/tree-p.jpg')); ?>" alt="Tree" class="marquee-img">
             </div>
             <!-- Duplicate content for seamless scrolling -->
             <div class="marquee-content">
-                <img src="{{ asset('images/plantpic/bamboo-p.jpg') }}" alt="Bamboo" class="marquee-img">
-                <img src="{{ asset('images/plantpic/fertilizer-p.jpg') }}" alt="Fertilizer" class="marquee-img">
-                <img src="{{ asset('images/plantpic/grass-p.jpg') }}" alt="Grass" class="marquee-img">
-                <img src="{{ asset('images/plantpic/herbs-pp.jpg') }}" alt="Herbs" class="marquee-img">
-                <img src="{{ asset('images/plantpic/palm-pp.jpg') }}" alt="Palm" class="marquee-img">
-                <img src="{{ asset('images/plantpic/shrubs-p.jpg') }}" alt="Shrubs" class="marquee-img">
-                <img src="{{ asset('images/plantpic/tree-p.jpg') }}" alt="Tree" class="marquee-img">
+                <img src="<?php echo e(asset('images/plantpic/bamboo-p.jpg')); ?>" alt="Bamboo" class="marquee-img">
+                <img src="<?php echo e(asset('images/plantpic/fertilizer-p.jpg')); ?>" alt="Fertilizer" class="marquee-img">
+                <img src="<?php echo e(asset('images/plantpic/grass-p.jpg')); ?>" alt="Grass" class="marquee-img">
+                <img src="<?php echo e(asset('images/plantpic/herbs-pp.jpg')); ?>" alt="Herbs" class="marquee-img">
+                <img src="<?php echo e(asset('images/plantpic/palm-pp.jpg')); ?>" alt="Palm" class="marquee-img">
+                <img src="<?php echo e(asset('images/plantpic/shrubs-p.jpg')); ?>" alt="Shrubs" class="marquee-img">
+                <img src="<?php echo e(asset('images/plantpic/tree-p.jpg')); ?>" alt="Tree" class="marquee-img">
                 </div>
             </div>
         </div>
@@ -1914,7 +1916,7 @@
                 <div class="category-filter-box">
                     <div class="filter-title d-flex align-items-center justify-content-between mb-3">
                         <span>Category Filter</span>
-                        @if(Auth::check() && Auth::user()->hasAdminAccess())
+                        <?php if(Auth::check() && Auth::user()->hasAdminAccess()): ?>
                         <div class="d-flex align-items-center" style="gap: .5rem;">
                             <button type="button" id="deleteCategoryBtn" class="btn btn-outline-danger icon-square-btn" title="Delete Category" aria-label="Delete Category">
                                 <i class="fas fa-trash"></i>
@@ -1923,10 +1925,10 @@
                                 <i class="fas fa-plus"></i>
                             </button>
                         </div>
-                        @endif
+                        <?php endif; ?>
                     </div>
                     <div class="category-grid">
-                        @php
+                        <?php
                             $isAdmin = Auth::check() && Auth::user()->hasAdminAccess();
                             $categoryCounts = [
                                 'shrub' => $plants->where('category', 'shrub')->count(),
@@ -1937,70 +1939,70 @@
                                 'bamboo' => $plants->where('category', 'bamboo')->count(),
                                 'fertilizer' => $plants->where('category', 'fertilizer')->count(),
                             ];
-                        @endphp
+                        ?>
                         <div class="category-icon-item active" data-category="all">
                             <div class="icon-circle active">
                                 <i class="fas fa-border-all"></i>
                             </div>
                             <span>All</span>
                         </div>
-                        @if($isAdmin || $categoryCounts['shrub'] > 0)
+                        <?php if($isAdmin || $categoryCounts['shrub'] > 0): ?>
                         <div class="category-icon-item" data-category="shrub">
-                            <img src="{{ asset('images/categories/shrub-g.png') }}" alt="Shrub" class="category-img">
+                            <img src="<?php echo e(asset('images/categories/shrub-g.png')); ?>" alt="Shrub" class="category-img">
                             <span>Shrub</span>
                         </div>
-                        @endif
-                        @if($isAdmin || $categoryCounts['herbs'] > 0)
+                        <?php endif; ?>
+                        <?php if($isAdmin || $categoryCounts['herbs'] > 0): ?>
                         <div class="category-icon-item" data-category="herbs">
-                            <img src="{{ asset('images/categories/herbs-g.png') }}" alt="Herbs" class="category-img">
+                            <img src="<?php echo e(asset('images/categories/herbs-g.png')); ?>" alt="Herbs" class="category-img">
                             <span>Herbs</span>
                         </div>
-                        @endif
-                        @if($isAdmin || $categoryCounts['palm'] > 0)
+                        <?php endif; ?>
+                        <?php if($isAdmin || $categoryCounts['palm'] > 0): ?>
                         <div class="category-icon-item" data-category="palm">
-                            <img src="{{ asset('images/categories/palm-g.png') }}" alt="Palm" class="category-img">
+                            <img src="<?php echo e(asset('images/categories/palm-g.png')); ?>" alt="Palm" class="category-img">
                             <span>Palm</span>
                         </div>
-                        @endif
-                        @if($isAdmin || $categoryCounts['tree'] > 0)
+                        <?php endif; ?>
+                        <?php if($isAdmin || $categoryCounts['tree'] > 0): ?>
                         <div class="category-icon-item" data-category="tree">
-                            <img src="{{ asset('images/categories/tree-g.png') }}" alt="Tree" class="category-img">
+                            <img src="<?php echo e(asset('images/categories/tree-g.png')); ?>" alt="Tree" class="category-img">
                             <span>Tree</span>
                         </div>
-                        @endif
-                        @if($isAdmin || $categoryCounts['grass'] > 0)
+                        <?php endif; ?>
+                        <?php if($isAdmin || $categoryCounts['grass'] > 0): ?>
                         <div class="category-icon-item" data-category="grass">
-                            <img src="{{ asset('images/categories/grass-g.png') }}" alt="Grass" class="category-img">
+                            <img src="<?php echo e(asset('images/categories/grass-g.png')); ?>" alt="Grass" class="category-img">
                             <span>Grass</span>
                         </div>
-                        @endif
-                        @if($isAdmin || $categoryCounts['bamboo'] > 0)
+                        <?php endif; ?>
+                        <?php if($isAdmin || $categoryCounts['bamboo'] > 0): ?>
                         <div class="category-icon-item" data-category="bamboo">
-                            <img src="{{ asset('images/categories/bamboo-g.png') }}" alt="Bamboo" class="category-img">
+                            <img src="<?php echo e(asset('images/categories/bamboo-g.png')); ?>" alt="Bamboo" class="category-img">
                             <span>Bamboo</span>
                         </div>
-                        @endif
-                        @if($isAdmin || $categoryCounts['fertilizer'] > 0)
+                        <?php endif; ?>
+                        <?php if($isAdmin || $categoryCounts['fertilizer'] > 0): ?>
                         <div class="category-icon-item" data-category="fertilizer">
-                            <img src="{{ asset('images/categories/fertilizer-g.png') }}" alt="Fertilizer" class="category-img">
+                            <img src="<?php echo e(asset('images/categories/fertilizer-g.png')); ?>" alt="Fertilizer" class="category-img">
                             <span>Fertilizer</span>
                         </div>
-                        @endif
+                        <?php endif; ?>
                         
-                        @if(isset($additionalCategories) && $additionalCategories->count() > 0)
-                            @foreach($additionalCategories as $category)
-                                <div class="category-icon-item" data-category="{{ $category->slug }}">
-                                    @if($category->icon_path)
-                                        <img src="{{ asset('storage/' . $category->icon_path) }}" alt="{{ $category->name }}" class="category-img">
-                                    @else
+                        <?php if(isset($additionalCategories) && $additionalCategories->count() > 0): ?>
+                            <?php $__currentLoopData = $additionalCategories; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $category): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <div class="category-icon-item" data-category="<?php echo e($category->slug); ?>">
+                                    <?php if($category->icon_path): ?>
+                                        <img src="<?php echo e(asset('storage/' . $category->icon_path)); ?>" alt="<?php echo e($category->name); ?>" class="category-img">
+                                    <?php else: ?>
                                         <div class="icon-circle">
                                             <i class="fas fa-leaf"></i>
                                         </div>
-                                    @endif
-                                    <span>{{ $category->name }}</span>
+                                    <?php endif; ?>
+                                    <span><?php echo e($category->name); ?></span>
                                 </div>
-                            @endforeach
-                        @endif
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
@@ -2016,20 +2018,20 @@
                 </div>
             </div>
             <div class="col-md-6 text-end search-controls-container">
-                    @if(Auth::check() && Auth::user()->hasAdminAccess())
+                    <?php if(Auth::check() && Auth::user()->hasAdminAccess()): ?>
                     <button class="btn btn-success me-2" data-bs-toggle="modal" data-bs-target="#addPlantModal">
                     <i class="fas fa-plus me-1"></i>Add New Plant
                 </button>
-                    @endif
+                    <?php endif; ?>
 
-                    @if(Auth::check() && Auth::user()->isClient() && !Auth::user()->hasAdminAccess())
+                    <?php if(Auth::check() && Auth::user()->isClient() && !Auth::user()->hasAdminAccess()): ?>
                         <!-- Client users only - Show both options -->
                         <div class="d-flex gap-2 justify-content-end">
                             <button class="btn btn-success" id="viewRequestBtn" onclick="startPlantInquiry()">
                                 <i class="fas fa-clipboard-list me-1"></i>Request Inquiry
                             </button>
                             
-                            @if(!Auth::user()->isProfileComplete())
+                            <?php if(!Auth::user()->isProfileComplete()): ?>
                                 <!-- RFQ Locked - Profile Incomplete -->
                                 <button class="btn btn-success position-relative" id="requestPlantsBtn" 
                                         style="opacity: 0.5; cursor: not-allowed;" 
@@ -2043,14 +2045,14 @@
                                         <i class="fas fa-lock"></i>
                                     </span>
                                 </button>
-                            @else
+                            <?php else: ?>
                                 <!-- RFQ Unlocked - Profile Complete -->
                                 <button class="btn btn-success" id="requestPlantsBtn">
                                     <i class="fas fa-file-invoice me-1"></i>Request for Quotation (RFQ)
                                 </button>
-                            @endif
+                            <?php endif; ?>
                         </div>
-                    @endif
+                    <?php endif; ?>
             </div>
         </div>
 
@@ -2058,7 +2060,7 @@
         <div class="category-filter-box d-md-none mb-3">
             <div class="filter-title d-flex align-items-center justify-content-between mb-3">
                 <span>Category Filter</span>
-                @if(Auth::check() && Auth::user()->hasAdminAccess())
+                <?php if(Auth::check() && Auth::user()->hasAdminAccess()): ?>
                 <div class="d-flex align-items-center" style="gap: .5rem;">
                     <button type="button" class="btn btn-outline-danger icon-square-btn delete-category-btn" title="Delete Category" aria-label="Delete Category">
                         <i class="fas fa-trash"></i>
@@ -2067,7 +2069,7 @@
                         <i class="fas fa-plus"></i>
                     </button>
                 </div>
-                @endif
+                <?php endif; ?>
             </div>
             <div class="category-grid">
                 <div class="category-icon-item active" data-category="all">
@@ -2076,63 +2078,63 @@
                     </div>
                     <span>All</span>
                 </div>
-                @if($isAdmin || $categoryCounts['shrub'] > 0)
+                <?php if($isAdmin || $categoryCounts['shrub'] > 0): ?>
                 <div class="category-icon-item" data-category="shrub">
-                    <img src="{{ asset('images/categories/shrub-g.png') }}" alt="Shrub" class="category-img">
+                    <img src="<?php echo e(asset('images/categories/shrub-g.png')); ?>" alt="Shrub" class="category-img">
                     <span>Shrub</span>
                 </div>
-                @endif
-                @if($isAdmin || $categoryCounts['herbs'] > 0)
+                <?php endif; ?>
+                <?php if($isAdmin || $categoryCounts['herbs'] > 0): ?>
                 <div class="category-icon-item" data-category="herbs">
-                    <img src="{{ asset('images/categories/herbs-g.png') }}" alt="Herbs" class="category-img">
+                    <img src="<?php echo e(asset('images/categories/herbs-g.png')); ?>" alt="Herbs" class="category-img">
                     <span>Herbs</span>
                 </div>
-                @endif
-                @if($isAdmin || $categoryCounts['palm'] > 0)
+                <?php endif; ?>
+                <?php if($isAdmin || $categoryCounts['palm'] > 0): ?>
                 <div class="category-icon-item" data-category="palm">
-                    <img src="{{ asset('images/categories/palm-g.png') }}" alt="Palm" class="category-img">
+                    <img src="<?php echo e(asset('images/categories/palm-g.png')); ?>" alt="Palm" class="category-img">
                     <span>Palm</span>
                 </div>
-                @endif
-                @if($isAdmin || $categoryCounts['tree'] > 0)
+                <?php endif; ?>
+                <?php if($isAdmin || $categoryCounts['tree'] > 0): ?>
                 <div class="category-icon-item" data-category="tree">
-                    <img src="{{ asset('images/categories/tree-g.png') }}" alt="Tree" class="category-img">
+                    <img src="<?php echo e(asset('images/categories/tree-g.png')); ?>" alt="Tree" class="category-img">
                     <span>Tree</span>
                 </div>
-                @endif
-                @if($isAdmin || $categoryCounts['grass'] > 0)
+                <?php endif; ?>
+                <?php if($isAdmin || $categoryCounts['grass'] > 0): ?>
                 <div class="category-icon-item" data-category="grass">
-                    <img src="{{ asset('images/categories/grass-g.png') }}" alt="Grass" class="category-img">
+                    <img src="<?php echo e(asset('images/categories/grass-g.png')); ?>" alt="Grass" class="category-img">
                     <span>Grass</span>
                 </div>
-                @endif
-                @if($isAdmin || $categoryCounts['bamboo'] > 0)
+                <?php endif; ?>
+                <?php if($isAdmin || $categoryCounts['bamboo'] > 0): ?>
                 <div class="category-icon-item" data-category="bamboo">
-                    <img src="{{ asset('images/categories/bamboo-g.png') }}" alt="Bamboo" class="category-img">
+                    <img src="<?php echo e(asset('images/categories/bamboo-g.png')); ?>" alt="Bamboo" class="category-img">
                     <span>Bamboo</span>
                 </div>
-                @endif
-                @if($isAdmin || $categoryCounts['fertilizer'] > 0)
+                <?php endif; ?>
+                <?php if($isAdmin || $categoryCounts['fertilizer'] > 0): ?>
                 <div class="category-icon-item" data-category="fertilizer">
-                    <img src="{{ asset('images/categories/fertilizer-g.png') }}" alt="Fertilizer" class="category-img">
+                    <img src="<?php echo e(asset('images/categories/fertilizer-g.png')); ?>" alt="Fertilizer" class="category-img">
                     <span>Fertilizer</span>
                 </div>
-                @endif
+                <?php endif; ?>
             </div>
         </div>
 
         <!-- Plants Grid -->
         <div class="row row-cols-1 row-cols-md-4 g-4" id="plantsGrid">
-            @foreach($plants as $plant)
-            <div class="col plant-item" data-category="{{ $plant->category }}" data-name="{{ $plant->name }}">
-                        @if(Auth::check() && Auth::user()->hasAdminAccess())
+            <?php $__currentLoopData = $plants; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $plant): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+            <div class="col plant-item" data-category="<?php echo e($plant->category); ?>" data-name="<?php echo e($plant->name); ?>">
+                        <?php if(Auth::check() && Auth::user()->hasAdminAccess()): ?>
                             <!-- Admin/Super Admin View -->
-                            <div class="card admin-plant-card" data-plant-id="{{ $plant->id }}" data-plant-code="{{ $plant->code }}">
+                            <div class="card admin-plant-card" data-plant-id="<?php echo e($plant->id); ?>" data-plant-code="<?php echo e($plant->code); ?>">
                                 <div class="card-body p-0">
                                     <!-- Main View (Always Visible) -->
                                     <div class="plant-main-view">
                                         <div class="plant-header d-flex justify-content-between align-items-center p-3">
-                                            <h5 class="card-title mb-0">{{ $plant->name }}</h5>
+                                            <h5 class="card-title mb-0"><?php echo e($plant->name); ?></h5>
                                             <div class="info-icon">
                                                 <i class="fas fa-chevron-right"></i>
                                             </div>
@@ -2140,14 +2142,14 @@
 
                                         <!-- Photo Display -->
                                         <div class="plant-image-container">
-                                            @if($plant->photo_path)
-                                                <img src="{{ asset('storage/' . $plant->photo_path) }}" alt="{{ $plant->name }}" class="plant-main-photo">
-                                            @else
+                                            <?php if($plant->photo_path): ?>
+                                                <img src="<?php echo e(asset('storage/' . $plant->photo_path)); ?>" alt="<?php echo e($plant->name); ?>" class="plant-main-photo">
+                                            <?php else: ?>
                                                 <div class="no-photo-placeholder">
                                                     <i class="fas fa-image"></i>
                                                     <p class="small">No Photo Available</p>
                                                 </div>
-                                            @endif
+                                            <?php endif; ?>
                                         </div>
                                     </div>
 
@@ -2158,38 +2160,38 @@
                                             <button class="btn btn-sm btn-link back-to-main" onclick="toggleAdminDetails(this)">
                                                 <i class="fas fa-chevron-left"></i>
                                             </button>
-                                            @if(!Auth::user()->isSuperAdmin())
+                                            <?php if(!Auth::user()->isSuperAdmin()): ?>
                                             <div class="d-flex align-items-center gap-2">
                                                 <button class="btn btn-link p-0 edit-plant-btn"
                                                         title="Edit"
-                                                        data-plant-id="{{ $plant->id }}"
-                                                        data-name="{{ $plant->name }}"
-                                                        data-code="{{ $plant->code }}"
-                                                        data-scientific-name="{{ $plant->scientific_name }}"
-                                                        data-category="{{ $plant->category }}"
-                                                        data-description="{{ $plant->description }}"
-                                                        data-height-mm="{{ $plant->height_mm }}"
-                                                        data-spread-mm="{{ $plant->spread_mm }}"
-                                                        data-spacing-mm="{{ $plant->spacing_mm }}"
-                                                        data-oc="{{ $plant->oc }}"
-                                                        data-price="{{ $plant->price }}"
-                                                        data-cost-per-sqm="{{ $plant->cost_per_sqm }}"
-                                                        data-pieces-per-sqm="{{ $plant->pieces_per_sqm }}"
-                                                        data-cost-per-mm="{{ $plant->cost_per_mm }}"
-                                                        data-quantity="{{ $plant->quantity }}"
-                                                        data-photo-path="{{ $plant->photo_path }}"
+                                                        data-plant-id="<?php echo e($plant->id); ?>"
+                                                        data-name="<?php echo e($plant->name); ?>"
+                                                        data-code="<?php echo e($plant->code); ?>"
+                                                        data-scientific-name="<?php echo e($plant->scientific_name); ?>"
+                                                        data-category="<?php echo e($plant->category); ?>"
+                                                        data-description="<?php echo e($plant->description); ?>"
+                                                        data-height-mm="<?php echo e($plant->height_mm); ?>"
+                                                        data-spread-mm="<?php echo e($plant->spread_mm); ?>"
+                                                        data-spacing-mm="<?php echo e($plant->spacing_mm); ?>"
+                                                        data-oc="<?php echo e($plant->oc); ?>"
+                                                        data-price="<?php echo e($plant->price); ?>"
+                                                        data-cost-per-sqm="<?php echo e($plant->cost_per_sqm); ?>"
+                                                        data-pieces-per-sqm="<?php echo e($plant->pieces_per_sqm); ?>"
+                                                        data-cost-per-mm="<?php echo e($plant->cost_per_mm); ?>"
+                                                        data-quantity="<?php echo e($plant->quantity); ?>"
+                                                        data-photo-path="<?php echo e($plant->photo_path); ?>"
                                                         type="button">
                                                     <i class="fas fa-edit fa-lg text-white"></i>
                                                 </button>
                                                 <button class="btn btn-link p-0 delete-plant-btn"
                                                         style="background: transparent !important; border: none !important; box-shadow: none !important; color: #dc3545 !important;"
                                                         title="Delete"
-                                                        data-plant-id="{{ $plant->id }}"
-                                                        data-plant-name="{{ $plant->name }}">
+                                                        data-plant-id="<?php echo e($plant->id); ?>"
+                                                        data-plant-name="<?php echo e($plant->name); ?>">
                                                     <i class="fas fa-trash-can fa-lg"></i>
                                                 </button>
                                             </div>
-                                            @endif
+                                            <?php endif; ?>
                                             <h6 class="mb-0">Plant Details</h6>
                                         </div>
 
@@ -2197,40 +2199,40 @@
                                         <div class="p-3">
                                             <div class="info-section text-white">
                                                 <div class="section-content">
-                                                    <p><small class="text-muted">Category:</small> <span class="value-text">{{ ucfirst($plant->category) }}</span></p>
-                                                    <p><small class="text-muted">Code:</small> <span class="value-text">{{ $plant->code ?? 'N/A' }}</span></p>
-                                                    @if($plant->scientific_name)
-                                                        <p><small class="text-muted">Scientific Name:</small> <em class="value-text">{{ $plant->scientific_name }}</em></p>
-                                                    @endif
-                                                    @if($plant->height_mm || $plant->spread_mm || $plant->spacing_mm)
+                                                    <p><small class="text-muted">Category:</small> <span class="value-text"><?php echo e(ucfirst($plant->category)); ?></span></p>
+                                                    <p><small class="text-muted">Code:</small> <span class="value-text"><?php echo e($plant->code ?? 'N/A'); ?></span></p>
+                                                    <?php if($plant->scientific_name): ?>
+                                                        <p><small class="text-muted">Scientific Name:</small> <em class="value-text"><?php echo e($plant->scientific_name); ?></em></p>
+                                                    <?php endif; ?>
+                                                    <?php if($plant->height_mm || $plant->spread_mm || $plant->spacing_mm): ?>
                                                         <div class="measurements mt-2">
                                                             <ul class="list-unstyled mb-0">
-                            @if($plant->height_mm)
-                                                                    <li><small class="text-muted">Height:</small> <span class="value-text">{{ $plant->height_mm }} mm</span></li>
-                            @endif
-                            @if($plant->spread_mm)
-                                                                    <li><small class="text-muted">Spread:</small> <span class="value-text">{{ $plant->spread_mm }} mm</span></li>
-                            @endif
-                            @if($plant->spacing_mm)
-                                                                    <li><small class="text-muted">Spacing:</small> <span class="value-text">{{ $plant->spacing_mm }} mm</span></li>
-                            @endif
+                            <?php if($plant->height_mm): ?>
+                                                                    <li><small class="text-muted">Height:</small> <span class="value-text"><?php echo e($plant->height_mm); ?> mm</span></li>
+                            <?php endif; ?>
+                            <?php if($plant->spread_mm): ?>
+                                                                    <li><small class="text-muted">Spread:</small> <span class="value-text"><?php echo e($plant->spread_mm); ?> mm</span></li>
+                            <?php endif; ?>
+                            <?php if($plant->spacing_mm): ?>
+                                                                    <li><small class="text-muted">Spacing:</small> <span class="value-text"><?php echo e($plant->spacing_mm); ?> mm</span></li>
+                            <?php endif; ?>
                         </ul>
                                                         </div>
-                                                    @endif
+                                                    <?php endif; ?>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        @else
+                        <?php else: ?>
                             <!-- User View -->
-                            <div class="card user-plant-card" data-plant-id="{{ $plant->id }}" data-plant-code="{{ $plant->code }}">
+                            <div class="card user-plant-card" data-plant-id="<?php echo e($plant->id); ?>" data-plant-code="<?php echo e($plant->code); ?>">
                                 <div class="card-body p-0">
                                     <!-- Main View (Always Visible) -->
                                     <div class="plant-main-view">
                                         <div class="plant-header d-flex justify-content-between align-items-center p-3">
-                                            <h5 class="card-title mb-0">{{ $plant->name }}</h5>
+                                            <h5 class="card-title mb-0"><?php echo e($plant->name); ?></h5>
                                             <div class="info-icon">
                                                 <i class="fas fa-chevron-right"></i>
                                             </div>
@@ -2238,14 +2240,14 @@
 
                                         <!-- Photo Display -->
                                         <div class="plant-image-container">
-                                            @if($plant->photo_path)
-                                                <img src="{{ asset('storage/' . $plant->photo_path) }}" alt="{{ $plant->name }}" class="plant-main-photo">
-                                            @else
+                                            <?php if($plant->photo_path): ?>
+                                                <img src="<?php echo e(asset('storage/' . $plant->photo_path)); ?>" alt="<?php echo e($plant->name); ?>" class="plant-main-photo">
+                                            <?php else: ?>
                                                 <div class="no-photo-placeholder">
                                                     <i class="fas fa-image"></i>
                                                     <p class="small">No Photo Available</p>
                                                 </div>
-                                            @endif
+                                            <?php endif; ?>
                                         </div>
                                     </div>
 
@@ -2267,52 +2269,52 @@
                                         <div class="p-2">
                                             <div class="info-section text-white">
                                                 <div class="section-content">
-                                                    <p class="mb-1" style="font-size: 0.9rem;"><small class="text-muted">Category:</small> <span class="value-text">{{ ucfirst($plant->category) }}</span></p>
-                                                    <p class="mb-1" style="font-size: 0.9rem;"><small class="text-muted">Code:</small> <span class="value-text">{{ $plant->code ?? 'N/A' }}</span></p>
-                                                    @if($plant->scientific_name)
-                                                        <p class="mb-2" style="font-size: 0.9rem;"><small class="text-muted">Scientific Name:</small> <em class="value-text">{{ $plant->scientific_name }}</em></p>
-                                                    @endif
+                                                    <p class="mb-1" style="font-size: 0.9rem;"><small class="text-muted">Category:</small> <span class="value-text"><?php echo e(ucfirst($plant->category)); ?></span></p>
+                                                    <p class="mb-1" style="font-size: 0.9rem;"><small class="text-muted">Code:</small> <span class="value-text"><?php echo e($plant->code ?? 'N/A'); ?></span></p>
+                                                    <?php if($plant->scientific_name): ?>
+                                                        <p class="mb-2" style="font-size: 0.9rem;"><small class="text-muted">Scientific Name:</small> <em class="value-text"><?php echo e($plant->scientific_name); ?></em></p>
+                                                    <?php endif; ?>
 
                                                     <div class="measurements mt-2">
                                                         <ul class="list-unstyled mb-0">
-                                                            @if($plant->height_mm)
+                                                            <?php if($plant->height_mm): ?>
                                                                 <li class="mb-1" style="font-size: 0.9rem;">
                                                                     <small class="text-muted">Height:</small>
-                                                                    <span class="value-text">{{ $plant->height_mm }} mm</span>
+                                                                    <span class="value-text"><?php echo e($plant->height_mm); ?> mm</span>
                                                                 </li>
-                                                            @endif
-                                                            @if($plant->spread_mm)
+                                                            <?php endif; ?>
+                                                            <?php if($plant->spread_mm): ?>
                                                                 <li class="mb-1" style="font-size: 0.9rem;">
                                                                     <small class="text-muted">Spread:</small>
-                                                                    <span class="value-text">{{ $plant->spread_mm }} mm</span>
+                                                                    <span class="value-text"><?php echo e($plant->spread_mm); ?> mm</span>
                                                                 </li>
-                                                            @endif
-                                                            @if($plant->spacing_mm)
+                                                            <?php endif; ?>
+                                                            <?php if($plant->spacing_mm): ?>
                                                                 <li class="mb-1" style="font-size: 0.9rem;">
                                                                     <small class="text-muted">Spacing:</small>
-                                                                    <span class="value-text">{{ $plant->spacing_mm }} mm</span>
+                                                                    <span class="value-text"><?php echo e($plant->spacing_mm); ?> mm</span>
                                                                 </li>
-                                                            @endif
+                                                            <?php endif; ?>
                                                         </ul>
                                                     </div>
 
-                                                    @guest
+                                                    <?php if(auth()->guard()->guest()): ?>
                                                         <!-- For guests - Login prompt -->
                                                         <div class="login-prompt mt-2">
-                                                            <a href="{{ route('login') }}" class="text-white" style="font-size: 0.85rem;">
+                                                            <a href="<?php echo e(route('login')); ?>" class="text-white" style="font-size: 0.85rem;">
                                                                 <i class="fas fa-sign-in-alt"></i> Want to request? Let's log you in first.
                                                             </a>
                                                         </div>
-                                                    @endguest
+                                                    <?php endif; ?>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        @endif
+                        <?php endif; ?>
             </div>
-            @endforeach
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                             </div>
                         </div>
                     </div>
@@ -2426,7 +2428,7 @@
                 </div>
                 <div class="modal-body">
                     <form id="editPlantForm">
-                        @csrf
+                        <?php echo csrf_field(); ?>
                         <input type="hidden" id="edit_plant_id">
 
                         <div class="row g-3">
@@ -2539,7 +2541,7 @@
                 </div>
                 <div class="modal-body">
                     <form id="photoUploadForm" enctype="multipart/form-data">
-                        @csrf
+                        <?php echo csrf_field(); ?>
                         <input type="hidden" id="photoPlantId" name="plant_id">
                         <div class="current-photo mb-3 text-center">
                             <img id="currentPhoto" src="" alt="" class="img-fluid mb-2 d-none">
@@ -2576,7 +2578,7 @@
                     <div class="mb-3">
                         <label for="requestEmail" class="form-label">Email address</label>
                         <input type="email" class="form-control" id="requestEmail" placeholder="your@email.com"
-                            @auth value="{{ auth()->user()->email }}" @endauth>
+                            <?php if(auth()->guard()->check()): ?> value="<?php echo e(auth()->user()->email); ?>" <?php endif; ?>>
                         <div class="form-text">We'll send you updates about your quotation request to this email.</div>
                     </div>
                 </div>
@@ -2789,7 +2791,7 @@
                     </div>
 
                     <form id="modalRequestForm">
-                        @csrf
+                        <?php echo csrf_field(); ?>
 
                         <!-- User Info Section -->
                         <div class="row mb-4">
@@ -2797,21 +2799,21 @@
                                 <div class="form-group">
                                     <label for="modal_name">Your Name</label>
                                     <input type="text" class="form-control" id="modal_name" name="name"
-                                        value="{{ auth()->check() ? auth()->user()->first_name . ' ' . auth()->user()->last_name : '' }}" required>
+                                        value="<?php echo e(auth()->check() ? auth()->user()->first_name . ' ' . auth()->user()->last_name : ''); ?>" required>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="modal_email">Email</label>
                                     <input type="email" class="form-control" id="modal_email" name="email"
-                                        value="{{ auth()->check() ? auth()->user()->email : '' }}" required>
+                                        value="<?php echo e(auth()->check() ? auth()->user()->email : ''); ?>" required>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="modal_contact_number">Contact Number</label>
                                     <input type="text" class="form-control" id="modal_contact_number" name="contact_number"
-                                        value="{{ auth()->check() ? auth()->user()->contact_number : '' }}" required>
+                                        value="<?php echo e(auth()->check() ? auth()->user()->contact_number : ''); ?>" required>
                                 </div>
                             </div>
                         </div>
@@ -2861,7 +2863,7 @@
             <span class="text-muted">© 2024 All rights reserved.</span>
         </div>
     </footer>
-    @if(Auth::check() && Auth::user()->hasAdminAccess())
+    <?php if(Auth::check() && Auth::user()->hasAdminAccess()): ?>
     <!-- Add Category Modal (moved outside navbar; inputs enabled) -->
     <div class="modal fade" id="addCategoryModal" tabindex="-1" aria-labelledby="addCategoryLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -2890,7 +2892,7 @@
             </div>
         </div>
     </div>
-    @endif
+    <?php endif; ?>
 
     <!-- Generic Confirm/Info Modal for Home page actions -->
     <div class="modal fade" id="homeConfirmModal" tabindex="-1" aria-hidden="true">
@@ -2916,14 +2918,14 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="{{ asset('js/alerts.js') }}?v={{ time() }}"></script>
-    <script src="{{ asset('js/loading.js') }}"></script>
-    <script src="{{ asset('js/push-notifications.js') }}?v={{ time() }}"></script>
-    <script src="{{ asset('js/rfq.js') }}"></script>
-    <script src="{{ asset('js/home.js') }}"></script>
+    <script src="<?php echo e(asset('js/alerts.js')); ?>?v=<?php echo e(time()); ?>"></script>
+    <script src="<?php echo e(asset('js/loading.js')); ?>"></script>
+    <script src="<?php echo e(asset('js/push-notifications.js')); ?>?v=<?php echo e(time()); ?>"></script>
+    <script src="<?php echo e(asset('js/rfq.js')); ?>"></script>
+    <script src="<?php echo e(asset('js/home.js')); ?>"></script>
     
     <!-- Plants Page Logout Confirmation Script -->
-    @auth
+    <?php if(auth()->guard()->check()): ?>
     <script>
     document.addEventListener('DOMContentLoaded', function() {
         const plantsLogoutBtn = document.getElementById('plants-logout-btn');
@@ -2943,7 +2945,7 @@
         }
     });
     </script>
-    @endauth
+    <?php endif; ?>
     
     <!-- Profile Incomplete Alert for RFQ -->
     <script>
@@ -2986,11 +2988,11 @@
 
     // Show alert when locked RFQ button is clicked
     function showProfileIncompleteAlert() {
-        @auth
-        const profilePercentage = {{ auth()->user()->getProfileCompletionPercentage() }};
-        @else
+        <?php if(auth()->guard()->check()): ?>
+        const profilePercentage = <?php echo e(auth()->user()->getProfileCompletionPercentage()); ?>;
+        <?php else: ?>
         const profilePercentage = 0;
-        @endauth
+        <?php endif; ?>
         
         Swal.fire({
             icon: 'warning',
@@ -3036,7 +3038,7 @@
             padding: '1.5rem'
         }).then((result) => {
             if (result.isConfirmed) {
-                window.location.href = '{{ route("profile.edit") }}';
+                window.location.href = '<?php echo e(route("profile.edit")); ?>';
             }
         });
         return false;
@@ -4113,12 +4115,12 @@ console.log('Loading modal form submission handler');
     </script>
 
     <!-- Hidden auth check element for JavaScript -->
-    @auth
+    <?php if(auth()->guard()->check()): ?>
         <div data-auth-check="true" style="display: none;"></div>
-        @if(Auth::user()->hasClientAccess())
+        <?php if(Auth::user()->hasClientAccess()): ?>
             <div data-user-role="client" style="display: none;"></div>
-        @endif
-    @endauth
+        <?php endif; ?>
+    <?php endif; ?>
     </div><!-- End page-content -->
 
     <!-- Preloader script -->
@@ -4146,4 +4148,4 @@ console.log('Loading modal form submission handler');
         });
     </script>
 </body>
-</html>
+</html><?php /**PATH C:\CODING\my_Inventory\resources\views/public/plants.blade.php ENDPATH**/ ?>

@@ -1369,10 +1369,6 @@
                                 <i class="fas fa-building me-2"></i>Company & Address
                             </h6>
                             <div class="row">
-                                <div class="col-md-6 mb-2" id="detail-company-name-row">
-                                    <strong>Company Name:</strong>
-                                    <span id="detail-company-name" class="text-muted"></span>
-                                </div>
                                 <div class="col-md-6 mb-2" id="detail-company-address-row">
                                     <strong>Company Address:</strong>
                                     <span id="detail-company-address" class="text-muted"></span>
@@ -1623,7 +1619,6 @@
                     $('#detail-section-header').html('<i class="fas fa-building me-2"></i>Company Information');
                     
                     // Populate company fields
-                    $('#detail-company-name').text(user.company_name || 'N/A');
                     $('#detail-company-address').text(user.company_address || 'N/A');
                 }
                 

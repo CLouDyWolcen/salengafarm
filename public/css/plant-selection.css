@@ -158,6 +158,9 @@ body.plant-selection-mode .info-icon {
     border-radius: 8px;
     padding: 1rem;
     margin-bottom: 1.5rem;
+    position: sticky;
+    top: 80px;
+    z-index: 100;
 }
 
 .filter-title {

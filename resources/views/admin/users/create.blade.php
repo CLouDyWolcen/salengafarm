@@ -166,18 +166,6 @@
                                             @enderror
                                         </div>
                                     </div>
-
-                                    <div class="mb-0">
-                                        <label for="company_name" class="form-label">
-                                            <i class="fas fa-building me-1"></i>Company Name <span class="text-danger">*</span>
-                                        </label>
-                                        <input type="text" class="form-control @error('company_name') is-invalid @enderror" 
-                                               id="company_name" name="company_name" value="{{ old('company_name') }}" 
-                                               placeholder="Enter company name" required>
-                                        @error('company_name')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
                                 </div>
 
                                 <!-- Security Section -->

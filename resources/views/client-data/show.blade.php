@@ -326,16 +326,20 @@
                                         @if($canUpload)
                                             <form action="{{ route('site-visits.client-data.upload', ['siteVisit' => $siteVisit->id, 'itemKey' => $key]) }}" method="POST" enctype="multipart/form-data" class="client-data-upload-form">
                                                 @csrf
-                                                <div class="d-flex flex-column gap-2">
-                                                    <input type="file" name="file" id="file-{{ $key }}" class="file-input-cd d-none" required>
+                                                <div class="mb-2">
+                                                    <input type="file" name="file" id="file-{{ $key }}" class="file-input-cd" required style="display: none;">
                                                     <button type="button" class="btn btn-outline-secondary btn-sm w-100 select-file-btn" onclick="document.getElementById('file-{{ $key }}').click()" style="font-size: 0.7rem; padding: 0.2rem 0.4rem;">
                                                         <i class="fas fa-paperclip me-1"></i><span class="btn-text">Select File</span>
                                                     </button>
-                                                    <button class="btn btn-success btn-sm w-100 upload-btn" type="submit" style="font-size: 0.7rem; padding: 0.2rem 0.4rem;">
-                                                        <span class="btn-content"><i class="fas fa-upload me-1"></i>Upload</span>
-                                                        <span class="spinner-border spinner-border-sm d-none" role="status" style="width: 0.8rem; height: 0.8rem;"></span>
-                                                    </button>
                                                 </div>
+                                                <div class="selected-file-display mb-2 p-2 bg-light rounded d-none" style="font-size: 0.75rem;">
+                                                    <i class="fas fa-file text-success me-1"></i>
+                                                    <span class="selected-filename text-truncate d-inline-block" style="max-width: 180px;"></span>
+                                                </div>
+                                                <button class="btn btn-success btn-sm w-100 upload-btn" type="submit" disabled style="font-size: 0.7rem; padding: 0.2rem 0.4rem;">
+                                                    <span class="btn-content"><i class="fas fa-upload me-1"></i>Upload</span>
+                                                    <span class="spinner-border spinner-border-sm d-none" role="status" style="width: 0.8rem; height: 0.8rem;"></span>
+                                                </button>
                                                 @if($key === 'drone_map')
                                                     <small class="text-muted d-block mt-1" style="font-size: 0.65rem;">Allowed: pdf, jpg, jpeg, png, mp4, mov. Max 20MB.</small>
                                                 @else
@@ -630,32 +634,37 @@
                 });
             });
             
-            // Client Data file upload handling - change button text and background color
+            // Client Data file upload handling - match site-visits pattern
             document.querySelectorAll('.file-input-cd').forEach(input => {
                 input.addEventListener('change', function() {
                     const form = this.closest('.client-data-upload-form');
                     const selectBtn = form.querySelector('.select-file-btn');
+                    const uploadBtn = form.querySelector('.upload-btn');
+                    const fileDisplay = form.querySelector('.selected-file-display');
+                    const filenameSpan = form.querySelector('.selected-filename');
                     const btnText = selectBtn.querySelector('.btn-text');
                     
                     if (this.files.length > 0) {
                         const filename = this.files[0].name;
-                        const displayName = filename.length > 20 ? filename.substring(0, 17) + '...' : filename;
                         
-                        // Change button to light green background and show filename
+                        // Update select button to show selected
                         selectBtn.classList.remove('btn-outline-secondary');
                         selectBtn.classList.add('btn-outline-success');
-                        selectBtn.style.backgroundColor = '#d1e7dd';
-                        selectBtn.style.borderColor = '#198754';
-                        selectBtn.style.color = '#0f5132';
-                        btnText.textContent = displayName;
+                        btnText.textContent = 'Change File';
+                        
+                        // Show filename display
+                        filenameSpan.textContent = filename;
+                        fileDisplay.classList.remove('d-none');
+                        
+                        // Enable upload button
+                        uploadBtn.disabled = false;
                     } else {
-                        // Reset button
+                        // Reset if no file
                         selectBtn.classList.remove('btn-outline-success');
                         selectBtn.classList.add('btn-outline-secondary');
-                        selectBtn.style.backgroundColor = '';
-                        selectBtn.style.borderColor = '';
-                        selectBtn.style.color = '';
                         btnText.textContent = 'Select File';
+                        fileDisplay.classList.add('d-none');
+                        uploadBtn.disabled = true;
                     }
                 });
             });

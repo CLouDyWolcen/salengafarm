@@ -218,20 +218,7 @@
                                         <i class="fas fa-building me-2"></i>Company Information
                                     </h6>
                                     <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="mb-3">
-                                                <label for="company_name" class="form-label">Company Name</label>
-                                                <input type="text" 
-                                                       class="form-control @error('company_name') is-invalid @enderror" 
-                                                       id="company_name" 
-                                                       name="company_name" 
-                                                       value="{{ old('company_name', $user->company_name) }}">
-                                                @error('company_name')
-                                                    <div class="invalid-feedback">{{ $message }}</div>
-                                                @enderror
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
+                                        <div class="col-md-12">
                                             <div class="mb-3">
                                                 <label for="company_address" class="form-label">Company Address</label>
                                                 <input type="text" 
@@ -405,7 +392,6 @@
                 companyFields.style.display = 'none';
                 
                 // Clear company fields
-                document.getElementById('company_name').value = '';
                 document.getElementById('company_address').value = '';
             } else if (accountType === 'company') {
                 individualFields.style.display = 'none';

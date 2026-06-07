@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
     <title>Verify Your Identity - Salenga Farm</title>
-    <link rel="icon" type="image/x-icon" href="{{ asset('tree-leaf.ico') }}">
+    <link rel="icon" type="image/x-icon" href="<?php echo e(asset('tree-leaf.ico')); ?>">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
@@ -312,15 +312,15 @@
         </div>
         
         <div class="card-body-custom">
-            @if($lockedOut)
+            <?php if($lockedOut): ?>
                 <div class="lockout-message">
                     <i class="fas fa-lock lockout-icon"></i>
                     <h5 class="text-danger">Account Temporarily Locked</h5>
                     <p class="mb-0">
-                        Too many failed attempts. Please try again in <strong>{{ $lockoutMinutes }} minutes</strong>.
+                        Too many failed attempts. Please try again in <strong><?php echo e($lockoutMinutes); ?> minutes</strong>.
                     </p>
                 </div>
-            @else
+            <?php else: ?>
                 <div class="info-box">
                     <p>
                         <i class="fas fa-paper-plane" style="margin-right: 6px;"></i>
@@ -328,25 +328,27 @@
                     </p>
                 </div>
                 
-                @if(session('success'))
+                <?php if(session('success')): ?>
                     <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        <i class="fas fa-check-circle me-2"></i>{{ session('success') }}
+                        <i class="fas fa-check-circle me-2"></i><?php echo e(session('success')); ?>
+
                         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
-                @endif
+                <?php endif; ?>
                 
-                @if($errors->any())
+                <?php if($errors->any()): ?>
                     <div class="alert alert-danger alert-dismissible fade show" role="alert">
                         <i class="fas fa-exclamation-circle me-2"></i>
-                        @foreach($errors->all() as $error)
-                            {{ $error }}
-                        @endforeach
+                        <?php $__currentLoopData = $errors->all(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $error): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <?php echo e($error); ?>
+
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
-                @endif
+                <?php endif; ?>
                 
-                <form method="POST" action="{{ route('mfa.verify.post') }}" id="verifyForm">
-                    @csrf
+                <form method="POST" action="<?php echo e(route('mfa.verify.post')); ?>" id="verifyForm">
+                    <?php echo csrf_field(); ?>
                     
                     <div class="mb-4">
                         <label class="form-label text-center d-block fw-bold mb-3" style="font-size: 14px;">
@@ -387,8 +389,8 @@
                 <div class="text-center mt-3">
                     <p class="text-muted mb-0" style="font-size: 13px;">
                         Didn't receive the code? 
-                        <form method="POST" action="{{ route('mfa.resend') }}" class="d-inline">
-                            @csrf
+                        <form method="POST" action="<?php echo e(route('mfa.resend')); ?>" class="d-inline">
+                            <?php echo csrf_field(); ?>
                             <button type="submit" class="btn btn-link resend-link p-0">
                                 Click to resend
                             </button>
@@ -402,7 +404,7 @@
                         Salenga Farm - Secure Authentication
                     </small>
                 </div>
-            @endif
+            <?php endif; ?>
         </div>
     </div>
 
@@ -481,3 +483,4 @@
     </script>
 </body>
 </html>
+<?php /**PATH C:\CODING\my_Inventory\resources\views/auth/mfa/verify.blade.php ENDPATH**/ ?>
