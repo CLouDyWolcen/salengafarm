@@ -13,7 +13,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
-    <link href="{{ asset('css/public.css') }}?v=3" rel="stylesheet">
+    <link href="{{ asset('css/public.css') }}?v=4" rel="stylesheet">
     <link href="{{ asset('css/plant-selection.css') }}?v={{ time() }}" rel="stylesheet">
     <link href="{{ asset('css/loading.css') }}?v={{ time() }}" rel="stylesheet">
     <link href="{{ asset('css/push-notifications.css') }}?v={{ time() }}" rel="stylesheet">
@@ -1497,15 +1497,9 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        @if(Auth::user()->role === 'super_admin')
-                            <a class="nav-link text-white {{ request()->routeIs('plant-care.index') || request()->routeIs('plant-care.show') ? 'active' : '' }}" href="{{ route('plant-care.index') }}">
-                                <i class="fas fa-leaf me-1"></i> Plant Guide
-                            </a>
-                        @else
-                            <a class="nav-link text-white {{ request()->routeIs('plant-care.admin') || request()->routeIs('plant-care.edit') || request()->routeIs('plant-care.show') ? 'active' : '' }}" href="{{ route('plant-care.admin') }}">
-                                <i class="fas fa-leaf me-1"></i> Plant Guide
-                            </a>
-                        @endif
+                        <a class="nav-link text-white {{ request()->routeIs('plant-care.admin') || request()->routeIs('plant-care.edit') || request()->routeIs('plant-care.show') ? 'active' : '' }}" href="{{ route('plant-care.admin') }}">
+                            <i class="fas fa-leaf me-1"></i> Plant Guide
+                        </a>
                     </li>
                 </ul>
                 @else
@@ -1551,11 +1545,7 @@
                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="menuDropdown">
                                     <!-- Mobile-only nav links (Home, Plant Guide) -->
                                     <li class="d-md-none"><a class="dropdown-item" href="{{ route('public.plants') }}"><i class="fas fa-home me-2"></i>Home</a></li>
-                                    @if(auth()->user()->role === 'super_admin')
-                                        <li class="d-md-none"><a class="dropdown-item" href="{{ route('plant-care.index') }}"><i class="fas fa-leaf me-2"></i>Plant Guide</a></li>
-                                    @else
-                                        <li class="d-md-none"><a class="dropdown-item" href="{{ route('plant-care.admin') }}"><i class="fas fa-leaf me-2"></i>Plant Guide</a></li>
-                                    @endif
+                                    <li class="d-md-none"><a class="dropdown-item" href="{{ route('plant-care.admin') }}"><i class="fas fa-leaf me-2"></i>Plant Guide</a></li>
                                     <li class="d-md-none"><hr class="dropdown-divider"></li>
                                     
                                     <!-- Desktop nav links (always visible) -->
@@ -1907,11 +1897,11 @@
     </div>
 
     <!-- Main Content -->
-    <div class="container-fluid py-5">
-        <div class="row">
+    <div class="container-fluid py-5" style="overflow: visible;">
+        <div class="row" style="overflow: visible; align-items: flex-start;">
             <!-- Left sidebar with category filter (desktop only) -->
-            <div class="col-md-3 d-none d-md-block">
-                <div class="category-filter-box">
+            <div class="col-md-3 d-none d-md-block" style="align-self: stretch;">
+                <div class="category-filter-box" style="position: sticky; top: 10px; z-index: 100;">
                     <div class="filter-title d-flex align-items-center justify-content-between mb-3">
                         <span>Category Filter</span>
                         @if(Auth::check() && Auth::user()->hasAdminAccess())
@@ -2158,7 +2148,6 @@
                                             <button class="btn btn-sm btn-link back-to-main" onclick="toggleAdminDetails(this)">
                                                 <i class="fas fa-chevron-left"></i>
                                             </button>
-                                            @if(!Auth::user()->isSuperAdmin())
                                             <div class="d-flex align-items-center gap-2">
                                                 <button class="btn btn-link p-0 edit-plant-btn"
                                                         title="Edit"
@@ -2189,7 +2178,6 @@
                                                     <i class="fas fa-trash-can fa-lg"></i>
                                                 </button>
                                             </div>
-                                            @endif
                                             <h6 class="mb-0">Plant Details</h6>
                                         </div>
 

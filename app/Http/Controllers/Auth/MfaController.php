@@ -47,6 +47,9 @@ class MfaController extends Controller
      */
     public function verify(Request $request)
     {
+        // Trim the code to handle copy-paste with whitespace
+        $request->merge(['code' => trim($request->code ?? '')]);
+        
         $request->validate([
             'code' => 'required|string|size:6|regex:/^[0-9]{6}$/',
             'remember_device' => 'nullable|boolean'
