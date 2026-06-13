@@ -379,9 +379,7 @@
                                             <label for="category" class="form-label">Category</label>
                                             <select class="form-select" id="category" name="category" required>
                                             <option value="" selected disabled>Select Category</option>
-                                            @foreach(\App\Models\Category::orderBy('name', 'asc')->get() as $cat)
-                                                <option value="{{ $cat->slug }}">{{ $cat->name }}</option>
-                                            @endforeach
+                                            <!-- Categories will be populated by JavaScript -->
                                         </select>
                                         </div>
                                     </div>
@@ -832,15 +830,14 @@
             // Function to populate category dropdown with custom categories
             function populateCategoryDropdown() {
                 const categorySelect = $('#category');
-                const additionalCategories = JSON.parse(localStorage.getItem('additionalCategories') || '[]');
                 
                 // Remove any previously added custom categories
                 categorySelect.find('option[data-custom="true"]').remove();
                 
-                // Add custom categories
+                // Add all categories from database (already loaded in additionalCategories variable)
                 additionalCategories.forEach(cat => {
                     const option = $('<option>')
-                        .val(cat.name.toLowerCase())
+                        .val(cat.slug)
                         .text(cat.name)
                         .attr('data-custom', 'true');
                     categorySelect.append(option);
