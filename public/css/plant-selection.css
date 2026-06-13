@@ -158,9 +158,34 @@ body.plant-selection-mode .info-icon {
     border-radius: 8px;
     padding: 1rem;
     margin-bottom: 1.5rem;
-    position: sticky;
-    top: 80px;
-    z-index: 100;
+    position: sticky !important;
+    top: 80px !important;
+    z-index: 100 !important;
+}
+
+/* Ensure sticky positioning on desktop/laptop - HIGHEST PRIORITY */
+@media (min-width: 769px) {
+    /* Ensure row container allows sticky children */
+    .container-fluid .row {
+        overflow: visible !important;
+    }
+    
+    /* Fix flexbox alignment for sticky to work */
+    .container-fluid.py-5 > .row {
+        align-items: flex-start !important;
+    }
+    
+    .col-md-3 .category-filter-box,
+    .category-filter-box {
+        position: sticky !important;
+        top: 80px !important;
+        z-index: 100 !important;
+    }
+    
+    /* Ensure parent column allows sticky */
+    .col-md-3 {
+        position: relative !important;
+    }
 }
 
 .filter-title {

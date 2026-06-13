@@ -7,6 +7,7 @@ use App\Models\Plant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 
 class PublicController extends Controller
 {
@@ -24,6 +25,11 @@ class PublicController extends Controller
 
     public function update(Request $request, DisplayPlant $plant)
     {
+        // Authorization check - only admin/super admin can update
+        if (!Auth::check() || !Auth::user()->hasAdminAccess()) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
         try {
             $validated = $request->validate([
                 'name' => 'required|string|max:255',
@@ -58,6 +64,11 @@ class PublicController extends Controller
 
     public function store(Request $request)
     {
+        // Authorization check - only admin/super admin can add plants
+        if (!Auth::check() || !Auth::user()->hasAdminAccess()) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'code' => 'nullable|string|max:50',
@@ -84,12 +95,22 @@ class PublicController extends Controller
 
     public function destroy(DisplayPlant $plant)
     {
+        // Authorization check - only admin/super admin can delete plants
+        if (!Auth::check() || !Auth::user()->hasAdminAccess()) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
         $plant->delete();
         return response()->json(['message' => 'Plant removed from display successfully']);
     }
 
     public function uploadPhoto(Request $request)
     {
+        // Authorization check - only admin/super admin can upload photos
+        if (!Auth::check() || !Auth::user()->hasAdminAccess()) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
         try {
             $request->validate([
                 'plant_id' => 'required|exists:display_plants,id',
@@ -127,6 +148,11 @@ class PublicController extends Controller
 
     public function removePhoto($plant)
     {
+        // Authorization check - only admin/super admin can remove photos
+        if (!Auth::check() || !Auth::user()->hasAdminAccess()) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
         try {
             $plant = DisplayPlant::findOrFail($plant);
 

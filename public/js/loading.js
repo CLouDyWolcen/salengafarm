@@ -56,11 +56,11 @@ const LoadingManager = {
         overlay.innerHTML = `
             <div class="loading-content">
                 <div class="domino-container">
-                    <div class="domino-loader" style="animation: dominos 1s ease infinite;"></div>
-                    <div class="domino-loader" style="animation: dominos 1s ease infinite;"></div>
-                    <div class="domino-loader" style="animation: dominos 1s ease infinite;"></div>
-                    <div class="domino-loader" style="animation: dominos 1s ease infinite;"></div>
-                    <div class="domino-loader" style="animation: dominos 1s ease infinite;"></div>
+                    <div class="domino-loader" style="animation: dominos 1s ease infinite; animation-delay: 0.325s;"></div>
+                    <div class="domino-loader" style="animation: dominos 1s ease infinite; animation-delay: 0.5s;"></div>
+                    <div class="domino-loader" style="animation: dominos 1s ease infinite; animation-delay: 0.625s;"></div>
+                    <div class="domino-loader" style="animation: dominos 1s ease infinite; animation-delay: 0.74s;"></div>
+                    <div class="domino-loader" style="animation: dominos 1s ease infinite; animation-delay: 0.865s;"></div>
                 </div>
                 <div class="loading-text">${message}</div>
                 ${submessage ? `<div class="loading-subtext">${submessage}</div>` : ''}
