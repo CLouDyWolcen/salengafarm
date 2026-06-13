@@ -18,9 +18,12 @@ class PlantController extends Controller
         $baseCategories = ['shrub', 'herbs', 'palm', 'tree', 'grass', 'bamboo', 'fertilizer'];
         
         // Get only additional categories (exclude base categories from "Show More")
-        $categories = \App\Models\Category::whereNotIn('slug', $baseCategories)->get();
+        $additionalCategories = \App\Models\Category::whereNotIn('slug', $baseCategories)->get();
         
-        return view('plants.index', compact('plants', 'categories'));
+        // Get ALL categories for the dropdown
+        $allCategories = \App\Models\Category::orderBy('name', 'asc')->get();
+        
+        return view('plants.index', compact('plants', 'additionalCategories', 'allCategories'));
     }
 
     public function store(Request $request)

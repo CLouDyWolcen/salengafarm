@@ -834,8 +834,8 @@
                 // Remove any previously added custom categories
                 categorySelect.find('option[data-custom="true"]').remove();
                 
-                // Add all categories from database (already loaded in additionalCategories variable)
-                additionalCategories.forEach(cat => {
+                // Add all categories from database
+                allCategories.forEach(cat => {
                     const option = $('<option>')
                         .val(cat.slug)
                         .text(cat.name)
@@ -1746,7 +1746,8 @@
         // Category management functionality
         let deleteMode = false;
         let selectedCategoryToDelete = null;
-        let additionalCategories = @json($categories ?? []);
+        let additionalCategories = @json($additionalCategories ?? []);
+        let allCategories = @json($allCategories ?? []);
 
         // Add category button
         $('#addCategoryBtn').on('click', function() {
@@ -1786,8 +1787,9 @@
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
                 success: function(response) {
-                    // Add to local array
+                    // Add to local arrays
                     additionalCategories.push(response.category);
+                    allCategories.push(response.category);
                     
                     $('#addCategoryModal').modal('hide');
                     $('#addCategoryForm')[0].reset();
@@ -1961,8 +1963,9 @@
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
                     success: function(response) {
-                        // Remove from local array
+                        // Remove from local arrays
                         additionalCategories = additionalCategories.filter(c => c.id !== selectedCategoryToDelete);
+                        allCategories = allCategories.filter(c => c.id !== selectedCategoryToDelete);
                         
                         $('#deleteCategoryModal').modal('hide');
                         
