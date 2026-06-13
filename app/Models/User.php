@@ -6,6 +6,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use App\Notifications\CustomResetPasswordNotification;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -308,5 +309,16 @@ class User extends Authenticatable implements MustVerifyEmail
     public function mfaAttempts()
     {
         return $this->hasMany(MfaAttempt::class);
+    }
+
+    /**
+     * Send the password reset notification using Brevo.
+     *
+     * @param  string  $token
+     * @return void
+     */
+    public function sendPasswordResetNotification($token)
+    {
+        $this->notify(new CustomResetPasswordNotification($token));
     }
 }
