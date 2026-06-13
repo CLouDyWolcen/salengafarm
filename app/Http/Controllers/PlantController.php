@@ -20,8 +20,8 @@ class PlantController extends Controller
         // Get only additional categories (exclude base categories from "Show More")
         $additionalCategories = \App\Models\Category::whereNotIn('slug', $baseCategories)->get();
         
-        // Get ALL categories for the dropdown
-        $allCategories = \App\Models\Category::orderBy('name', 'asc')->get();
+        // Get ALL categories for the dropdown (in creation order, not alphabetical)
+        $allCategories = \App\Models\Category::orderBy('id', 'asc')->get();
         
         return view('plants.index', compact('plants', 'additionalCategories', 'allCategories'));
     }

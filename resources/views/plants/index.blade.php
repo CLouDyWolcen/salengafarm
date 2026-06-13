@@ -536,6 +536,30 @@
     <script src="{{ asset('js/loading.js') }}"></script>
     <script src="{{ asset('js/push-notifications.js') }}?v={{ time() }}"></script>
     <script>
+        // Function to populate category dropdown with custom categories
+        function populateCategoryDropdown() {
+            const categorySelect = $('#category');
+            
+            console.log('=== populateCategoryDropdown called ===');
+            console.log('allCategories:', allCategories);
+            console.log('Current dropdown options:', categorySelect.find('option').length);
+            
+            // Remove any previously added custom categories
+            categorySelect.find('option[data-custom="true"]').remove();
+            
+            // Add all categories from database
+            allCategories.forEach(cat => {
+                console.log('Adding category:', cat.name, cat.slug);
+                const option = $('<option>')
+                    .val(cat.slug)
+                    .text(cat.name)
+                    .attr('data-custom', 'true');
+                categorySelect.append(option);
+            });
+            
+            console.log('After populate, dropdown options:', categorySelect.find('option').length);
+        }
+        
         $(document).ready(function() {
             let selectedPlant = null;
             const modal = new bootstrap.Modal(document.getElementById('plantModal'));
@@ -545,6 +569,9 @@
 
             // Setup sidebar toggle for mobile
             setupSidebarToggle();
+            
+            // Populate category dropdown on page load
+            populateCategoryDropdown();
 
             // Function to update row numbers
             function updateRowNumbers() {
@@ -826,30 +853,6 @@
                 
                 modal.show();
             });
-            
-            // Function to populate category dropdown with custom categories
-            function populateCategoryDropdown() {
-                const categorySelect = $('#category');
-                
-                console.log('=== populateCategoryDropdown called ===');
-                console.log('allCategories:', allCategories);
-                console.log('Current dropdown options:', categorySelect.find('option').length);
-                
-                // Remove any previously added custom categories
-                categorySelect.find('option[data-custom="true"]').remove();
-                
-                // Add all categories from database
-                allCategories.forEach(cat => {
-                    console.log('Adding category:', cat.name, cat.slug);
-                    const option = $('<option>')
-                        .val(cat.slug)
-                        .text(cat.name)
-                        .attr('data-custom', 'true');
-                    categorySelect.append(option);
-                });
-                
-                console.log('After populate, dropdown options:', categorySelect.find('option').length);
-            }
 
             // Edit button click handler
             $(document).on('click', '.edit-plant', function(e) {
@@ -875,6 +878,9 @@
                     cost_per_mm: plantRow.data('cost-per-mm'),
                     quantity: plantRow.data('quantity')
                 };
+                
+                // Populate category dropdown
+                populateCategoryDropdown();
                 
                 // Reset form and clear previous errors
                 $('#plantForm')[0].reset();
