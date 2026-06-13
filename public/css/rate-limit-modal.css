@@ -1,0 +1,305 @@
+/**
+ * Rate Limit Modal Styles
+ * Responsive popup for rate limit errors
+ */
+
+/* Modal container */
+.rate-limit-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 99999;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+/* Overlay backdrop */
+.rate-limit-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    animation: fadeIn 0.3s ease;
+}
+
+/* Modal content */
+.rate-limit-content {
+    position: relative;
+    background: white;
+    border-radius: 16px;
+    padding: 40px 30px;
+    max-width: 480px;
+    width: 100%;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 1;
+}
+
+/* Icon */
+.rate-limit-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 20px;
+    background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 24px rgba(255, 152, 0, 0.3);
+}
+
+.rate-limit-icon i {
+    font-size: 36px;
+    color: white;
+    animation: pulse 2s infinite;
+}
+
+/* Title */
+.rate-limit-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #333;
+    margin: 0 0 15px 0;
+}
+
+/* Message */
+.rate-limit-message {
+    font-size: 16px;
+    color: #666;
+    line-height: 1.6;
+    margin: 0 0 25px 0;
+}
+
+/* Timer */
+.rate-limit-timer {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    padding: 20px;
+    border-radius: 12px;
+    margin: 0 0 25px 0;
+    font-size: 18px;
+    color: #495057;
+    font-weight: 600;
+}
+
+#countdown-seconds {
+    display: inline-block;
+    min-width: 40px;
+    color: #ff9800;
+    font-size: 24px;
+    font-weight: 700;
+}
+
+/* Close button */
+.rate-limit-close-btn {
+    background: linear-gradient(135deg, #198754 0%, #157347 100%);
+    color: white;
+    border: none;
+    padding: 14px 40px;
+    border-radius: 50px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(25, 135, 84, 0.3);
+    width: 100%;
+    max-width: 200px;
+}
+
+.rate-limit-close-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(25, 135, 84, 0.4);
+}
+
+.rate-limit-close-btn:active {
+    transform: translateY(0);
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+}
+
+/* Responsive Design */
+
+/* Tablet */
+@media (max-width: 768px) {
+    .rate-limit-content {
+        padding: 35px 25px;
+        max-width: 420px;
+    }
+    
+    .rate-limit-icon {
+        width: 70px;
+        height: 70px;
+    }
+    
+    .rate-limit-icon i {
+        font-size: 32px;
+    }
+    
+    .rate-limit-title {
+        font-size: 22px;
+    }
+    
+    .rate-limit-message {
+        font-size: 15px;
+    }
+    
+    .rate-limit-timer {
+        font-size: 17px;
+        padding: 18px;
+    }
+    
+    #countdown-seconds {
+        font-size: 22px;
+    }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+    .rate-limit-modal {
+        padding: 15px;
+    }
+    
+    .rate-limit-content {
+        padding: 30px 20px;
+        border-radius: 12px;
+    }
+    
+    .rate-limit-icon {
+        width: 60px;
+        height: 60px;
+        margin-bottom: 15px;
+    }
+    
+    .rate-limit-icon i {
+        font-size: 28px;
+    }
+    
+    .rate-limit-title {
+        font-size: 20px;
+        margin-bottom: 12px;
+    }
+    
+    .rate-limit-message {
+        font-size: 14px;
+        margin-bottom: 20px;
+    }
+    
+    .rate-limit-timer {
+        font-size: 16px;
+        padding: 15px;
+        margin-bottom: 20px;
+    }
+    
+    #countdown-seconds {
+        font-size: 20px;
+        min-width: 35px;
+    }
+    
+    .rate-limit-close-btn {
+        padding: 12px 30px;
+        font-size: 15px;
+        max-width: 100%;
+    }
+}
+
+/* Small mobile */
+@media (max-width: 360px) {
+    .rate-limit-content {
+        padding: 25px 15px;
+    }
+    
+    .rate-limit-icon {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .rate-limit-icon i {
+        font-size: 24px;
+    }
+    
+    .rate-limit-title {
+        font-size: 18px;
+    }
+    
+    .rate-limit-message {
+        font-size: 13px;
+    }
+    
+    .rate-limit-timer {
+        font-size: 15px;
+        padding: 12px;
+    }
+    
+    #countdown-seconds {
+        font-size: 18px;
+    }
+}
+
+/* Dark mode support (optional) */
+@media (prefers-color-scheme: dark) {
+    .rate-limit-content {
+        background: #2d2d2d;
+        color: #e0e0e0;
+    }
+    
+    .rate-limit-title {
+        color: #ffffff;
+    }
+    
+    .rate-limit-message {
+        color: #b0b0b0;
+    }
+    
+    .rate-limit-timer {
+        background: linear-gradient(135deg, #3a3a3a 0%, #2d2d2d 100%);
+        color: #e0e0e0;
+    }
+}
+
+/* Accessibility */
+.rate-limit-close-btn:focus {
+    outline: 3px solid #ffc107;
+    outline-offset: 2px;
+}
+
+/* Print styles (hide modal when printing) */
+@media print {
+    .rate-limit-modal {
+        display: none !important;
+    }
+}

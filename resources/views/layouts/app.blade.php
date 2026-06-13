@@ -17,6 +17,7 @@
         <link href="{{ asset('css/sidebar.css') }}" rel="stylesheet">
         <link href="{{ asset('css/loading.css') }}?v={{ time() }}" rel="stylesheet">
         <link href="{{ asset('css/push-notifications.css') }}?v={{ time() }}" rel="stylesheet">
+        <link href="{{ asset('css/rate-limit-modal.css') }}?v={{ time() }}" rel="stylesheet">
         
         <!-- Custom CSS -->
         <link href="{{ asset('csss/public.css') }}" rel="stylesheet">
@@ -88,6 +89,7 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script src="{{ asset('js/loading.js') }}"></script>
+        <script src="{{ asset('js/rate-limit-handler.js') }}?v={{ time() }}"></script>
         @auth
         <script src="{{ asset('js/push-notifications.js') }}?v={{ time() }}"></script>
         @endauth

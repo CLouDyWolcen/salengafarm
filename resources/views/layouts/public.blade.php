@@ -211,6 +211,7 @@
         min-width: 70px;
     }
     </style>
+    <link href="{{ asset('css/rate-limit-modal.css') }}?v={{ time() }}" rel="stylesheet">
 </head>
 <body class="bg-light {{ (auth()->check() && auth()->user()->hasAdminAccess()) ? 'with-sidebar' : 'no-sidebar' }}">
     @php
@@ -290,23 +291,10 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        @if(auth()->user()->role === 'super_admin')
-                            <a class="nav-link text-white {{ request()->routeIs('plant-care.index') || request()->routeIs('plant-care.show') ? 'active' : '' }}" href="{{ route('plant-care.index') }}">
-                                <i class="fas fa-leaf me-1"></i> Plant Guide
-                            </a>
-                        @else
-                            <a class="nav-link text-white {{ request()->routeIs('plant-care.admin') || request()->routeIs('plant-care.edit') || request()->routeIs('plant-care.show') ? 'active' : '' }}" href="{{ route('plant-care.admin') }}">
-                                <i class="fas fa-leaf me-1"></i> Plant Guide
-                            </a>
-                        @endif
-                    </li>
-                    @if(auth()->user()->isSuperAdmin())
-                    <li class="nav-item">
-                        <a class="nav-link text-white {{ request()->routeIs('plants.index') ? 'active' : '' }}" href="{{ route('plants.index') }}">
-                            <i class="fas fa-seedling me-1"></i> Plant Details
+                        <a class="nav-link text-white {{ request()->routeIs('plant-care.admin') || request()->routeIs('plant-care.edit') || request()->routeIs('plant-care.show') ? 'active' : '' }}" href="{{ route('plant-care.admin') }}">
+                            <i class="fas fa-leaf me-1"></i> Plant Guide
                         </a>
                     </li>
-                    @endif
                 </ul>
                 @else
                 <!-- Guests: no centered nav, just spacer -->
@@ -352,11 +340,7 @@
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="menuDropdown">
                             <!-- Mobile-only nav links (Home, Plant Guide) -->
                             <li class="d-md-none"><a class="dropdown-item" href="{{ route('public.plants') }}"><i class="fas fa-home me-2"></i>Home</a></li>
-                            @if(auth()->user()->role === 'super_admin')
-                                <li class="d-md-none"><a class="dropdown-item" href="{{ route('plant-care.index') }}"><i class="fas fa-leaf me-2"></i>Plant Guide</a></li>
-                            @else
-                                <li class="d-md-none"><a class="dropdown-item" href="{{ route('plant-care.admin') }}"><i class="fas fa-leaf me-2"></i>Plant Guide</a></li>
-                            @endif
+                            <li class="d-md-none"><a class="dropdown-item" href="{{ route('plant-care.admin') }}"><i class="fas fa-leaf me-2"></i>Plant Guide</a></li>
                             <li class="d-md-none"><hr class="dropdown-divider"></li>
                             
                             <!-- Desktop nav links (always visible) -->
@@ -541,5 +525,6 @@
     @endauth
     
     @yield('scripts')
+    <script src="{{ asset('js/rate-limit-handler.js') }}?v={{ time() }}"></script>
 </body>
 </html>

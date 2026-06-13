@@ -16,14 +16,22 @@ Route::middleware('guest')->group(function () {
     Route::get('register', [RegisteredUserController::class, 'create'])
         ->name('register');
 
-    Route::post('register', [RegisteredUserController::class, 'store']);
+    // Rate limit: 5 registrations per minute per IP to prevent mass account creation
+    Route::post('register', [RegisteredUserController::class, 'store'])
+        ->middleware('throttle:5,1');
     
     // Email verification routes (after registration)
     Route::get('verify-email-code', [\App\Http\Controllers\Auth\EmailVerificationCodeController::class, 'show'])
         ->name('verification.code.show');
+    
+    // Rate limit: 10 attempts per minute to prevent brute force of 6-digit codes
     Route::post('verify-email-code', [\App\Http\Controllers\Auth\EmailVerificationCodeController::class, 'verify'])
+        ->middleware('throttle:10,1')
         ->name('verification.code.verify');
+    
+    // Rate limit: 3 resends per 15 minutes to prevent email spam
     Route::post('verify-email-code/resend', [\App\Http\Controllers\Auth\EmailVerificationCodeController::class, 'resend'])
+        ->middleware('throttle:3,15')
         ->name('verification.code.resend');
 
     Route::get('login', [AuthenticatedSessionController::class, 'create'])
@@ -34,13 +42,17 @@ Route::middleware('guest')->group(function () {
     Route::get('forgot-password', [PasswordResetLinkController::class, 'create'])
         ->name('password.request');
 
+    // Rate limit: 3 password reset requests per hour per IP
     Route::post('forgot-password', [PasswordResetLinkController::class, 'store'])
+        ->middleware('throttle:3,60')
         ->name('password.email');
 
     Route::get('reset-password/{token}', [NewPasswordController::class, 'create'])
         ->name('password.reset');
 
+    // Rate limit: 5 password reset submissions per hour (with token)
     Route::post('reset-password', [NewPasswordController::class, 'store'])
+        ->middleware('throttle:5,60')
         ->name('password.store');
 });
 

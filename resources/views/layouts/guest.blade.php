@@ -14,6 +14,8 @@
     <meta name="msapplication-TileImage" content="{{ asset('tree-leaf.ico') }}?v=2">
     @vite(['resources/css/app.css'])
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="{{ asset('css/rate-limit-modal.css') }}?v={{ time() }}" rel="stylesheet">
 </head>
 <body class="bg-gray-100">
     <div class="container mx-auto p-4">
@@ -22,5 +24,6 @@
             {{ $slot }}
         </div>
     </div>
+    <script src="{{ asset('js/rate-limit-handler.js') }}?v={{ time() }}"></script>
 </body>
 </html>

@@ -145,29 +145,31 @@ Route::delete('/display-plants/photo/remove/{plant}', [PublicController::class, 
 Route::middleware(['auth', 'can:client-access'])->prefix('user/plant-request')->name('user.plant-request.')->group(function () {
     Route::get('/', [UserPlantRequestController::class, 'create'])->name('create');
     Route::get('/select-plants', [UserPlantRequestController::class, 'selectPlants'])->name('select-plants');
-    Route::post('/store', [UserPlantRequestController::class, 'store'])->name('store');
+    
+    // Rate limit: 10 plant requests per hour per client to prevent spam
+    Route::post('/store', [UserPlantRequestController::class, 'store'])
+        ->middleware('throttle:10,60')
+        ->name('store');
+    
     Route::get('/success/{id}', [UserPlantRequestController::class, 'success'])->name('success');
     Route::get('/download-pdf/{id}', [UserPlantRequestController::class, 'downloadPdf'])->name('download-pdf');
     Route::delete('/{id}', [UserPlantRequestController::class, 'destroy'])->name('destroy');
 });
-
-// Plant Inquiry route (for the new selection-based inquiry system)
-Route::post('/user-plant-request', [UserPlantRequestController::class, 'store'])->name('user-plant-request.store');
 
 // CSRF token refresh route
 Route::get('/refresh-csrf', function () {
     return response()->json(['token' => csrf_token()]);
 });
 
-// Client RFQ routes - for clients only
+// Client RFQ routes - for clients only (must be authenticated)
 Route::middleware(['auth', 'can:client-access'])->group(function () {
-    Route::post('/client-request', [ClientRequestController::class, 'store'])->name('client-request.store');
+    // Rate limit: 10 RFQ submissions per hour per client
+    Route::post('/client-request', [ClientRequestController::class, 'store'])
+        ->middleware('throttle:10,60')
+        ->name('client-request.store');
+    
     Route::get('/request-success/{id}', [ClientRequestController::class, 'showSuccess'])->name('request-success');
 });
-
-// For public users without authentication
-Route::post('/client-request-public', [ClientRequestController::class, 'store'])->name('client-request.public');
-Route::get('/request-success-public/{id}', [ClientRequestController::class, 'showSuccess'])->name('request-success-public');
 
 // Social Login Routes
 Route::get('/auth/{provider}/redirect', [SocialiteController::class, 'redirectToProvider'])->name('socialite.redirect');
@@ -192,8 +194,11 @@ Route::middleware(['auth'])->group(function () {
     // User inquiry response view
     Route::get('/user/inquiries/{id}/response', [UserDashboardController::class, 'viewResponse'])->name('user.inquiry.response');
     
-    // Client request submission
-    Route::post('/client-request/submit', [UserDashboardController::class, 'submitClientRequest'])->name('client-request.submit');
+    // Client request submission (quick action from dashboard)
+    // Rate limit: 10 client requests per hour per authenticated client
+    Route::post('/client-request/submit', [UserDashboardController::class, 'submitClientRequest'])
+        ->middleware('throttle:10,60')
+        ->name('client-request.submit');
     
     // User can delete their own requests
     Route::delete('/user/requests/{id}', [ClientRequestController::class, 'destroy'])->name('user.requests.destroy');
