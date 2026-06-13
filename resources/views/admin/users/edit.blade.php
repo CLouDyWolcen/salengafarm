@@ -166,44 +166,96 @@
                                         <i class="fas fa-user me-2"></i>Individual Information
                                     </h6>
                                     <div class="row">
-                                        <div class="col-md-6">
+                                        <div class="col-md-12">
                                             <div class="mb-3">
-                                                <label for="address" class="form-label">Personal Address</label>
+                                                <label for="address" class="form-label">Full Address (Street, Barangay)</label>
                                                 <input type="text" 
                                                        class="form-control @error('address') is-invalid @enderror" 
                                                        id="address" 
                                                        name="address" 
+                                                       placeholder="Street, Barangay"
                                                        value="{{ old('address', $user->address) }}">
                                                 @error('address')
                                                     <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
                                             </div>
                                         </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <label for="city" class="form-label">City</label>
+                                                <input type="text" 
+                                                       class="form-control @error('city') is-invalid @enderror" 
+                                                       id="city" 
+                                                       name="city" 
+                                                       placeholder="City"
+                                                       value="{{ old('city', $user->city) }}">
+                                                @error('city')
+                                                    <div class="invalid-feedback">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <label for="province" class="form-label">Province</label>
+                                                <input type="text" 
+                                                       class="form-control @error('province') is-invalid @enderror" 
+                                                       id="province" 
+                                                       name="province" 
+                                                       placeholder="Province"
+                                                       value="{{ old('province', $user->province) }}">
+                                                @error('province')
+                                                    <div class="invalid-feedback">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <label for="zip_code" class="form-label">Zip Code</label>
+                                                <input type="text" 
+                                                       class="form-control @error('zip_code') is-invalid @enderror" 
+                                                       id="zip_code" 
+                                                       name="zip_code" 
+                                                       placeholder="Zip Code"
+                                                       value="{{ old('zip_code', $user->zip_code) }}">
+                                                @error('zip_code')
+                                                    <div class="invalid-feedback">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
                                         <div class="col-md-6">
                                             <div class="mb-3">
-                                                <label for="gender" class="form-label">Gender</label>
-                                                <select class="form-select @error('gender') is-invalid @enderror" 
-                                                        id="gender" 
-                                                        name="gender">
-                                                    <option value="">Select Gender</option>
-                                                    <option value="male" {{ old('gender', $user->gender) == 'male' ? 'selected' : '' }}>Male</option>
-                                                    <option value="female" {{ old('gender', $user->gender) == 'female' ? 'selected' : '' }}>Female</option>
-                                                    <option value="other" {{ old('gender', $user->gender) == 'other' ? 'selected' : '' }}>Other</option>
+                                                <label for="property_type" class="form-label">Property Type</label>
+                                                <select class="form-select @error('property_type') is-invalid @enderror" 
+                                                        id="property_type" 
+                                                        name="property_type">
+                                                    <option value="">Select Property Type</option>
+                                                    <option value="residential" {{ old('property_type', $user->property_type) == 'residential' ? 'selected' : '' }}>Residential</option>
+                                                    <option value="commercial" {{ old('property_type', $user->property_type) == 'commercial' ? 'selected' : '' }}>Commercial</option>
+                                                    <option value="industrial" {{ old('property_type', $user->property_type) == 'industrial' ? 'selected' : '' }}>Industrial</option>
+                                                    <option value="agricultural" {{ old('property_type', $user->property_type) == 'agricultural' ? 'selected' : '' }}>Agricultural</option>
+                                                    <option value="mixed_use" {{ old('property_type', $user->property_type) == 'mixed_use' ? 'selected' : '' }}>Mixed Use</option>
                                                 </select>
-                                                @error('gender')
+                                                @error('property_type')
                                                     <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="mb-3">
-                                                <label for="property_type" class="form-label">Property Type</label>
-                                                <input type="text" 
-                                                       class="form-control @error('property_type') is-invalid @enderror" 
-                                                       id="property_type" 
-                                                       name="property_type" 
-                                                       value="{{ old('property_type', $user->property_type) }}">
-                                                @error('property_type')
+                                                <label for="gender" class="form-label">Gender (Optional)</label>
+                                                <select class="form-select @error('gender') is-invalid @enderror" 
+                                                        id="gender" 
+                                                        name="gender">
+                                                    <option value="">Prefer not to say</option>
+                                                    <option value="male" {{ old('gender', $user->gender) == 'male' ? 'selected' : '' }}>Male</option>
+                                                    <option value="female" {{ old('gender', $user->gender) == 'female' ? 'selected' : '' }}>Female</option>
+                                                    <option value="other" {{ old('gender', $user->gender) == 'other' ? 'selected' : '' }}>Other</option>
+                                                </select>
+                                                @error('gender')
                                                     <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
                                             </div>
@@ -218,15 +270,126 @@
                                         <i class="fas fa-building me-2"></i>Company Information
                                     </h6>
                                     <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="company_name" class="form-label">Company Name</label>
+                                                <input type="text" 
+                                                       class="form-control @error('company_name') is-invalid @enderror" 
+                                                       id="company_name" 
+                                                       name="company_name" 
+                                                       placeholder="Company Name"
+                                                       value="{{ old('company_name', $user->company_name) }}">
+                                                @error('company_name')
+                                                    <div class="invalid-feedback">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="business_type" class="form-label">Business Type</label>
+                                                <select class="form-select @error('business_type') is-invalid @enderror" 
+                                                        id="business_type" 
+                                                        name="business_type">
+                                                    <option value="">Select Business Type</option>
+                                                    <option value="landscaping" {{ old('business_type', $user->business_type) == 'landscaping' ? 'selected' : '' }}>Landscaping</option>
+                                                    <option value="real_estate" {{ old('business_type', $user->business_type) == 'real_estate' ? 'selected' : '' }}>Real Estate</option>
+                                                    <option value="construction" {{ old('business_type', $user->business_type) == 'construction' ? 'selected' : '' }}>Construction</option>
+                                                    <option value="hospitality" {{ old('business_type', $user->business_type) == 'hospitality' ? 'selected' : '' }}>Hospitality</option>
+                                                    <option value="retail" {{ old('business_type', $user->business_type) == 'retail' ? 'selected' : '' }}>Retail</option>
+                                                    <option value="agriculture" {{ old('business_type', $user->business_type) == 'agriculture' ? 'selected' : '' }}>Agriculture</option>
+                                                    <option value="other" {{ old('business_type', $user->business_type) == 'other' ? 'selected' : '' }}>Other</option>
+                                                </select>
+                                                @error('business_type')
+                                                    <div class="invalid-feedback">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="tin" class="form-label">TIN <small class="text-muted">(Optional)</small></label>
+                                                <input type="text" 
+                                                       class="form-control @error('tin') is-invalid @enderror" 
+                                                       id="tin" 
+                                                       name="tin" 
+                                                       placeholder="Tax Identification Number"
+                                                       value="{{ old('tin', $user->tin) }}">
+                                                @error('tin')
+                                                    <div class="invalid-feedback">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="website_socials" class="form-label">Website/Socials <small class="text-muted">(Optional)</small></label>
+                                                <input type="text" 
+                                                       class="form-control @error('website_socials') is-invalid @enderror" 
+                                                       id="website_socials" 
+                                                       name="website_socials" 
+                                                       placeholder="Website or Social Media URL"
+                                                       value="{{ old('website_socials', $user->website_socials) }}">
+                                                @error('website_socials')
+                                                    <div class="invalid-feedback">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
                                         <div class="col-md-12">
                                             <div class="mb-3">
-                                                <label for="company_address" class="form-label">Company Address</label>
+                                                <label for="company_address" class="form-label">Company Address (Street, Barangay)</label>
                                                 <input type="text" 
                                                        class="form-control @error('company_address') is-invalid @enderror" 
                                                        id="company_address" 
                                                        name="company_address" 
+                                                       placeholder="Street, Barangay"
                                                        value="{{ old('company_address', $user->company_address) }}">
                                                 @error('company_address')
+                                                    <div class="invalid-feedback">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <label for="company_city" class="form-label">City</label>
+                                                <input type="text" 
+                                                       class="form-control @error('company_city') is-invalid @enderror" 
+                                                       id="company_city" 
+                                                       name="company_city" 
+                                                       placeholder="City"
+                                                       value="{{ old('company_city', $user->company_city) }}">
+                                                @error('company_city')
+                                                    <div class="invalid-feedback">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <label for="company_province" class="form-label">Province</label>
+                                                <input type="text" 
+                                                       class="form-control @error('company_province') is-invalid @enderror" 
+                                                       id="company_province" 
+                                                       name="company_province" 
+                                                       placeholder="Province"
+                                                       value="{{ old('company_province', $user->company_province) }}">
+                                                @error('company_province')
+                                                    <div class="invalid-feedback">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <label for="company_zip_code" class="form-label">Zip Code</label>
+                                                <input type="text" 
+                                                       class="form-control @error('company_zip_code') is-invalid @enderror" 
+                                                       id="company_zip_code" 
+                                                       name="company_zip_code" 
+                                                       placeholder="Zip Code"
+                                                       value="{{ old('company_zip_code', $user->company_zip_code) }}">
+                                                @error('company_zip_code')
                                                     <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
                                             </div>
@@ -392,15 +555,25 @@
                 companyFields.style.display = 'none';
                 
                 // Clear company fields
+                document.getElementById('company_name').value = '';
+                document.getElementById('business_type').value = '';
+                document.getElementById('tin').value = '';
+                document.getElementById('website_socials').value = '';
                 document.getElementById('company_address').value = '';
+                document.getElementById('company_city').value = '';
+                document.getElementById('company_province').value = '';
+                document.getElementById('company_zip_code').value = '';
             } else if (accountType === 'company') {
                 individualFields.style.display = 'none';
                 companyFields.style.display = 'block';
                 
                 // Clear individual fields
                 document.getElementById('address').value = '';
-                document.getElementById('gender').value = '';
+                document.getElementById('city').value = '';
+                document.getElementById('province').value = '';
+                document.getElementById('zip_code').value = '';
                 document.getElementById('property_type').value = '';
+                document.getElementById('gender').value = '';
             } else {
                 individualFields.style.display = 'none';
                 companyFields.style.display = 'none';

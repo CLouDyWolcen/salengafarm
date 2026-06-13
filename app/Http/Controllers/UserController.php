@@ -170,10 +170,22 @@ class UserController extends Controller
             'contact_number' => 'nullable|string|max:255',
             'role' => 'required|in:client,admin',
             'account_type' => 'nullable|in:individual,company',
+            // Individual fields
             'address' => 'nullable|string|max:255',
+            'city' => 'nullable|string|max:255',
+            'province' => 'nullable|string|max:255',
+            'zip_code' => 'nullable|string|max:20',
+            'property_type' => 'nullable|string|max:255',
             'gender' => 'nullable|in:male,female,other',
+            // Company fields
             'company_name' => 'nullable|string|max:255',
+            'business_type' => 'nullable|string|max:255',
+            'tin' => 'nullable|string|max:255',
+            'website_socials' => 'nullable|string|max:255',
             'company_address' => 'nullable|string|max:255',
+            'company_city' => 'nullable|string|max:255',
+            'company_province' => 'nullable|string|max:255',
+            'company_zip_code' => 'nullable|string|max:20',
             'page_access' => 'nullable|array',
         ]);
 
@@ -197,17 +209,41 @@ class UserController extends Controller
         // If not a client, clear account type fields
         if (!$validated['is_client']) {
             $validated['account_type'] = 'individual';
+            // Clear individual fields
             $validated['address'] = null;
+            $validated['city'] = null;
+            $validated['province'] = null;
+            $validated['zip_code'] = null;
+            $validated['property_type'] = null;
             $validated['gender'] = null;
+            // Clear company fields
             $validated['company_name'] = null;
+            $validated['business_type'] = null;
+            $validated['tin'] = null;
+            $validated['website_socials'] = null;
             $validated['company_address'] = null;
+            $validated['company_city'] = null;
+            $validated['company_province'] = null;
+            $validated['company_zip_code'] = null;
         } else {
             // If client, clear fields based on account type
             if ($validated['account_type'] === 'individual') {
+                // Clear company fields
                 $validated['company_name'] = null;
+                $validated['business_type'] = null;
+                $validated['tin'] = null;
+                $validated['website_socials'] = null;
                 $validated['company_address'] = null;
+                $validated['company_city'] = null;
+                $validated['company_province'] = null;
+                $validated['company_zip_code'] = null;
             } else {
+                // Clear individual fields
                 $validated['address'] = null;
+                $validated['city'] = null;
+                $validated['province'] = null;
+                $validated['zip_code'] = null;
+                $validated['property_type'] = null;
                 $validated['gender'] = null;
             }
         }
