@@ -831,17 +831,24 @@
             function populateCategoryDropdown() {
                 const categorySelect = $('#category');
                 
+                console.log('=== populateCategoryDropdown called ===');
+                console.log('allCategories:', allCategories);
+                console.log('Current dropdown options:', categorySelect.find('option').length);
+                
                 // Remove any previously added custom categories
                 categorySelect.find('option[data-custom="true"]').remove();
                 
                 // Add all categories from database
                 allCategories.forEach(cat => {
+                    console.log('Adding category:', cat.name, cat.slug);
                     const option = $('<option>')
                         .val(cat.slug)
                         .text(cat.name)
                         .attr('data-custom', 'true');
                     categorySelect.append(option);
                 });
+                
+                console.log('After populate, dropdown options:', categorySelect.find('option').length);
             }
 
             // Edit button click handler
@@ -1748,6 +1755,13 @@
         let selectedCategoryToDelete = null;
         let additionalCategories = @json($additionalCategories ?? []);
         let allCategories = @json($allCategories ?? []);
+
+        // DEBUG: Log categories on page load
+        console.log('=== CATEGORY DEBUG ===');
+        console.log('additionalCategories:', additionalCategories);
+        console.log('allCategories:', allCategories);
+        console.log('additionalCategories length:', additionalCategories.length);
+        console.log('allCategories length:', allCategories.length);
 
         // Add category button
         $('#addCategoryBtn').on('click', function() {
