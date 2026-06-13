@@ -379,13 +379,9 @@
                                             <label for="category" class="form-label">Category</label>
                                             <select class="form-select" id="category" name="category" required>
                                             <option value="" selected disabled>Select Category</option>
-                                            <option value="shrub">Shrub</option>
-                                            <option value="herbs">Herbs</option>
-                                            <option value="palm">Palm</option>
-                                            <option value="tree">Tree</option>
-                                            <option value="grass">Grass</option>
-                                            <option value="bamboo">Bamboo</option>
-                                            <option value="fertilizer">Fertilizer</option>
+                                            @foreach(\App\Models\Category::orderBy('name', 'asc')->get() as $cat)
+                                                <option value="{{ $cat->slug }}">{{ $cat->name }}</option>
+                                            @endforeach
                                         </select>
                                         </div>
                                     </div>

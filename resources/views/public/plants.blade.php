@@ -2359,13 +2359,9 @@
                                         <label class="form-label">Category <span class="text-danger">*</span></label>
                                         <select class="form-control" id="category" required>
                                             <option value="">— Select Category —</option>
-                                            <option value="shrub">Shrub</option>
-                                            <option value="herbs">Herbs</option>
-                                            <option value="palm">Palm</option>
-                                            <option value="tree">Tree</option>
-                                            <option value="grass">Grass</option>
-                                            <option value="bamboo">Bamboo</option>
-                                            <option value="fertilizer">Fertilizer</option>
+                                            @foreach(\App\Models\Category::orderBy('name', 'asc')->get() as $cat)
+                                                <option value="{{ $cat->slug }}">{{ $cat->name }}</option>
+                                            @endforeach
                                         </select>
                                     </div>
                                 </div>
@@ -2455,13 +2451,9 @@
                                     <div class="col-md-6">
                                         <label class="form-label">Category</label>
                                         <select class="form-select" id="edit_category">
-                                            <option value="shrub">Shrub</option>
-                                            <option value="herbs">Herbs</option>
-                                            <option value="palm">Palm</option>
-                                            <option value="tree">Tree</option>
-                                            <option value="grass">Grass</option>
-                                            <option value="bamboo">Bamboo</option>
-                                            <option value="fertilizer">Fertilizer</option>
+                                            @foreach(\App\Models\Category::orderBy('name', 'asc')->get() as $cat)
+                                                <option value="{{ $cat->slug }}">{{ $cat->name }}</option>
+                                            @endforeach
                                         </select>
                                     </div>
                                     <div class="col-md-6">
