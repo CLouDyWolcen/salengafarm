@@ -15,6 +15,7 @@
     <meta name="msapplication-TileImage" content="{{ asset('tree-leaf.ico') }}?v=2">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
     <link href="{{ asset('css/sidebar.css') }}" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
     <link href="{{ asset('css/inventory.css') }}?v=2" rel="stylesheet">
@@ -1118,6 +1119,37 @@
         });
     </script>
     <style>
+        /* Limit dropdown menu height and make it scrollable */
+        .form-select[size]:not([size="1"]),
+        select[size]:not([size="1"]) {
+            height: auto;
+        }
+        
+        /* Target Bootstrap's dropdown menu for select */
+        #category {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        /* For better UX - show scrollbar only on hover */
+        #category::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        #category::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        
+        #category::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+        
+        #category::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+        
         /* Compact SweetAlert styling */
         .compact-swal {
             font-size: 0.9rem !important;
@@ -1835,7 +1867,13 @@
                         `,
                         showConfirmButton: true,
                         confirmButtonColor: '#28a745',
-                        confirmButtonText: 'OK'
+                        confirmButtonText: 'OK',
+                        showClass: {
+                            popup: 'animate__animated animate__fadeInDown animate__faster'
+                        },
+                        hideClass: {
+                            popup: 'animate__animated animate__fadeOutUp animate__faster'
+                        }
                     }).then(() => {
                         // Reload page to show new category
                         location.reload();
