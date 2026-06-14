@@ -925,17 +925,10 @@ function initAdminEditFeatures() {
                 name: document.getElementById('edit_name').value,
                 code: document.getElementById('edit_code').value || null,
                 scientific_name: document.getElementById('edit_scientific_name').value || null,
-                description: document.getElementById('edit_description').value || null,
                 category: document.getElementById('edit_category').value || 'shrub',
                 height_mm: document.getElementById('edit_height_mm').value || null,
                 spread_mm: document.getElementById('edit_spread_mm').value || null,
-                spacing_mm: document.getElementById('edit_spacing_mm').value || null,
-                oc: document.getElementById('edit_oc').value || null,
-                price: document.getElementById('edit_price').value || null,
-                cost_per_sqm: document.getElementById('edit_cost_per_sqm').value || null,
-                pieces_per_sqm: document.getElementById('edit_pieces_per_sqm').value || null,
-                cost_per_mm: document.getElementById('edit_cost_per_mm').value || null,
-                quantity: document.getElementById('edit_quantity').value || null
+                spacing_mm: document.getElementById('edit_spacing_mm').value || null
             };
 
             saveBtn.disabled = true;
@@ -1040,16 +1033,9 @@ function initAdminEditFeatures() {
                             editBtn.setAttribute('data-code', data.plant.code || '');
                             editBtn.setAttribute('data-scientific-name', data.plant.scientific_name || '');
                             editBtn.setAttribute('data-category', data.plant.category || 'shrub');
-                            editBtn.setAttribute('data-description', data.plant.description || '');
                             editBtn.setAttribute('data-height-mm', data.plant.height_mm || '');
                             editBtn.setAttribute('data-spread-mm', data.plant.spread_mm || '');
                             editBtn.setAttribute('data-spacing-mm', data.plant.spacing_mm || '');
-                            editBtn.setAttribute('data-oc', data.plant.oc || '');
-                            editBtn.setAttribute('data-price', data.plant.price || '');
-                            editBtn.setAttribute('data-cost-per-sqm', data.plant.cost_per_sqm || '');
-                            editBtn.setAttribute('data-pieces-per-sqm', data.plant.pieces_per_sqm || '');
-                            editBtn.setAttribute('data-cost-per-mm', data.plant.cost_per_mm || '');
-                            editBtn.setAttribute('data-quantity', data.plant.quantity || '');
                         }
 
                         // Re-apply current category and search filters so visibility updates without page refresh
@@ -1208,16 +1194,9 @@ function prefillEditFormFromButton(btn) {
     document.getElementById('edit_code').value = d('data-code');
     document.getElementById('edit_scientific_name').value = d('data-scientific-name');
     document.getElementById('edit_category').value = d('data-category') || 'shrub';
-    document.getElementById('edit_description').value = d('data-description');
     document.getElementById('edit_height_mm').value = d('data-height-mm');
     document.getElementById('edit_spread_mm').value = d('data-spread-mm');
     document.getElementById('edit_spacing_mm').value = d('data-spacing-mm');
-    document.getElementById('edit_oc').value = d('data-oc');
-    document.getElementById('edit_price').value = d('data-price');
-    document.getElementById('edit_cost_per_sqm').value = d('data-cost-per-sqm');
-    document.getElementById('edit_pieces_per_sqm').value = d('data-pieces-per-sqm');
-    document.getElementById('edit_cost_per_mm').value = d('data-cost-per-mm');
-    document.getElementById('edit_quantity').value = d('data-quantity');
 
     const photoPath = d('data-photo-path');
     updateEditPhotoPreview(photoPath);

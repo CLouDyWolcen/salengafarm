@@ -93,6 +93,8 @@ html, body {
     border-top: 1px solid #e0e8d8;
     margin-top: auto;
     padding: 1rem 0.8rem 0.5rem 0.8rem !important;
+    position: relative;
+    z-index: 1000;
 }
 .sidebar-profile-card {
     display: flex;
@@ -171,7 +173,14 @@ html, body {
     font-weight: 500;
     border-radius: 8px;
     transition: background 0.18s, color 0.18s, font-weight 0.18s;
-    cursor: pointer;
+    cursor: pointer !important;
+    pointer-events: auto !important;
+    position: relative;
+    z-index: 1001 !important;
+    width: 100% !important;
+    text-align: left !important;
+    border: none !important;
+    background: transparent !important;
 }
 .sidebar-logout-link:hover {
     background: #ffeaea;

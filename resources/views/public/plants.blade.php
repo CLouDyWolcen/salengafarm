@@ -1255,6 +1255,34 @@
             overflow: visible !important;
             margin-bottom: 2rem !important;
         }
+        
+        /* Edit Plant Modal - Optimal width */
+        #editPlantModal .modal-dialog {
+            max-width: 900px !important;
+        }
+        
+        /* Compact spacing for edit modal */
+        #editPlantModal .form-label {
+            white-space: nowrap;
+            margin-bottom: 0.25rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        
+        #editPlantModal .row.g-3 {
+            row-gap: 0.75rem !important;
+            column-gap: 0.75rem !important;
+        }
+        
+        #editPlantModal .modal-body {
+            padding: 1rem;
+        }
+        
+        #editPlantModal .form-control,
+        #editPlantModal .form-select {
+            font-size: 0.875rem;
+            padding: 0.375rem 0.75rem;
+        }
     </style>
     <style>
         .menu-btn {
@@ -1875,7 +1903,6 @@
         <div class="marquee">
             <div class="marquee-content">
                 <img src="{{ asset('images/plantpic/bamboo-p.jpg') }}" alt="Bamboo" class="marquee-img">
-                <img src="{{ asset('images/plantpic/fertilizer-p.jpg') }}" alt="Fertilizer" class="marquee-img">
                 <img src="{{ asset('images/plantpic/grass-p.jpg') }}" alt="Grass" class="marquee-img">
                 <img src="{{ asset('images/plantpic/herbs-pp.jpg') }}" alt="Herbs" class="marquee-img">
                 <img src="{{ asset('images/plantpic/palm-pp.jpg') }}" alt="Palm" class="marquee-img">
@@ -1885,7 +1912,6 @@
             <!-- Duplicate content for seamless scrolling -->
             <div class="marquee-content">
                 <img src="{{ asset('images/plantpic/bamboo-p.jpg') }}" alt="Bamboo" class="marquee-img">
-                <img src="{{ asset('images/plantpic/fertilizer-p.jpg') }}" alt="Fertilizer" class="marquee-img">
                 <img src="{{ asset('images/plantpic/grass-p.jpg') }}" alt="Grass" class="marquee-img">
                 <img src="{{ asset('images/plantpic/herbs-pp.jpg') }}" alt="Herbs" class="marquee-img">
                 <img src="{{ asset('images/plantpic/palm-pp.jpg') }}" alt="Palm" class="marquee-img">
@@ -2402,7 +2428,7 @@
 
     <!-- Edit Plant Modal (Admin/Super Admin) -->
     <div class="modal fade" id="editPlantModal" tabindex="-1">
-        <div class="modal-dialog modal-xl">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Edit Plant</h5>
@@ -2414,87 +2440,65 @@
                         <input type="hidden" id="edit_plant_id">
 
                         <div class="row g-3">
-                            <div class="col-md-4">
-                                <label class="form-label">Current Photo</label>
-                                <div class="d-flex align-items-start gap-3">
-                                    <img id="edit_current_photo" src="" alt="Current Photo" class="img-thumbnail d-none" style="width: 160px; height: 160px; object-fit: cover;">
-                                    <div id="edit_no_photo" class="no-photo-placeholder d-flex align-items-center justify-content-center border bg-light" style="width: 160px; height: 160px;">
-                                        <i class="fas fa-image"></i>
-                                    </div>
-                                </div>
-                                <div class="mt-3">
-                                    <input type="file" class="form-control mb-2" id="edit_photo_file" accept="image/*">
-                                    <div class="d-flex gap-2">
-                                        <button type="button" class="btn btn-primary btn-sm" id="editUploadPhoto">
-                                            <i class="fas fa-upload me-1"></i>Upload
-                                        </button>
-                                        <button type="button" class="btn btn-danger btn-sm" id="editRemovePhoto">
-                                            <i class="fas fa-trash me-1"></i>Remove
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-8">
+                            <div class="col-12">
                                 <div class="row g-3">
-                                    <div class="col-md-6">
-                                        <label class="form-label">Name</label>
-                                        <input type="text" class="form-control" id="edit_name" required>
+                                    <div class="col-auto">
+                                        <label class="form-label d-block">Current Photo</label>
+                                        <img id="edit_current_photo" src="" alt="Current Photo" class="img-thumbnail d-none" style="width: 180px; height: 180px; object-fit: cover;">
+                                        <div id="edit_no_photo" class="no-photo-placeholder d-flex align-items-center justify-content-center border bg-light" style="width: 180px; height: 180px;">
+                                            <i class="fas fa-image fa-3x text-muted"></i>
+                                        </div>
+                                        <div class="mt-2">
+                                            <input type="file" class="form-control form-control-sm mb-2" id="edit_photo_file" accept="image/*">
+                                            <div class="d-flex gap-2">
+                                                <button type="button" class="btn btn-primary btn-sm w-100" id="editUploadPhoto">
+                                                    <i class="fas fa-upload me-1"></i>Upload
+                                                </button>
+                                                <button type="button" class="btn btn-danger btn-sm w-100" id="editRemovePhoto">
+                                                    <i class="fas fa-trash me-1"></i>Remove
+                                                </button>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label">Code</label>
-                                        <input type="text" class="form-control" id="edit_code">
-                                    </div>
-                                    <div class="col-md-12">
-                                        <label class="form-label">Scientific Name</label>
-                                        <input type="text" class="form-control" id="edit_scientific_name">
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label">Category</label>
-                                        <select class="form-select" id="edit_category">
-                                            @foreach(\App\Models\Category::orderBy('name', 'asc')->get() as $cat)
-                                                <option value="{{ $cat->slug }}">{{ $cat->name }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label">O.C.</label>
-                                        <input type="text" class="form-control" id="edit_oc">
-                                    </div>
-                                    <div class="col-md-12">
-                                        <label class="form-label">Description</label>
-                                        <textarea class="form-control" id="edit_description" rows="3"></textarea>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label class="form-label">Height (mm)</label>
-                                        <input type="number" class="form-control" id="edit_height_mm">
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label class="form-label">Spread (mm)</label>
-                                        <input type="number" class="form-control" id="edit_spread_mm">
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label class="form-label">Spacing (mm)</label>
-                                        <input type="number" class="form-control" id="edit_spacing_mm">
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label class="form-label">Price</label>
-                                        <input type="number" step="0.01" class="form-control" id="edit_price">
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label class="form-label">Cost / sqm</label>
-                                        <input type="number" step="0.01" class="form-control" id="edit_cost_per_sqm">
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label class="form-label">Pieces / sqm</label>
-                                        <input type="number" step="0.01" class="form-control" id="edit_pieces_per_sqm">
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label class="form-label">Cost / mm</label>
-                                        <input type="number" step="0.01" class="form-control" id="edit_cost_per_mm">
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label class="form-label">Quantity</label>
-                                        <input type="number" class="form-control" id="edit_quantity">
+                                    <div class="col">
+                                        <div class="row g-3">
+                                            <div class="col-md-6">
+                                                <label class="form-label">Name</label>
+                                                <input type="text" class="form-control" id="edit_name" required>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label">Code</label>
+                                                <input type="text" class="form-control" id="edit_code">
+                                            </div>
+                                            <div class="col-md-12">
+                                                <label class="form-label">Scientific Name</label>
+                                                <input type="text" class="form-control" id="edit_scientific_name">
+                                            </div>
+                                            <div class="col-md-12">
+                                                <label class="form-label">Category</label>
+                                                <select class="form-select" id="edit_category">
+                                                    @foreach(\App\Models\Category::orderBy('name', 'asc')->get() as $cat)
+                                                        <option value="{{ $cat->slug }}">{{ $cat->name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="row g-2">
+                                                    <div class="col-4">
+                                                        <label class="form-label">Height (mm)</label>
+                                                        <input type="number" class="form-control" id="edit_height_mm">
+                                                    </div>
+                                                    <div class="col-4">
+                                                        <label class="form-label">Spread (mm)</label>
+                                                        <input type="number" class="form-control" id="edit_spread_mm">
+                                                    </div>
+                                                    <div class="col-4">
+                                                        <label class="form-label">Spacing (mm)</label>
+                                                        <input type="number" class="form-control" id="edit_spacing_mm">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

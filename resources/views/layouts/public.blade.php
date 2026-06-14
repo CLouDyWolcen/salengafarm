@@ -215,7 +215,7 @@
 </head>
 <body class="bg-light {{ (auth()->check() && auth()->user()->hasAdminAccess()) ? 'with-sidebar' : 'no-sidebar' }}">
     @php
-        $noNavbarPatterns = ['/walk-in', '/requests', 'admin/requests'];
+        $noNavbarPatterns = ['/walk-in', '/requests', 'admin/requests', '/profile'];
         $currentPath = request()->path();
         $hideNavbar = false;
         foreach ($noNavbarPatterns as $pattern) {
@@ -223,11 +223,16 @@
                 $hideNavbar = true;
                 break;
             }
-            // Also hide for any subroutes (e.g., admin/requests/*)
+            // Also hide for any subroutes (e.g., admin/requests/*, profile/*)
             if (str_starts_with($currentPath, ltrim($pattern, '/').'/')) {
                 $hideNavbar = true;
                 break;
             }
+        }
+        
+        // For profile pages: hide navbar ONLY for admin users
+        if (str_starts_with($currentPath, 'profile') && auth()->check() && auth()->user()->hasAdminAccess()) {
+            $hideNavbar = true;
         }
     @endphp
     @if (!$hideNavbar)

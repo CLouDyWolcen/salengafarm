@@ -148,9 +148,9 @@
                 </div>
             </div>
         </a>
-        <form id="sidebar-logout-form" action="{{ route('logout') }}" method="POST" style="display:inline; width: 100%;">
+        <form id="sidebar-logout-form" action="{{ route('logout') }}" method="POST" style="display:inline; width: 100%; position: relative; z-index: 1001;">
             @csrf
-            <button type="button" class="nav-link sidebar-link sidebar-logout-link" id="logout-btn" title="Logout" style="width: 100%; text-align: left; border: none; background: transparent;">
+            <button type="button" class="nav-link sidebar-link sidebar-logout-link" id="logout-btn" title="Logout" style="width: 100%; text-align: left; border: none; background: transparent; cursor: pointer !important; pointer-events: auto !important; position: relative; z-index: 1001 !important;">
                 <i class="fas fa-sign-out-alt me-2 text-danger"></i> <span>Logout</span>
             </button>
         </form>
@@ -189,20 +189,43 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('Sidebar script loaded');
     const logoutBtn = document.getElementById('logout-btn');
+    console.log('Logout button found:', logoutBtn);
+    
     if (logoutBtn) {
-        logoutBtn.addEventListener('click', function(e) {
+        // Remove any existing listeners by cloning the button
+        const newLogoutBtn = logoutBtn.cloneNode(true);
+        logoutBtn.parentNode.replaceChild(newLogoutBtn, logoutBtn);
+        
+        console.log('Attaching click event to logout button');
+        newLogoutBtn.addEventListener('click', function(e) {
+            console.log('Logout button clicked!');
             e.preventDefault();
-            AlertSystem.confirm({
-                title: 'Logout?',
-                message: 'Are you sure you want to log out?',
-                confirmText: 'Yes, Logout',
-                cancelText: 'Cancel',
-                onConfirm: function() {
+            e.stopPropagation();
+            
+            // Check if AlertSystem is available
+            if (typeof AlertSystem !== 'undefined' && AlertSystem.confirm) {
+                AlertSystem.confirm({
+                    title: 'Logout?',
+                    message: 'Are you sure you want to log out?',
+                    confirmText: 'Yes, Logout',
+                    cancelText: 'Cancel',
+                    onConfirm: function() {
+                        console.log('Logout confirmed, submitting form');
+                        document.getElementById('sidebar-logout-form').submit();
+                    }
+                });
+            } else {
+                // Fallback if AlertSystem is not available
+                console.warn('AlertSystem not available, using native confirm');
+                if (confirm('Are you sure you want to log out?')) {
                     document.getElementById('sidebar-logout-form').submit();
                 }
-            });
+            }
         });
+    } else {
+        console.error('Logout button not found!');
     }
 });
 </script>

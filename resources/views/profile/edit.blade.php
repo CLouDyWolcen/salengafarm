@@ -5,117 +5,12 @@
     $isAdmin = $user && $user->hasAdminAccess();
 @endphp
 
-@if($isAdmin)
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
-    <title>Edit Profile - Plant Inventory</title>
-    <link rel="icon" type="image/x-icon" href="{{ asset('tree-leaf.ico') }}?v=2">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="{{ asset('css/sidebar.css') }}" rel="stylesheet">
-    <link href="{{ asset('css/inventory.css') }}" rel="stylesheet">
-    <link href="{{ asset('css/profile.css') }}?v=1" rel="stylesheet">
-    <link href="{{ asset('css/push-notifications.css') }}?v={{ time() }}" rel="stylesheet">
-    <style>
-        /* Admin profile page proper spacing */
-        .main-content {
-            padding: 2rem !important;
-            background-color: #f5f8f7 !important;
-        }
-        .profile-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            position: relative;
-            z-index: 1;
-        }
-        
-        /* Ensure profile cards have proper styling for admin */
-        .profile-card {
-            background-color: white !important;
-            border-radius: 12px !important;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05) !important;
-            border: none !important;
-            overflow: hidden !important;
-            margin-bottom: 1.5rem !important;
-            position: relative;
-            z-index: 1;
-        }
-        
-        .profile-card .card-header {
-            background: linear-gradient(145deg, #2a9d4e, #6cbf84) !important;
-            color: white !important;
-            border-bottom: none !important;
-            padding: 0.5rem 0.75rem !important;
-            font-weight: 600 !important;
-            font-size: 0.95rem !important;
-        }
-        
-        .profile-card .card-body {
-            padding: 0.75rem !important;
-        }
-        
-        /* Override any sidebar/inventory styles */
-        .dashboard-page .profile-card {
-            background: white !important;
-        }
-        
-        /* Reduce form group spacing */
-        .form-group {
-            margin-bottom: 0.5rem !important;
-        }
-        
-        /* Ensure navbar dropdown is above profile content */
-        .navbar {
-            position: relative;
-            z-index: 1030 !important;
-        }
-        
-        .dropdown-menu {
-            z-index: 1031 !important;
-        }
-    </style>
-</head>
-<body class="bg-light dashboard-page">
-    <div id="sidebarOverlay"></div>
-    <div class="dashboard-flex">
-        @include('layouts.sidebar')
-        <!-- Sidebar Toggle Button for Mobile -->
-        <button id="sidebarToggle" class="btn btn-success d-lg-none" type="button" aria-label="Open sidebar">
-            <i class="fa fa-bars" style="font-size: 1.3rem;"></i>
-        </button>
-        <div class="main-content">
-            <div class="container-fluid px-4 py-4" style="max-width: 1400px; margin: 0 auto; margin-top: 1rem;">
-@else
 @extends('layouts.public')
 
 @push('styles')
 <link href="{{ asset('css/profile.css') }}?v=1" rel="stylesheet">
-<link href="{{ asset('css/push-notifications.css') }}?v={{ time() }}" rel="stylesheet">
 <style>
-/* Hide sidebar for non-admin users */
-body.with-sidebar {
-    display: block !important;
-}
-body.with-sidebar .dashboard-flex {
-    display: block !important;
-}
-body.with-sidebar .dashboard-flex .sidebar {
-    display: none !important;
-}
-body.with-sidebar .dashboard-flex .main-content {
-    margin-left: 0 !important;
-    width: 100% !important;
-    padding-left: 0 !important;
-}
-
-/* User profile page proper spacing */
+/* Profile page specific spacing */
 .profile-container {
     max-width: 1200px;
     margin: 0 auto;
@@ -153,52 +48,19 @@ body.with-sidebar .dashboard-flex .main-content {
 .form-group {
     margin-bottom: 0.5rem !important;
 }
-
-/* Ensure navbar dropdown is above profile content */
-.main-nav {
-    position: relative !important;
-    z-index: 1030 !important;
-}
-
-.navbar {
-    position: relative;
-    z-index: 1030 !important;
-}
-
-.dropdown-menu {
-    z-index: 10000 !important;
-    position: absolute !important;
-}
-
-.user-section .dropdown {
-    position: relative !important;
-}
-
-.user-section .dropdown-menu {
-    position: absolute !important;
-    top: 100% !important;
-    right: 0 !important;
-    left: auto !important;
-    display: none !important;
-}
-
-.user-section .dropdown-menu.show {
-    display: block !important;
-}
-
-/* Ensure content doesn't overlap navbar */
-.container-fluid {
-    position: relative;
-    z-index: 1;
-}
 </style>
 @endpush
 
 @section('content')
-<div class="container-fluid px-4" style="max-width: 1400px; margin: 0 auto; padding-top: 1.5rem; padding-bottom: 2rem;">
+<!-- Sidebar Toggle Button for Mobile (Admin only) -->
+@if(auth()->check() && auth()->user()->hasAdminAccess())
+<button id="sidebarToggle" class="btn btn-success d-lg-none position-fixed" type="button" aria-label="Open sidebar" style="top: 70px; left: 10px; z-index: 1050; border-radius: 50%; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.2);">
+    <i class="fa fa-bars" style="font-size: 1.3rem;"></i>
+</button>
 @endif
 
-                    <h2 class="mb-3">Profile Settings</h2>
+<div class="container-fluid px-4 py-3" style="max-width: 1400px; margin: 0 auto;">
+                    <h2 class="mb-3" style="margin-top: 0; padding-top: 0;">Profile Settings</h2>
                     
                     <!-- Profile Completion Banner -->
                     @if(!auth()->user()->hasAdminAccess() && !auth()->user()->isProfileComplete())
@@ -1073,15 +935,24 @@ body.with-sidebar .dashboard-flex .main-content {
         passwordInput.addEventListener('input', validatePassword);
         confirmInput.addEventListener('input', validatePassword);
         currentInput.addEventListener('input', validatePassword);
+        
+        // Sidebar toggle functionality for mobile
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const sidebar = document.getElementById('sidebarMenu');
+        const overlay = document.getElementById('sidebarOverlay');
+        
+        if (sidebarToggle && sidebar && overlay) {
+            sidebarToggle.addEventListener('click', function() {
+                sidebar.classList.add('active');
+                overlay.classList.add('active');
+            });
+            
+            overlay.addEventListener('click', function() {
+                sidebar.classList.remove('active');
+                overlay.classList.remove('active');
+            });
+        }
     </script>
 
-@if($isAdmin)
-        </div><!-- Close container-fluid for admin -->
-    </div><!-- Close main-content -->
-</div><!-- Close dashboard-flex -->
-</body>
-</html>
-@else
-</div><!-- Close container-fluid for non-admin -->
+</div><!-- Close container-fluid -->
 @endsection
-@endif
