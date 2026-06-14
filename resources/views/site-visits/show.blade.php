@@ -102,6 +102,106 @@
         .table thead th { position: sticky; top: 0; background: #fff; z-index: 2; }
         /* Slightly tighter info section spacing */
         .info-section { padding: .9rem; }
+        
+        /* Mobile responsive styles for Client's Data Checklist */
+        @media (max-width: 768px) {
+            /* Make table horizontally scrollable */
+            .info-section .table-responsive {
+                overflow-x: auto !important;
+                -webkit-overflow-scrolling: touch !important;
+            }
+            
+            /* Set fixed table width for horizontal scroll */
+            .info-section .table {
+                min-width: 900px !important;
+                table-layout: fixed !important;
+            }
+            
+            /* Fixed column widths */
+            .info-section .table th:nth-child(1),
+            .info-section .table td:nth-child(1) {
+                width: 150px !important;
+            }
+            
+            .info-section .table th:nth-child(2),
+            .info-section .table td:nth-child(2) {
+                width: 280px !important;
+            }
+            
+            .info-section .table th:nth-child(3),
+            .info-section .table td:nth-child(3) {
+                width: 260px !important;
+            }
+            
+            .info-section .table th:nth-child(4),
+            .info-section .table td:nth-child(4) {
+                width: 210px !important;
+                word-wrap: break-word !important;
+                white-space: normal !important;
+            }
+            
+            /* Prevent note text from overlapping */
+            .info-section .table td small {
+                display: block !important;
+                margin-top: 0.25rem !important;
+                line-height: 1.3 !important;
+                word-wrap: break-word !important;
+                white-space: normal !important;
+            }
+            
+            /* Stack form elements vertically in Status column */
+            .info-section .table form.row {
+                display: flex !important;
+                flex-direction: column !important;
+                gap: 0.4rem !important;
+            }
+            
+            .info-section .table form.row .col-auto,
+            .info-section .table form.row .col {
+                width: 100% !important;
+                max-width: 100% !important;
+                padding: 0 !important;
+            }
+            
+            .info-section .status-select,
+            .info-section .note-input {
+                width: 100% !important;
+                min-width: 100% !important;
+            }
+            
+            /* Reduce font sizes on mobile */
+            .info-section .table {
+                font-size: 0.75rem !important;
+            }
+            
+            .info-section .table th,
+            .info-section .table td {
+                padding: 0.4rem 0.3rem !important;
+            }
+            
+            .info-section .btn-sm {
+                font-size: 0.7rem !important;
+                padding: 0.25rem 0.4rem !important;
+            }
+            
+            .info-section .form-control-sm,
+            .info-section .form-select-sm {
+                font-size: 0.7rem !important;
+                padding: 0.25rem 0.4rem !important;
+            }
+            
+            .info-section small {
+                font-size: 0.65rem !important;
+            }
+            
+            .info-section .badge {
+                font-size: 0.7rem !important;
+            }
+            
+            .info-section h5 {
+                font-size: 0.95rem !important;
+            }
+        }
     </style>
 </head>
 <body class="bg-light">

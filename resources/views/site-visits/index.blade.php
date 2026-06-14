@@ -96,6 +96,29 @@
             #map-card-body {
                 min-height: 300px !important;
             }
+            
+            /* Site Visits filter tabs - keep horizontal on mobile */
+            .nav-tabs {
+                display: flex !important;
+                flex-wrap: nowrap !important;
+                overflow-x: auto !important;
+                -webkit-overflow-scrolling: touch !important;
+            }
+            
+            .nav-tabs .nav-item {
+                flex: 0 0 auto !important;
+            }
+            
+            .nav-tabs .nav-link {
+                font-size: 0.7rem !important;
+                padding: 0.45rem 0.5rem !important;
+                white-space: nowrap !important;
+            }
+            
+            .nav-tabs .nav-link .badge {
+                font-size: 0.65rem !important;
+                padding: 0.15rem 0.35rem !important;
+            }
         }
     </style>
 </head>

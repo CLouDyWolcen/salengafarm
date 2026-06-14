@@ -893,9 +893,22 @@ h4, .h4 { font-size: 1.1rem; }
         gap: 0.5rem !important;
     }
     
-    /* Full width buttons on mobile */
-    .btn {
-        width: 100% !important;
+    /* Keep Export and Add New Plant buttons horizontal with minimal gap */
+    .search-bar .d-flex.gap-2 {
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        gap: 0.5rem !important;
+    }
+    
+    .search-bar .d-flex.gap-2 .btn,
+    .search-bar .d-flex.gap-2 .dropdown {
+        flex: 0 1 auto !important;
+        width: auto !important;
+        min-width: fit-content !important;
+    }
+    
+    .search-bar .d-flex.gap-2 #addBtn {
+        flex: 1 1 auto !important;
     }
     
     /* Category filter adjustments - keep in row */
@@ -1112,9 +1125,19 @@ h4, .h4 { font-size: 1.1rem; }
         font-size: 1.1rem !important;
     }
     
+    /* Reduce gap between action buttons - override gap-1 */
+    .table td .d-flex.gap-1,
     .table .d-flex.gap-2 {
-        gap: 0.2rem !important;
+        gap: 0.15rem !important;
         justify-content: flex-end !important;
+    }
+    
+    /* Make availability badges more compact on mobile */
+    .table .badge {
+        font-size: 0.65rem !important;
+        padding: 0.25rem 0.35rem !important;
+        white-space: nowrap !important;
+    }
         flex-direction: row !important;
         flex-wrap: nowrap !important;
         display: flex !important;

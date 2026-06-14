@@ -589,6 +589,97 @@
         background-color: #f8f9fa;
     }
     
+    /* Mobile - FORCE Sales Records table to be scrollable with ALL columns visible */
+    @media (max-width: 768px) {
+        #salesRecordsModal .table-responsive {
+            overflow-x: auto !important;
+            overflow-y: auto !important;
+            -webkit-overflow-scrolling: touch !important;
+            display: block !important;
+        }
+        
+        #salesRecordsModal .table {
+            min-width: 1100px !important;
+            width: 1100px !important;
+            display: table !important;
+            table-layout: fixed !important;
+        }
+        
+        #salesRecordsModal .table thead,
+        #salesRecordsModal .table tbody {
+            display: table-row-group !important;
+        }
+        
+        #salesRecordsModal .table tr {
+            display: table-row !important;
+        }
+        
+        #salesRecordsModal .table th,
+        #salesRecordsModal .table td {
+            display: table-cell !important;
+            white-space: nowrap !important;
+            font-size: 0.7rem !important;
+            padding: 0.4rem 0.3rem !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+        }
+        
+        /* Fixed column widths for all 11 columns */
+        #salesRecordsModal .table th:nth-child(1),
+        #salesRecordsModal .table td:nth-child(1) {
+            width: 40px !important;
+            min-width: 40px !important;
+        }
+        
+        #salesRecordsModal .table th:nth-child(2),
+        #salesRecordsModal .table td:nth-child(2) {
+            width: 80px !important;
+            min-width: 80px !important;
+        }
+        
+        #salesRecordsModal .table th:nth-child(3),
+        #salesRecordsModal .table td:nth-child(3) {
+            width: 120px !important;
+            min-width: 120px !important;
+        }
+        
+        #salesRecordsModal .table th:nth-child(4),
+        #salesRecordsModal .table th:nth-child(5),
+        #salesRecordsModal .table th:nth-child(6),
+        #salesRecordsModal .table td:nth-child(4),
+        #salesRecordsModal .table td:nth-child(5),
+        #salesRecordsModal .table td:nth-child(6) {
+            width: 70px !important;
+            min-width: 70px !important;
+        }
+        
+        #salesRecordsModal .table th:nth-child(7),
+        #salesRecordsModal .table td:nth-child(7) {
+            width: 60px !important;
+            min-width: 60px !important;
+        }
+        
+        #salesRecordsModal .table th:nth-child(8),
+        #salesRecordsModal .table th:nth-child(9),
+        #salesRecordsModal .table td:nth-child(8),
+        #salesRecordsModal .table td:nth-child(9) {
+            width: 90px !important;
+            min-width: 90px !important;
+        }
+        
+        #salesRecordsModal .table th:nth-child(10),
+        #salesRecordsModal .table td:nth-child(10) {
+            width: 100px !important;
+            min-width: 100px !important;
+        }
+        
+        #salesRecordsModal .table th:nth-child(11),
+        #salesRecordsModal .table td:nth-child(11) {
+            width: 90px !important;
+            min-width: 90px !important;
+        }
+    }
+    
     /* Ensure Delete Selected button is clickable above table */
     #salesRecordsModal .modal-body > .row {
         position: relative;

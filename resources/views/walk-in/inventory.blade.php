@@ -6,6 +6,21 @@
 <style>
     /* Mobile responsive - force cards side by side */
     @media (max-width: 767px) {
+        /* Header - stack title and buttons vertically on mobile */
+        .d-flex.justify-content-between.align-items-center:has(h2.fs-4) {
+            flex-direction: column !important;
+            align-items: flex-start !important;
+            gap: 0.75rem !important;
+        }
+        
+        /* Make button group full width on mobile */
+        .d-flex.justify-content-between.align-items-center:has(h2.fs-4) .btn-group {
+            width: 100% !important;
+            display: flex !important;
+            justify-content: flex-start !important;
+            gap: 0.5rem !important;
+        }
+        
         /* Stat cards - 2x2 grid */
         .row.g-2.mb-3 > .col-6 {
             flex: 0 0 50% !important;
@@ -108,13 +123,86 @@
     
     /* Status badge styles */
     .status-badge {
-        padding: 0.25rem 0.75rem;
+        padding: 0.25rem 0.6rem;
         border-radius: 20px;
-        font-size: 0.75rem;
+        font-size: 0.7rem;
         font-weight: 600;
         display: inline-flex;
         align-items: center;
         gap: 0.25rem;
+        white-space: nowrap;
+    }
+    
+    /* Stock Alerts buttons responsive - make text and badges smaller on mobile */
+    @media (max-width: 576px) {
+        /* Show All button - make smaller */
+        #show-all-low-stock {
+            font-size: 0.65rem !important;
+            padding: 0.25rem 0.4rem !important;
+        }
+        
+        #show-all-low-stock i {
+            font-size: 0.65rem !important;
+            margin-right: 0.15rem !important;
+        }
+        
+        /* Hide ALL text in the buttons - show only icon + badge number */
+        #low-stock-toggle span:not(.badge),
+        #out-of-stock-toggle span:not(.badge) {
+            display: none !important;
+        }
+        
+        /* Make icons bigger and centered */
+        #low-stock-toggle i,
+        #out-of-stock-toggle i {
+            font-size: 0.9rem !important;
+            margin: 0 !important;
+        }
+        
+        /* Badge styling - make more visible */
+        #low-stock-count-badge,
+        #out-of-stock-count-badge {
+            font-size: 0.7rem !important;
+            padding: 0.2rem 0.4rem !important;
+            font-weight: 700 !important;
+        }
+        
+        /* Button containers - compact and centered */
+        #low-stock-toggle,
+        #out-of-stock-toggle {
+            padding: 0.5rem 0.6rem !important;
+            justify-content: center !important;
+            gap: 0.5rem !important;
+        }
+        
+        /* Stock list items - proper alignment */
+        #low-stock-list .list-group-item {
+            padding: 0.4rem 0.5rem !important;
+        }
+        
+        #low-stock-list .list-group-item h6 {
+            font-size: 0.75rem !important;
+            margin-bottom: 0.15rem !important;
+            max-width: 140px !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+            white-space: nowrap !important;
+        }
+        
+        #low-stock-list .list-group-item small {
+            font-size: 0.65rem !important;
+        }
+        
+        #low-stock-list .list-group-item .badge {
+            font-size: 0.65rem !important;
+            padding: 0.2rem 0.4rem !important;
+            white-space: nowrap !important;
+            flex-shrink: 0 !important;
+        }
+        
+        #low-stock-list .list-group-item .d-flex {
+            align-items: center !important;
+        }
     }
     
     .status-badge.status-good {
@@ -251,19 +339,19 @@
                             <table class="table table-hover table-sm mb-0">
                                 <thead class="sticky-top bg-white">
                                     <tr>
-                                        <th>Plant Name</th>
-                                        <th>Code</th>
-                                        <th>Price</th>
-                                        <th>Stock</th>
-                                        <th>Status</th>
-                                        <th>Actions</th>
+                                        <th style="width: 25%;">Plant Name</th>
+                                        <th style="width: 12%; min-width: 100px; white-space: nowrap; padding-left: 10px;">Code</th>
+                                        <th style="width: 18%;">Price</th>
+                                        <th style="width: 12%;">Stock</th>
+                                        <th style="width: 15%;">Status</th>
+                                        <th style="width: 18%;">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody id="inventory-table-body">
                                     @foreach($plants as $plant)
                                         <tr data-id="{{ $plant->id }}">
                                             <td class="align-middle">{{ $plant->name }}</td>
-                                            <td class="align-middle">{{ $plant->code }}</td>
+                                            <td class="align-middle" style="white-space: nowrap; padding-left: 10px;">{{ $plant->code }}</td>
                                             <td class="align-middle">
                                                 <div class="input-group input-group-sm" style="width: 120px;">
                                                     <span class="input-group-text">₱</span>
@@ -274,13 +362,13 @@
                                                 <input type="number" class="form-control form-control-sm editable-quantity" value="{{ $plant->quantity }}" min="0" style="width: 80px;">
                                             </td>
                                             <td class="align-middle">
-                                                @if($plant->quantity < 5)
+                                                @if($plant->quantity == 0)
                                                     <span class="status-badge status-low">
-                                                        <i class="fas fa-exclamation-circle"></i> Low
+                                                        <i class="fas fa-times-circle"></i> Out of Stock
                                                     </span>
-                                                @elseif($plant->quantity < 10)
+                                                @elseif($plant->quantity <= 10)
                                                     <span class="status-badge status-medium">
-                                                        <i class="fas fa-exclamation-triangle"></i> Medium
+                                                        <i class="fas fa-exclamation-triangle"></i> Low Stock
                                                     </span>
                                                 @else
                                                     <span class="status-badge status-good">
@@ -336,23 +424,48 @@
                         </div>
                     </div>
 
-                    <!-- Low Stock Card -->
+                    <!-- Stock Alerts Card -->
                     <div class="col-md-12 col-6">
                         <div class="card sidebar-card" style="height: 280px; display: flex; flex-direction: column; border: none; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); border-radius: 12px;">
                             <div class="card-header d-flex justify-content-between align-items-center" style="background: linear-gradient(135deg, #ffb74d 0%, #ffa726 100%); color: white; border-radius: 12px 12px 0 0; border: none; padding: 0.5rem 0.75rem;">
-                                <h5 class="mb-0" style="font-weight: 600; font-family: 'Poppins', sans-serif; font-size: 0.9rem;"><i class="fas fa-exclamation-triangle me-2"></i>Low Stock Alert</h5>
+                                <h5 class="mb-0" style="font-weight: 600; font-family: 'Poppins', sans-serif; font-size: 0.9rem;"><i class="fas fa-exclamation-circle me-2"></i>Stock Alerts</h5>
                                 <button id="show-all-low-stock" class="btn btn-sm" style="background-color: rgba(255, 255, 255, 0.2); color: white; border: 1px solid rgba(255, 255, 255, 0.3); padding: 0.25rem 0.5rem; font-size: 0.75rem;" data-bs-toggle="modal" data-bs-target="#lowStockModal">
                                     <i class="fas fa-list-ul me-1"></i> Show All
                                 </button>
                             </div>
-                            <div class="card-body" style="flex: 1; overflow-y: auto; padding: 1rem; padding-top: 0.5rem !important;">
+                            <div class="card-body" style="flex: 1; overflow-y: auto; padding: 1rem; padding-top: 0.75rem !important;">
+                                <!-- Stock Type Buttons - Side by Side -->
+                                <div class="mb-3" style="background: white; border-radius: 8px; padding: 0.75rem; border: 1px solid #e0e0e0;">
+                                    <div class="row g-2">
+                                        <div class="col-6">
+                                            <div class="d-flex justify-content-between align-items-center" style="cursor: pointer; padding: 0.5rem; border-radius: 6px; background: #fff8e1; border: 1px solid #ffeaa7;" id="low-stock-toggle">
+                                                <div class="d-flex align-items-center">
+                                                    <i class="fas fa-exclamation-triangle me-2" style="color: #f57c00; font-size: 1rem;"></i>
+                                                    <span style="font-weight: 600; color: #333; font-size: 0.8rem; white-space: nowrap;">Low Stock</span>
+                                                </div>
+                                                <span class="badge" style="background-color: #fff3cd; color: #856404; font-size: 0.8rem; padding: 0.3rem 0.55rem; font-weight: 600;" id="low-stock-count-badge">0</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="d-flex justify-content-between align-items-center" style="cursor: pointer; padding: 0.5rem; border-radius: 6px; background: #ffebee; border: 1px solid #f5c6cb;" id="out-of-stock-toggle">
+                                                <div class="d-flex align-items-center">
+                                                    <i class="fas fa-times-circle me-1" style="color: #d32f2f; font-size: 0.9rem;"></i>
+                                                    <span style="font-weight: 600; color: #333; font-size: 0.75rem; white-space: nowrap;">Out of Stock</span>
+                                                </div>
+                                                <span class="badge" style="background-color: #f8d7da; color: #721c24; font-size: 0.8rem; padding: 0.3rem 0.55rem; font-weight: 600;" id="out-of-stock-count-badge">0</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Stock Items List -->
                                 <div class="list-group list-group-flush" id="low-stock-list">
-                                    <!-- Low stock items will be populated here via AJAX -->
+                                    <!-- Stock items will be populated here via AJAX -->
                                     <div class="list-group-item text-center py-4" style="background-color: transparent; border: none;">
                                         <div class="spinner-border" style="color: #ffa726;" role="status">
                                             <span class="visually-hidden">Loading...</span>
                                         </div>
-                                        <p class="mt-2 text-muted">Loading low stock items...</p>
+                                        <p class="mt-2 text-muted" style="font-size: 0.85rem;">Loading stock alerts...</p>
                                     </div>
                                 </div>
                             </div>
@@ -373,7 +486,7 @@
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title"><i class="fas fa-exclamation-triangle me-2"></i>Low Stock Plants</h5>
+                    <h5 class="modal-title"><i class="fas fa-exclamation-triangle me-2"></i>Low Stock / Out of Stock Plants</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body modal-body-fullheight p-0" style="min-height: 400px;">
@@ -388,7 +501,7 @@
                             </div>
                             <div class="alert alert-info">
                                 <i class="fas fa-info-circle me-2"></i>
-                                <span>These plants are running low on stock and might need reordering soon.</span>
+                                <span>These plants are either out of stock or running low and might need reordering soon.</span>
                             </div>
                         </div>
                         <div class="col-md-9 flex-grow-1 table-scroll" style="overflow-y: auto; max-height: 70vh;">
@@ -733,7 +846,80 @@
                 var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
                     return new bootstrap.Tooltip(tooltipTriggerEl);
                 });
+                
+                // Separate items by stock status and update counts
+                var outOfStockItems = lowStockItems.filter(item => item.quantity === 0);
+                var lowStockOnlyItems = lowStockItems.filter(item => item.quantity > 0 && item.quantity <= 10);
+                
+                // Update count badges
+                $('#low-stock-count-badge').text(lowStockOnlyItems.length);
+                $('#out-of-stock-count-badge').text(outOfStockItems.length);
+                
+                // Store data globally for filtering
+                window.stockAlertsData = {
+                    lowStock: lowStockOnlyItems,
+                    outOfStock: outOfStockItems,
+                    all: lowStockItems
+                };
             }
+            
+            // Function to display filtered stock items  
+            function displayFilteredStockItems(filter) {
+                var lowStockList = $('#low-stock-list');
+                lowStockList.empty();
+                
+                var itemsToShow = [];
+                
+                if (filter === 'low') {
+                    itemsToShow = window.stockAlertsData.lowStock || [];
+                } else if (filter === 'out') {
+                    itemsToShow = window.stockAlertsData.outOfStock || [];
+                } else {
+                    itemsToShow = window.stockAlertsData.all || [];
+                }
+                
+                if (itemsToShow.length === 0) {
+                    lowStockList.append(`
+                        <div class="list-group-item text-center py-3" style="background-color: transparent; border: none;">
+                            <i class="fas fa-info-circle text-muted mb-2"></i>
+                            <p class="mb-0 text-muted small">No items in this category</p>
+                        </div>
+                    `);
+                } else {
+                    // Display only the first 4 items
+                    $.each(itemsToShow.slice(0, 4), function(index, item) {
+                        var badgeStyle = item.quantity === 0 ? 
+                            'background-color: #f8d7da; color: #721c24;' : 
+                            'background-color: #fff3cd; color: #856404;';
+                        lowStockList.append(`
+                            <div class="list-group-item py-2" style="border-radius: 6px; margin-bottom: 0.4rem; border: 1px solid #e0e0e0;">
+                                <div class="d-flex w-100 justify-content-between align-items-center">
+                                    <div style="flex: 1; min-width: 0;">
+                                        <h6 class="mb-1" style="font-size: 0.8rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${item.name}">${item.name}</h6>
+                                        <small class="text-muted d-block" style="font-size: 0.7rem;">Code: ${item.code || 'N/A'}</small>
+                                    </div>
+                                    <span class="badge ms-2" style="${badgeStyle} font-size: 0.7rem; padding: 0.3rem 0.55rem; font-weight: 600;">${item.quantity} left</span>
+                                </div>
+                            </div>
+                        `);
+                    });
+                }
+            }
+            
+            // Add toggle button listeners
+            $(document).on('click', '#low-stock-toggle', function() {
+                displayFilteredStockItems('low');
+                // Add active styling
+                $(this).css('background', '#fff8e1');
+                $('#out-of-stock-toggle').css('background', '#ffebee');
+            });
+            
+            $(document).on('click', '#out-of-stock-toggle', function() {
+                displayFilteredStockItems('out');
+                // Add active styling
+                $(this).css('background', '#ffebee');
+                $('#low-stock-toggle').css('background', '#fff8e1');
+            });
 
             // Function to update summary cards
             function updateSummaryCards() {

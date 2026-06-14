@@ -442,6 +442,68 @@ h2.mb-4.fs-4:after {
   flex-direction: column;
 }
 
+/* Force tabs to be horizontal despite parent flex-column */
+.low-stock-card .card-body > .nav-tabs {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+}
+
+.low-stock-card .card-body > .nav-tabs .nav-item {
+  flex: 1 !important;
+}
+
+.low-stock-card .card-body > .nav-tabs .nav-link {
+  font-size: 0.7rem !important;
+  white-space: nowrap !important;
+  padding: 0.5rem 0.3rem !important;
+}
+
+.low-stock-card .card-body > .nav-tabs .nav-link i {
+  font-size: 0.7rem !important;
+}
+
+.low-stock-card .card-body > .nav-tabs .nav-link .badge {
+  font-size: 0.65rem !important;
+  padding: 0.2rem 0.4rem !important;
+}
+
+/* Stock Alerts list items alignment */
+.low-stock-card .list-group-item {
+  padding: 0.6rem 0.75rem !important;
+}
+
+.low-stock-card .list-group-item .d-flex {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  width: 100% !important;
+  gap: 0.5rem !important;
+}
+
+.low-stock-card .list-group-item .d-flex > div {
+  flex: 0 1 auto !important;
+  min-width: 0 !important;
+}
+
+.low-stock-card .list-group-item .badge {
+  flex-shrink: 0 !important;
+  white-space: nowrap !important;
+  font-size: 0.7rem !important;
+  padding: 0.3rem 0.5rem !important;
+}
+
+.low-stock-card .list-group-item h6 {
+  font-size: 0.8rem !important;
+  margin-bottom: 0.1rem !important;
+  white-space: normal !important;
+  word-break: break-word !important;
+}
+
+.low-stock-card .list-group-item small {
+  font-size: 0.7rem !important;
+}
+
 .low-stock-card .list-group-flush {
   flex: 1;
   overflow-y: auto;
@@ -669,20 +731,21 @@ h2.mb-4.fs-4:after {
     padding-top: 0 !important;
   }
 
-  /* Overview cards - Stack vertically on mobile for better readability */
+  /* Overview cards - Allow horizontal layout on mobile, wrap to next line if needed */
   .row.mb-4 {
     margin-bottom: 0.75rem !important;
     display: flex !important;
-    flex-direction: column !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
     gap: 0.5rem !important;
     margin-left: 0 !important;
     margin-right: 0 !important;
   }
 
   .row.mb-4 .col-md-4 {
-    width: 100% !important;
-    flex: 0 0 100% !important;
-    max-width: 100% !important;
+    width: calc(50% - 0.25rem) !important;
+    flex: 0 0 calc(50% - 0.25rem) !important;
+    max-width: calc(50% - 0.25rem) !important;
     margin-bottom: 0 !important;
     padding: 0 !important;
   }
@@ -748,6 +811,25 @@ h2.mb-4.fs-4:after {
     order: 2 !important;
     width: 100% !important;
     margin-bottom: 0 !important;
+  }
+  
+  /* Quick Actions buttons - 2x2 grid layout on mobile */
+  .right-column-card .d-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.5rem !important;
+    width: 100% !important;
+  }
+  
+  .right-column-card .btn {
+    font-size: 0.75rem !important;
+    padding: 0.6rem 0.4rem !important;
+    white-space: nowrap !important;
+  }
+  
+  .right-column-card .btn i {
+    font-size: 0.75rem !important;
+    margin-right: 0.3rem !important;
   }
 
   /* Low Stock Alerts: third, left half (50%) */
@@ -817,6 +899,30 @@ h2.mb-4.fs-4:after {
   .nav-tabs .nav-link i {
     font-size: 0.75rem;
   }
+  
+  /* Chart tabs - force horizontal layout */
+  .chart-container-card .nav-tabs {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    border-bottom: 1px solid #dee2e6;
+  }
+  
+  .chart-container-card .nav-tabs .nav-item {
+    flex: 1 1 auto !important;
+    min-width: fit-content !important;
+  }
+  
+  .chart-container-card .nav-tabs .nav-link {
+    font-size: 0.65rem !important;
+    padding: 0.4rem 0.3rem !important;
+    white-space: nowrap !important;
+  }
+  
+  .chart-container-card .nav-tabs .nav-link i {
+    font-size: 0.65rem !important;
+    margin-right: 0.2rem !important;
+  }
 
   #stockDistributionChart,
   #salesDistributionChart {
@@ -851,20 +957,148 @@ h2.mb-4.fs-4:after {
     padding: 0.3rem 0.6rem;
   }
   
-  /* Stock Alerts tabs - make them stack vertically on very small screens */
-  .nav-tabs.nav-fill {
-    flex-direction: column;
+  /* Sales Records Modal - make table horizontally scrollable on mobile */
+  #salesRecordsModal .table-responsive {
+    overflow-x: auto !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    display: block !important;
   }
   
-  .nav-tabs.nav-fill .nav-item {
-    width: 100%;
+  #salesRecordsModal .table {
+    min-width: 900px !important;
+    width: 900px !important;
+    display: table !important;
+    table-layout: fixed !important;
   }
   
+  #salesRecordsModal .table thead,
+  #salesRecordsModal .table tbody {
+    display: table-row-group !important;
+  }
+  
+  #salesRecordsModal .table tr {
+    display: table-row !important;
+  }
+  
+  #salesRecordsModal .table th,
+  #salesRecordsModal .table td {
+    display: table-cell !important;
+    white-space: nowrap !important;
+    font-size: 0.7rem !important;
+    padding: 0.4rem 0.3rem !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+  
+  /* Fixed column widths for all 8 columns (ID, Date, Plant Name, Qty, Unit Price, Total, Customer, Payment) */
+  #salesRecordsModal .table th:nth-child(1),
+  #salesRecordsModal .table td:nth-child(1) {
+    width: 50px !important;
+    min-width: 50px !important;
+  }
+  
+  #salesRecordsModal .table th:nth-child(2),
+  #salesRecordsModal .table td:nth-child(2) {
+    width: 90px !important;
+    min-width: 90px !important;
+  }
+  
+  #salesRecordsModal .table th:nth-child(3),
+  #salesRecordsModal .table td:nth-child(3) {
+    width: 150px !important;
+    min-width: 150px !important;
+  }
+  
+  #salesRecordsModal .table th:nth-child(4),
+  #salesRecordsModal .table td:nth-child(4) {
+    width: 60px !important;
+    min-width: 60px !important;
+  }
+  
+  #salesRecordsModal .table th:nth-child(5),
+  #salesRecordsModal .table th:nth-child(6),
+  #salesRecordsModal .table td:nth-child(5),
+  #salesRecordsModal .table td:nth-child(6) {
+    width: 100px !important;
+    min-width: 100px !important;
+  }
+  
+  #salesRecordsModal .table th:nth-child(7),
+  #salesRecordsModal .table td:nth-child(7) {
+    width: 120px !important;
+    min-width: 120px !important;
+  }
+  
+  #salesRecordsModal .table th:nth-child(8),
+  #salesRecordsModal .table td:nth-child(8) {
+    width: 100px !important;
+    min-width: 100px !important;
+  }
+  
+  /* Stock Alerts tabs - keep horizontal on all screen sizes */
   .nav-tabs.nav-fill .nav-link {
-    border-radius: 0;
-    text-align: left;
-    padding: 0.75rem 1rem;
+    font-size: 0.7rem !important;
+    padding: 0.5rem 0.3rem !important;
+    white-space: nowrap !important;
   }
+  
+  .nav-tabs.nav-fill .nav-link i {
+    font-size: 0.7rem !important;
+  }
+  
+  .nav-tabs.nav-fill .nav-link .badge {
+    font-size: 0.65rem !important;
+    padding: 0.2rem 0.4rem !important;
+  }
+  
+  /* Ensure tabs stay horizontal in Stock Alerts */
+  .low-stock-card .card-body > .nav-tabs {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+  }
+  
+  .low-stock-card .card-body > .nav-tabs .nav-item {
+    flex: 1 !important;
+  }
+  
+  /* Stock Alerts list items - ensure proper alignment on mobile */
+  .low-stock-card .list-group-item {
+    padding: 0.5rem 0.6rem !important;
+  }
+  
+  .low-stock-card .list-group-item .d-flex {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    width: 100% !important;
+    gap: 0.5rem !important;
+  }
+  
+  .low-stock-card .list-group-item .d-flex > div {
+    flex: 0 1 auto !important;
+    min-width: 0 !important;
+  }
+  
+  .low-stock-card .list-group-item .badge {
+    flex-shrink: 0 !important;
+    white-space: nowrap !important;
+    font-size: 0.65rem !important;
+    padding: 0.25rem 0.4rem !important;
+  }
+  
+  .low-stock-card .list-group-item h6 {
+    font-size: 0.75rem !important;
+    margin-bottom: 0.1rem !important;
+    white-space: normal !important;
+    word-break: break-word !important;
+  }
+  
+  .low-stock-card .list-group-item small {
+    font-size: 0.65rem !important;
+  }
+}
 }
 
 /* Custom scrollbar */

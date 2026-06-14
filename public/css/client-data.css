@@ -158,6 +158,13 @@ body.bg-light .client-data-page .text-muted {
 
 /* Mobile overrides - CRITICAL: Override inventory.css mobile table styles */
 @media (max-width: 768px) {
+    /* Enable horizontal scrolling */
+    body.bg-light .client-data-page .table-responsive {
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        display: block !important;
+    }
+    
     /* Compact Open button on mobile */
     body.bg-light .client-data-page .client-data-open-btn {
         font-size: 0.65rem !important;
@@ -225,29 +232,34 @@ body.bg-light .client-data-page .text-muted {
         line-height: 1.2 !important;
     }
     
-    /* Compact column widths on mobile */
+    /* Fixed column widths on mobile - allow horizontal scroll */
+    body.bg-light .client-data-page .table-responsive .table {
+        min-width: 900px !important;
+        width: 900px !important;
+    }
+    
     body.bg-light .client-data-page .table-responsive .table th:nth-child(1),
     body.bg-light .client-data-page .table-responsive .table td:nth-child(1) {
-        min-width: 100px !important;
-        max-width: 120px !important;
+        width: 150px !important;
+        min-width: 150px !important;
     }
     
     body.bg-light .client-data-page .table-responsive .table th:nth-child(2),
     body.bg-light .client-data-page .table-responsive .table td:nth-child(2) {
-        min-width: 80px !important;
-        max-width: 100px !important;
+        width: 250px !important;
+        min-width: 250px !important;
     }
     
     body.bg-light .client-data-page .table-responsive .table th:nth-child(3),
     body.bg-light .client-data-page .table-responsive .table td:nth-child(3) {
-        min-width: 70px !important;
-        max-width: 90px !important;
+        width: 250px !important;
+        min-width: 250px !important;
     }
     
     body.bg-light .client-data-page .table-responsive .table th:nth-child(4),
     body.bg-light .client-data-page .table-responsive .table td:nth-child(4) {
-        min-width: 70px !important;
-        max-width: 90px !important;
+        width: 150px !important;
+        min-width: 150px !important;
     }
     
     body.bg-light .client-data-page .table-responsive .table tbody tr {
@@ -320,6 +332,13 @@ body.bg-light .client-data-page .text-muted {
 }
 
 @media (max-width: 576px) {
+    /* Enable horizontal scrolling on small mobile */
+    body.bg-light .client-data-page .table-responsive {
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        display: block !important;
+    }
+    
     /* Ultra compact Open button on small mobile */
     body.bg-light .client-data-page .client-data-open-btn {
         font-size: 0.6rem !important;
@@ -370,29 +389,34 @@ body.bg-light .client-data-page .text-muted {
         line-height: 1.1 !important;
     }
     
-    /* Even more compact column widths on small mobile */
+    /* Fixed column widths on small mobile - same as tablet */
+    body.bg-light .client-data-page .table-responsive .table {
+        min-width: 900px !important;
+        width: 900px !important;
+    }
+    
     body.bg-light .client-data-page .table-responsive .table th:nth-child(1),
     body.bg-light .client-data-page .table-responsive .table td:nth-child(1) {
-        min-width: 90px !important;
-        max-width: 110px !important;
+        width: 150px !important;
+        min-width: 150px !important;
     }
     
     body.bg-light .client-data-page .table-responsive .table th:nth-child(2),
     body.bg-light .client-data-page .table-responsive .table td:nth-child(2) {
-        min-width: 70px !important;
-        max-width: 90px !important;
+        width: 250px !important;
+        min-width: 250px !important;
     }
     
     body.bg-light .client-data-page .table-responsive .table th:nth-child(3),
     body.bg-light .client-data-page .table-responsive .table td:nth-child(3) {
-        min-width: 60px !important;
-        max-width: 80px !important;
+        width: 250px !important;
+        min-width: 250px !important;
     }
     
     body.bg-light .client-data-page .table-responsive .table th:nth-child(4),
     body.bg-light .client-data-page .table-responsive .table td:nth-child(4) {
-        min-width: 60px !important;
-        max-width: 80px !important;
+        width: 150px !important;
+        min-width: 150px !important;
     }
     
     body.bg-light .client-data-page .table-responsive .table tbody tr {
