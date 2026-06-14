@@ -45,7 +45,7 @@
                 @endif
 
                 <!-- Search Bar -->
-                    <div class="search-bar mb-2" style="padding: 0.75rem; border-radius: 8px;">
+                    <div class="search-bar mb-1" style="padding: 0.75rem; border-radius: 8px;">
                         <div class="row g-2 align-items-end">
                         <div class="col-md-4">
                                 <div class="mb-2">
@@ -91,9 +91,11 @@
                             </div>
                         </div>
                         <div class="col-md-8">
-                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-                                    <label style="font-size: 0.9rem; margin: 0;">Category Filter</label>
-                                    <div style="display: flex; gap: 0.5rem;">
+                                <div class="row mb-2">
+                                    <div class="col-12 col-md-auto">
+                                        <label style="font-size: 0.9rem; margin: 0;">Category Filter</label>
+                                    </div>
+                                    <div class="col-12 col-md text-md-end">
                                         <button type="button" id="addCategoryBtn" class="btn btn-outline-success btn-sm" style="padding: 0.25rem 0.5rem;">
                                             <i class="fas fa-plus"></i>
                                         </button>
@@ -135,8 +137,26 @@
                                     <span class="d-block mt-1">Fertilizer</span>
                                 </div>
                             </div>
-                            <div style="text-align: right; margin: 0; padding: 0;">
-                                <a href="#" class="text-success text-decoration-none" style="font-size: 0.875rem;">Show more ▼</a>
+                            <div class="d-flex flex-nowrap align-items-center justify-content-between" style="gap: 0.25rem; overflow-x: auto;">
+                                <!-- Stock Status Filter -->
+                                <div class="d-flex gap-1 flex-nowrap" style="white-space: nowrap;">
+                                    <button class="btn btn-sm btn-outline-success stock-filter-btn active" data-stock="all" style="font-size: 0.7rem; padding: 0.3rem 0.5rem;">
+                                        <i class="fas fa-list"></i> <span class="d-none d-md-inline">All</span>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-primary stock-filter-btn" data-stock="in-stock" style="font-size: 0.7rem; padding: 0.3rem 0.5rem;">
+                                        <i class="fas fa-check-circle"></i> <span class="d-none d-md-inline">In Stock</span>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-danger stock-filter-btn" data-stock="out-of-stock" style="font-size: 0.7rem; padding: 0.3rem 0.5rem;">
+                                        <i class="fas fa-times-circle"></i> <span class="d-none d-md-inline">Out of Stock</span>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-warning stock-filter-btn" data-stock="low-stock" style="font-size: 0.7rem; padding: 0.3rem 0.5rem;">
+                                        <i class="fas fa-exclamation-triangle"></i> <span class="d-none d-md-inline">Low Stock</span>
+                                    </button>
+                                </div>
+                                <!-- Show More Link -->
+                                <div style="flex-shrink: 0;">
+                                    <a href="#" class="text-success text-decoration-none" style="font-size: 0.875rem;">Show more ▼</a>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -227,14 +247,22 @@
                                 </td>
                                 <td class="row-number">{{ $index + 1 }}</td>
                                 <td class="text-nowrap">{{ $plant->name }}</td>
-                                <td class="text-nowrap">{{ $plant->code }}</td>
+                                <td>{{ $plant->code }}</td>
                                 <td>{{ $plant->scientific_name }}</td>
-                                <td>{{ $plant->quantity > 0 ? 'In Stock' : 'Out of Stock' }}</td>
+                                <td>
+                                    @if($plant->quantity == 0)
+                                        <span class="badge bg-danger">Out of Stock</span>
+                                    @elseif($plant->quantity <= 10)
+                                        <span class="badge bg-warning text-dark">Low Stock</span>
+                                    @else
+                                        <span class="badge bg-success">In Stock</span>
+                                    @endif
+                                </td>
                                 <td>{{ $plant->height_mm }}</td>
                                 <td>{{ $plant->spread_mm }}</td>
                                 <td>{{ $plant->spacing_mm }}</td>
                                 <td>
-                                    <div class="d-flex gap-2 justify-content-end">
+                                    <div class="d-flex gap-1 justify-content-end">
                                         <button class="btn btn-link text-primary edit-plant" data-plant-id="{{ $plant->id }}" title="Edit">
                                             <i class="fas fa-edit fa-lg"></i>
                                         </button>
@@ -582,6 +610,53 @@
                 });
             }
 
+            // Combined filter function - MUST be defined before it's called
+            function applyFilters() {
+                const activeCategory = $('.category-icon-item.active').data('category') || 'all';
+                const activeStockStatus = $('.stock-filter-btn.active').data('stock') || 'all';
+                const searchText = $('#searchInput').val().toLowerCase().trim();
+                
+                console.log('Applying filters - Category:', activeCategory, 'Stock:', activeStockStatus, 'Search:', searchText); // Debug
+                
+                $('.plant-row').each(function() {
+                    const row = $(this);
+                    const rowCategory = row.data('category');
+                    const rowQuantity = parseInt(row.data('quantity')) || 0;
+                    
+                    // Search filter
+                    let searchMatch = true;
+                    if (searchText !== '') {
+                        const name = row.find('td:eq(2)').text().toLowerCase().trim();
+                        const code = row.find('td:eq(3)').text().toLowerCase().trim();
+                        const scientificName = row.find('td:eq(4)').text().toLowerCase().trim();
+                        searchMatch = name.includes(searchText) || code.includes(searchText) || scientificName.includes(searchText);
+                    }
+                    
+                    // Category filter
+                    const categoryMatch = activeCategory === 'all' || rowCategory === activeCategory;
+                    
+                    // Stock status filter
+                    let stockMatch = true;
+                    if (activeStockStatus === 'in-stock') {
+                        stockMatch = rowQuantity > 10; // More than low stock threshold
+                    } else if (activeStockStatus === 'out-of-stock') {
+                        stockMatch = rowQuantity === 0;
+                    } else if (activeStockStatus === 'low-stock') {
+                        stockMatch = rowQuantity > 0 && rowQuantity <= 10; // 1-10 items
+                    }
+                    // If activeStockStatus is 'all' or undefined, stockMatch stays true
+                    
+                    // Show row only if all filters match
+                    if (searchMatch && categoryMatch && stockMatch) {
+                        row.show();
+                    } else {
+                        row.hide();
+                    }
+                });
+                
+                updateRowNumbers();
+            }
+
             // Initial numbering - numbers are already rendered by PHP, just update for filtered views
             // No need to call updateRowNumbers() on initial load to prevent layout shift
 
@@ -615,34 +690,29 @@
                         $(`.plant-row[data-category="${category}"]`).show();
                     }
                 }
-                updateRowNumbers();
+                applyFilters();
+            });
+
+            // Stock Status Filter
+            console.log('Setting up stock filter buttons...'); // Test if this code runs
+            $(document).on('click', '.stock-filter-btn', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const stockStatus = $(this).data('stock');
+                
+                console.log('Stock filter clicked:', stockStatus); // Debug log
+                
+                // Update active button
+                $('.stock-filter-btn').removeClass('active');
+                $(this).addClass('active');
+                
+                applyFilters();
             });
 
             // Search functionality - searches in Name, Code, and Scientific Name
             $('#searchInput').on('input', function() {
-                const searchText = $(this).val().toLowerCase().trim();
-                
-                if (searchText === '') {
-                    // Show all rows if search is empty
-                    $('.plant-row').show();
-                } else {
-                    $('.plant-row').each(function() {
-                        const row = $(this);
-                        // Get text from Name (column 2), Code (column 3), and Scientific Name (column 4)
-                        const name = row.find('td:eq(2)').text().toLowerCase().trim();
-                        const code = row.find('td:eq(3)').text().toLowerCase().trim();
-                        const scientificName = row.find('td:eq(4)').text().toLowerCase().trim();
-                        
-                        // Show row if search text is found in any of these columns
-                        if (name.includes(searchText) || code.includes(searchText) || scientificName.includes(searchText)) {
-                            row.show();
-                        } else {
-                            row.hide();
-                        }
-                    });
-                }
-                
-                updateRowNumbers(); // Update numbers after search
+                applyFilters();
             });
 
             // Plant row selection
