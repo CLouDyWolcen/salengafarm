@@ -13,7 +13,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
-    <link href="{{ asset('css/public.css') }}?v=4" rel="stylesheet">
+    <link href="{{ asset('css/public.css') }}?v=5" rel="stylesheet">
     <link href="{{ asset('css/plant-selection.css') }}?v={{ time() }}" rel="stylesheet">
     <link href="{{ asset('css/loading.css') }}?v={{ time() }}" rel="stylesheet">
     <link href="{{ asset('css/push-notifications.css') }}?v={{ time() }}" rel="stylesheet">
@@ -1255,34 +1255,6 @@
             overflow: visible !important;
             margin-bottom: 2rem !important;
         }
-        
-        /* Edit Plant Modal - Optimal width */
-        #editPlantModal .modal-dialog {
-            max-width: 900px !important;
-        }
-        
-        /* Compact spacing for edit modal */
-        #editPlantModal .form-label {
-            white-space: nowrap;
-            margin-bottom: 0.25rem;
-            font-size: 0.875rem;
-            font-weight: 500;
-        }
-        
-        #editPlantModal .row.g-3 {
-            row-gap: 0.75rem !important;
-            column-gap: 0.75rem !important;
-        }
-        
-        #editPlantModal .modal-body {
-            padding: 1rem;
-        }
-        
-        #editPlantModal .form-control,
-        #editPlantModal .form-select {
-            font-size: 0.875rem;
-            padding: 0.375rem 0.75rem;
-        }
     </style>
     <style>
         .menu-btn {
@@ -1453,6 +1425,20 @@
         }
         .compact-dropdown .dropdown-divider {
             margin: 4px 0 !important;
+        }
+    </style>
+    <style>
+        /* Edit Plant Modal - Make it narrower */
+        #editPlantModal .modal-dialog {
+            max-width: 700px !important;
+        }
+        
+        /* Make photo square */
+        #editPlantModal #edit_current_photo,
+        #editPlantModal #edit_no_photo {
+            width: 140px !important;
+            height: 140px !important;
+            object-fit: cover !important;
         }
     </style>
 </head>
@@ -2434,69 +2420,68 @@
                     <h5 class="modal-title">Edit Plant</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body" style="padding: 1rem;">
                     <form id="editPlantForm">
                         @csrf
                         <input type="hidden" id="edit_plant_id">
 
-                        <div class="row g-3">
-                            <div class="col-12">
-                                <div class="row g-3">
-                                    <div class="col-auto">
-                                        <label class="form-label d-block">Current Photo</label>
-                                        <img id="edit_current_photo" src="" alt="Current Photo" class="img-thumbnail d-none" style="width: 180px; height: 180px; object-fit: cover;">
-                                        <div id="edit_no_photo" class="no-photo-placeholder d-flex align-items-center justify-content-center border bg-light" style="width: 180px; height: 180px;">
-                                            <i class="fas fa-image fa-3x text-muted"></i>
-                                        </div>
-                                        <div class="mt-2">
-                                            <input type="file" class="form-control form-control-sm mb-2" id="edit_photo_file" accept="image/*">
-                                            <div class="d-flex gap-2">
-                                                <button type="button" class="btn btn-primary btn-sm w-100" id="editUploadPhoto">
-                                                    <i class="fas fa-upload me-1"></i>Upload
-                                                </button>
-                                                <button type="button" class="btn btn-danger btn-sm w-100" id="editRemovePhoto">
-                                                    <i class="fas fa-trash me-1"></i>Remove
-                                                </button>
-                                            </div>
-                                        </div>
+                        <div class="row g-2">
+                            <div class="col-md-4">
+                                <label class="form-label">Current Photo</label>
+                                <div class="d-flex align-items-start gap-2">
+                                    <img id="edit_current_photo" src="" alt="Current Photo" class="img-thumbnail d-none" style="width: 140px; height: 140px; object-fit: cover;">
+                                    <div id="edit_no_photo" class="no-photo-placeholder d-flex align-items-center justify-content-center border bg-light" style="width: 140px; height: 140px;">
+                                        <i class="fas fa-image"></i>
                                     </div>
-                                    <div class="col">
-                                        <div class="row g-3">
-                                            <div class="col-md-6">
-                                                <label class="form-label">Name</label>
-                                                <input type="text" class="form-control" id="edit_name" required>
+                                </div>
+                                <div class="mt-2">
+                                    <input type="file" class="form-control form-control-sm mb-2" id="edit_photo_file" accept="image/*">
+                                    <div class="d-flex gap-2">
+                                        <button type="button" class="btn btn-primary btn-sm" id="editUploadPhoto">
+                                            <i class="fas fa-upload me-1"></i>Upload
+                                        </button>
+                                        <button type="button" class="btn btn-danger btn-sm" id="editRemovePhoto">
+                                            <i class="fas fa-trash me-1"></i>Remove
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-8">
+                                <div class="row g-2">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Name</label>
+                                        <input type="text" class="form-control form-control-sm" id="edit_name" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Code</label>
+                                        <input type="text" class="form-control form-control-sm" id="edit_code">
+                                    </div>
+                                    <div class="col-md-12">
+                                        <label class="form-label">Scientific Name</label>
+                                        <input type="text" class="form-control form-control-sm" id="edit_scientific_name">
+                                    </div>
+                                    <div class="col-md-12">
+                                        <label class="form-label">Category</label>
+                                        <select class="form-select form-select-sm" id="edit_category">
+                                            @foreach(\App\Models\Category::orderBy('name', 'asc')->get() as $cat)
+                                                <option value="{{ $cat->slug }}">{{ $cat->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-12">
+                                        <label class="form-label">Measurements</label>
+                                        <div class="row g-2">
+                                            <div class="col-4">
+                                                <label class="form-label small">Height (mm)</label>
+                                                <input type="number" class="form-control form-control-sm" id="edit_height_mm">
                                             </div>
-                                            <div class="col-md-6">
-                                                <label class="form-label">Code</label>
-                                                <input type="text" class="form-control" id="edit_code">
+                                            <div class="col-4">
+                                                <label class="form-label small">Spread (mm)</label>
+                                                <input type="number" class="form-control form-control-sm" id="edit_spread_mm">
                                             </div>
-                                            <div class="col-md-12">
-                                                <label class="form-label">Scientific Name</label>
-                                                <input type="text" class="form-control" id="edit_scientific_name">
-                                            </div>
-                                            <div class="col-md-12">
-                                                <label class="form-label">Category</label>
-                                                <select class="form-select" id="edit_category">
-                                                    @foreach(\App\Models\Category::orderBy('name', 'asc')->get() as $cat)
-                                                        <option value="{{ $cat->slug }}">{{ $cat->name }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                            <div class="col-12">
-                                                <div class="row g-2">
-                                                    <div class="col-4">
-                                                        <label class="form-label">Height (mm)</label>
-                                                        <input type="number" class="form-control" id="edit_height_mm">
-                                                    </div>
-                                                    <div class="col-4">
-                                                        <label class="form-label">Spread (mm)</label>
-                                                        <input type="number" class="form-control" id="edit_spread_mm">
-                                                    </div>
-                                                    <div class="col-4">
-                                                        <label class="form-label">Spacing (mm)</label>
-                                                        <input type="number" class="form-control" id="edit_spacing_mm">
-                                                    </div>
-                                                </div>
+                                            <div class="col-4">
+                                                <label class="form-label small">Spacing (mm)</label>
+                                                <input type="number" class="form-control form-control-sm" id="edit_spacing_mm">
                                             </div>
                                         </div>
                                     </div>
@@ -2505,9 +2490,9 @@
                         </div>
                     </form>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary" id="saveEditPlant">Save Changes</button>
+                <div class="modal-footer" style="padding: 0.5rem 1rem;">
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary btn-sm" id="saveEditPlant">Save Changes</button>
                 </div>
             </div>
         </div>
@@ -3993,7 +3978,7 @@ console.log('Loading modal form submission handler');
                     console.log('Using CSRF token:', csrfToken.content.substring(0, 10) + '...');
                     
                     // Submit the inquiry
-                    fetch('/user-plant-request', {
+                    fetch('/user/plant-request/store', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -4069,6 +4054,9 @@ console.log('Loading modal form submission handler');
                                 `,
                                 confirmButtonText: 'Continue Browsing',
                                 confirmButtonColor: '#198754'
+                            }).then(() => {
+                                // Reload the page to clear selection and return to normal browsing
+                                window.location.reload();
                             });
                             
                             // Exit selection mode and clean up

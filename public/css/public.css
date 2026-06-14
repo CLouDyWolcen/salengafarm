@@ -654,23 +654,13 @@ body {
     max-width: min(95vw, 1300px);
 }
 
-/* Edit Plant: nudge photo section right and enlarge preview */
-#editPlantModal .row.g-3>.col-md-4:first-child {
-    padding-left: 16px;
-    /* move content a bit to the right */
-}
-
+/* Edit Plant: Square photo container (140x140px) */
 #editPlantModal #edit_current_photo,
 #editPlantModal #edit_no_photo {
-    width: 100% !important;
-    /* fill column width */
-    height: 340px !important;
-    /* tall, prominent preview */
-    max-width: 100% !important;
+    width: 140px !important;
+    height: 140px !important;
     object-fit: cover !important;
-    /* fill both sides nicely */
     box-sizing: border-box;
-    /* include border/padding in width to avoid bleed */
 }
 
 /* Keep the placeholder centered only when visible (avoid overriding d-none) */
@@ -678,16 +668,6 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-}
-
-/* Space the file input and action buttons slightly from the left edge */
-#editPlantModal .row.g-3>.col-md-4:first-child .mt-3 {
-    margin-left: 2px;
-}
-
-/* Ensure left column never visually bleeds under right column */
-#editPlantModal .row.g-3>.col-md-4:first-child {
-    overflow: hidden;
 }
 
 /* Responsive adjustments */
