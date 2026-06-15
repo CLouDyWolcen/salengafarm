@@ -1114,24 +1114,24 @@ h4, .h4 { font-size: 1.1rem; }
         font-size: 0.85rem !important;
     }
     
-    /* Table action buttons - display in a row with proper spacing */
+    /* Table action buttons - display in a row with minimal spacing */
     .table .btn-link {
-        padding: 0.2rem 0.3rem !important;
+        padding: 0.2rem 0.25rem !important;
         margin: 0 !important;
         display: inline-flex !important;
         align-items: center !important;
         justify-content: center !important;
-        min-width: 32px !important;
+        min-width: 28px !important;
     }
     
     .table .btn-link i {
         font-size: 1rem !important;
     }
     
-    /* Reduce gap between action buttons with proper spacing to prevent overlap */
+    /* Minimal gap between action buttons to keep them close together */
     .table td .d-flex.gap-1,
     .table .d-flex.gap-2 {
-        gap: 0.25rem !important;
+        gap: 0.1rem !important;
         justify-content: flex-end !important;
         flex-wrap: nowrap !important;
     }
