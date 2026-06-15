@@ -1218,7 +1218,7 @@ h2.mb-4.fs-4:after {
         padding: 0 !important;
     }
     
-    .modal-dialog {
+    .modal-dialog:not(.modal-xl):not(.modal-lg) {
         margin: 0.5rem !important;
         max-width: calc(100% - 1rem) !important;
     }

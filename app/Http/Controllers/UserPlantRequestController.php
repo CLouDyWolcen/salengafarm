@@ -99,7 +99,7 @@ class UserPlantRequestController extends Controller
                     'type' => 'new_request',
                     'title' => 'New Plant Inquiry',
                     'message' => 'New inquiry from ' . $plantRequest->name,
-                    'link' => route('admin.requests.view', $plantRequest->id),
+                    'link' => route('requests.view', $plantRequest->id),
                 ]);
             }
             

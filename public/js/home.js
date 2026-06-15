@@ -293,7 +293,19 @@ function initDeleteCategory() {
         const name = (active.querySelector('span')?.textContent || '').trim() || cat;
         const id = active.getAttribute('data-category-id');
 
-        if (!id) { openHomeInfoDialog({ title: 'Notice', body: 'Only extra categories can be deleted.' }); return; }
+        // Base categories that cannot be deleted
+        const baseSlugs = new Set(['shrub','herbs','palm','tree','grass','bamboo','fertilizer','all']);
+        
+        if (baseSlugs.has(cat)) {
+            openHomeInfoDialog({ title: 'Notice', body: 'Cannot delete base categories. Only extra categories can be deleted.' });
+            return;
+        }
+
+        if (!id) {
+            openHomeInfoDialog({ title: 'Notice', body: 'Category ID not found. This category may need to be recreated. Please refresh the page and try again.' });
+            return;
+        }
+        
         openHomeConfirmDialog({ title: 'Delete Category', body: `Delete category "${name}"?`, yesText: 'Yes', noText: 'No', yesClass: 'btn-danger' })
         .then(confirmed => {
             if (!confirmed) return;
@@ -1033,9 +1045,16 @@ function initAdminEditFeatures() {
                             editBtn.setAttribute('data-code', data.plant.code || '');
                             editBtn.setAttribute('data-scientific-name', data.plant.scientific_name || '');
                             editBtn.setAttribute('data-category', data.plant.category || 'shrub');
+                            editBtn.setAttribute('data-description', data.plant.description || '');
                             editBtn.setAttribute('data-height-mm', data.plant.height_mm || '');
                             editBtn.setAttribute('data-spread-mm', data.plant.spread_mm || '');
                             editBtn.setAttribute('data-spacing-mm', data.plant.spacing_mm || '');
+                            editBtn.setAttribute('data-oc', data.plant.oc || '');
+                            editBtn.setAttribute('data-price', data.plant.price || '');
+                            editBtn.setAttribute('data-cost-per-sqm', data.plant.cost_per_sqm || '');
+                            editBtn.setAttribute('data-pieces-per-sqm', data.plant.pieces_per_sqm || '');
+                            editBtn.setAttribute('data-cost-per-mm', data.plant.cost_per_mm || '');
+                            editBtn.setAttribute('data-quantity', data.plant.quantity || '');
                         }
 
                         // Re-apply current category and search filters so visibility updates without page refresh

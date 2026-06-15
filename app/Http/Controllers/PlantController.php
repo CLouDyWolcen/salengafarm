@@ -353,26 +353,12 @@ class PlantController extends Controller
         $query = $request->input('search');
         $exclude = $request->input('exclude');
         
-        // Start building the query with prioritization:
-        // 1. First show plants that start with the query
-        // 2. Then show plants that contain the query
+        // Start building the query
         $plantsQuery = Plant::where(function($q) use ($query) {
-            $q->where('name', 'like', "{$query}%")  // Starts with
-              ->orWhere('scientific_name', 'like', "{$query}%")
-              ->orWhere('code', 'like', "{$query}%")
-              ->orWhere('name', 'like', "%{$query}%")  // Contains
+            $q->where('name', 'like', "%{$query}%")
               ->orWhere('scientific_name', 'like', "%{$query}%")
               ->orWhere('code', 'like', "%{$query}%");
-        })
-        // Order by: exact match first, then starts with, then contains
-        ->orderByRaw("CASE
-            WHEN LOWER(name) = LOWER(?) THEN 1
-            WHEN LOWER(name) LIKE LOWER(?) THEN 2
-            WHEN LOWER(scientific_name) LIKE LOWER(?) THEN 3
-            WHEN LOWER(code) LIKE LOWER(?) THEN 4
-            ELSE 5
-        END", [$query, "{$query}%", "{$query}%", "{$query}%"])
-        ->orderBy('name');
+        });
         
         // If exclude parameter is provided, exclude those plants
         if ($exclude) {

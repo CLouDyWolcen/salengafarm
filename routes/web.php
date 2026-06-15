@@ -287,6 +287,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/requests/export', [ClientRequestController::class, 'export'])->name('requests.export');
         Route::post('/requests/send-email/{id}', [ClientRequestController::class, 'sendEmail'])->name('requests.send-email');
         Route::post('/requests/{id}/send-response', [ClientRequestController::class, 'sendResponse'])->name('requests.send-response');
+        Route::post('/requests/{id}/check-availability', [ClientRequestController::class, 'checkAvailability'])->name('requests.check-availability');
         Route::get('/requests/view/{id}', [ClientRequestController::class, 'plainViewRequest'])->name('requests.view');
         Route::delete('/requests/{id}', [ClientRequestController::class, 'destroy'])->name('requests.destroy');
         Route::post('/requests/update/{id}', [ClientRequestController::class, 'updateRequest'])->name('requests.update');

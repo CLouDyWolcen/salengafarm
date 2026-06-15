@@ -1288,10 +1288,12 @@ h4, .h4 { font-size: 1.1rem; }
         margin-bottom: 0.5rem !important;
     }
     
-    /* Modal adjustments */
-    .modal-dialog {
-        margin: 0.5rem !important;
-        max-width: calc(100% - 1rem) !important;
+    /* Modal adjustments - only for mobile */
+    @media (max-width: 768px) {
+        .modal-dialog:not(.modal-xl):not(.modal-lg) {
+            margin: 0.5rem !important;
+            max-width: calc(100% - 1rem) !important;
+        }
     }
     
     .modal-body {

@@ -420,8 +420,8 @@
                             <!-- Client/User Information Card -->
                             <div class="custom-card">
                                 <div class="custom-card-header">
-                                    <h5>@if($request->request_type == 'user')User Information @else Client Information @endif</h5>
-                                    <button class="edit-btn edit-client-info-btn" title="@if($request->request_type == 'user')Edit User Information @else Edit Client Information @endif">
+                                    <h5>@if($request->request_type == 'user')Client Information @else Client Information @endif</h5>
+                                    <button class="edit-btn edit-client-info-btn" title="@if($request->request_type == 'user')Edit Client Information @else Edit Client Information @endif">
                                         <i class="fas fa-edit"></i>
                                     </button>
                                 </div>
@@ -442,7 +442,7 @@
                                                 <button type="submit" class="action-btn action-btn-success" id="sendEmailBtn">
                                                     <i class="fas fa-envelope"></i>
                                                     @if($request->request_type == 'user')
-                                                        Send Email to User
+                                                        Send Email to Client
                                                     @else
                                                         Send Email to Client
                                                     @endif
@@ -452,7 +452,7 @@
                                             <button type="button" class="action-btn action-btn-primary" id="sendResponseBtn" data-bs-toggle="modal" data-bs-target="#sendResponseModal">
                                                 <i class="fas fa-paper-plane"></i>
                                                 @if($request->request_type == 'user')
-                                                    Send Response to User
+                                                    Send Response to Client
                                                 @else
                                                     Send Response to Client
                                                 @endif
@@ -465,7 +465,7 @@
                                                 <button type="submit" class="action-btn action-btn-warning" id="resendEmailBtn">
                                                     <i class="fas fa-redo"></i>
                                                     @if($request->request_type == 'user')
-                                                        Resend Email to User
+                                                        Resend Email to Client
                                                     @else
                                                         Resend Email to Client
                                                     @endif
@@ -475,7 +475,7 @@
                                             <button type="button" class="action-btn action-btn-primary" id="sendResponseBtn2" data-bs-toggle="modal" data-bs-target="#sendResponseModal">
                                                 <i class="fas fa-redo"></i>
                                                 @if($request->request_type == 'user')
-                                                    Resend Response to User
+                                                    Resend Response to Client
                                                 @else
                                                     Resend Response to Client
                                                 @endif
@@ -493,7 +493,7 @@
                                                 <button type="submit" class="action-btn action-btn-warning" id="resendEmailBtn3">
                                                     <i class="fas fa-redo"></i>
                                                     @if($request->request_type == 'user')
-                                                        Resend Email to User
+                                                        Resend Email to Client
                                                     @else
                                                         Resend Email to Client
                                                     @endif
@@ -503,7 +503,7 @@
                                             <button type="button" class="action-btn action-btn-primary" id="sendResponseBtn3" data-bs-toggle="modal" data-bs-target="#sendResponseModal">
                                                 <i class="fas fa-redo"></i>
                                                 @if($request->request_type == 'user')
-                                                    Resend Response to User
+                                                    Resend Response to Client
                                                 @else
                                                     Resend Response to Client
                                                 @endif
@@ -518,9 +518,14 @@
                             <div class="custom-card">
                                 <div class="custom-card-header">
                                     <h5><i class="fas fa-leaf me-2"></i>Requested Items</h5>
-                                    <button class="edit-btn edit-items-btn" title="Edit Items">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
+                                    <div style="display: flex; gap: 8px;">
+                                        <button class="edit-btn" id="checkAvailabilityBtn" title="Check Availability from Inventory">
+                                            <i class="fas fa-sync-alt me-1"></i>Check Availability
+                                        </button>
+                                        <button class="edit-btn edit-items-btn" title="Edit Items">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                    </div>
                                 </div>
                                 <div style="padding: 0;">
                                     <div class="items-table-container">
@@ -878,6 +883,56 @@
                 e.preventDefault();
                 forceModalCleanup(); // Clean before opening
                 $('#editItemsModal').modal('show');
+            });
+
+            // Check Availability button functionality
+            $('#checkAvailabilityBtn').on('click', function(e) {
+                e.preventDefault();
+                const btn = $(this);
+                const originalHtml = btn.html();
+                
+                // Disable button and show loading state
+                btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-1"></i>Checking...');
+                
+                // Get request ID from URL or data attribute
+                const requestId = {{ $request->id }};
+                
+                // Make AJAX request to check availability
+                $.ajax({
+                    url: '/requests/' + requestId + '/check-availability',
+                    type: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function(response) {
+                        // Re-enable button
+                        btn.prop('disabled', false).html(originalHtml);
+                        
+                        if (response.success) {
+                            // Show success message
+                            if (window.PushNotifications) {
+                                window.PushNotifications.show('success', response.message || 'Availability checked successfully!', true);
+                            }
+                            
+                            // Reload page to show updated availability
+                            setTimeout(() => {
+                                window.location.reload();
+                            }, 1000);
+                        } else {
+                            if (window.PushNotifications) {
+                                window.PushNotifications.show('warning', response.message || 'Could not check availability', true);
+                            }
+                        }
+                    },
+                    error: function(xhr) {
+                        // Re-enable button
+                        btn.prop('disabled', false).html(originalHtml);
+                        
+                        if (window.PushNotifications) {
+                            window.PushNotifications.show('danger', 'Error checking availability. Please try again.', false);
+                        }
+                    }
+                });
             });
 
             // Auto-calculate total price when unit price or quantity changes

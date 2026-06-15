@@ -1111,4 +1111,74 @@ class ClientRequestController extends Controller
             'Plant Requests'
         );
     }
+    
+    /**
+     * Check availability from inventory and update request items
+     *
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function checkAvailability($id)
+    {
+        try {
+            $plantRequest = PlantRequest::findOrFail($id);
+            $items = $plantRequest->items_json;
+            $updatedCount = 0;
+            $skippedCount = 0;
+            
+            foreach ($items as $index => &$item) {
+                $plantName = $item['name'] ?? '';
+                
+                if (empty($plantName)) {
+                    $skippedCount++;
+                    continue;
+                }
+                
+                // Find plant in inventory by exact name match
+                $plant = \App\Models\Plant::where('name', $plantName)->first();
+                
+                if ($plant) {
+                    // Determine availability based on quantity
+                    if ($plant->quantity <= 0) {
+                        $item['availability'] = 'Out of Stock';
+                    } elseif ($plant->quantity >= 1 && $plant->quantity <= 10) {
+                        $item['availability'] = 'Limited Stock';
+                    } else {
+                        $item['availability'] = 'Available';
+                    }
+                    $updatedCount++;
+                } else {
+                    // Plant not found in inventory - leave availability blank
+                    $skippedCount++;
+                }
+            }
+            
+            // Save updated items
+            $plantRequest->items_json = $items;
+            $plantRequest->save();
+            
+            // Prepare response message
+            $message = "Availability checked successfully!";
+            if ($updatedCount > 0) {
+                $message .= " Updated {$updatedCount} item(s).";
+            }
+            if ($skippedCount > 0) {
+                $message .= " {$skippedCount} item(s) not found in inventory.";
+            }
+            
+            return response()->json([
+                'success' => true,
+                'message' => $message,
+                'updated_count' => $updatedCount,
+                'skipped_count' => $skippedCount
+            ]);
+            
+        } catch (\Exception $e) {
+            Log::error('Failed to check availability: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Error checking availability. Please try again.'
+            ], 500);
+        }
+    }
 }

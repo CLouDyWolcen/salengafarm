@@ -98,6 +98,73 @@
             gap: 0.3rem;
         }
         
+        /* Client's Data Checklist table - make horizontally scrollable */
+        .card-body {
+            overflow-x: auto !important;
+            -webkit-overflow-scrolling: touch !important;
+        }
+        
+        .client-data-table {
+            min-width: 900px !important;
+            width: 900px !important;
+            display: table !important;
+            table-layout: fixed !important;
+        }
+        
+        .client-data-table thead,
+        .client-data-table tbody {
+            display: table-row-group !important;
+        }
+        
+        .client-data-table tr {
+            display: table-row !important;
+        }
+        
+        .client-data-table th,
+        .client-data-table td {
+            display: table-cell !important;
+            font-size: 0.7rem !important;
+            padding: 0.4rem 0.3rem !important;
+        }
+        
+        /* Fixed column widths for all 4 columns */
+        .client-data-table th:nth-child(1),
+        .client-data-table td:nth-child(1) {
+            width: 150px !important;
+            min-width: 150px !important;
+        }
+        
+        .client-data-table th:nth-child(2),
+        .client-data-table td:nth-child(2) {
+            width: 250px !important;
+            min-width: 250px !important;
+        }
+        
+        .client-data-table th:nth-child(3),
+        .client-data-table td:nth-child(3) {
+            width: 250px !important;
+            min-width: 250px !important;
+        }
+        
+        .client-data-table th:nth-child(4),
+        .client-data-table td:nth-child(4) {
+            width: 150px !important;
+            min-width: 150px !important;
+        }
+        
+        .client-data-table .btn {
+            font-size: 0.65rem !important;
+            padding: 0.2rem 0.3rem !important;
+        }
+        
+        .client-data-table small {
+            font-size: 0.6rem !important;
+        }
+        
+        .client-data-table .badge {
+            font-size: 0.65rem !important;
+        }
+        
         .visit-info-inline .badge {
             font-size: 0.65rem;
             padding: 0.2em 0.5em;
