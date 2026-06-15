@@ -13,11 +13,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
     <link href="{{ asset('css/loading.css') }}?v={{ time() }}" rel="stylesheet">
     <link href="{{ asset('css/push-notifications.css') }}?v={{ time() }}" rel="stylesheet">
-    <link href="{{ asset('css/sidebar.css') }}" rel="stylesheet">
-    <link href="{{ asset('css/dashboard.css') }}?v=4" rel="stylesheet">
-    <link href="{{ asset('css/inventory.css') }}?v=2" rel="stylesheet">
+    <link href="{{ asset('css/sidebar.css') }}?v=6" rel="stylesheet">
+    <link href="{{ asset('css/dashboard.css') }}?v=6" rel="stylesheet">
+    <link href="{{ asset('css/inventory.css') }}?v=6" rel="stylesheet">
     <!-- Shared public styles (navbar/buttons) to match Home page -->
-    <link href="{{ asset('css/public.css') }}?v=3" rel="stylesheet">
+    <link href="{{ asset('css/public.css') }}?v=6" rel="stylesheet">
     <!-- <link href="{{ asset('css/plant-details.css') }}?v={{ rand(1000,9999) . time() }}" rel="stylesheet"> -->
     <!-- <link href="{{ asset('css/plant-details-fix.css') }}?v={{ rand(1000,9999) . time() }}" rel="stylesheet"> -->
     @stack('styles')

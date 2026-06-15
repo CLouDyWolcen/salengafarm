@@ -1074,15 +1074,17 @@ h4, .h4 { font-size: 1.1rem; }
     
     .table th:nth-child(6), /* Availability */
     .table td:nth-child(6) {
-        width: 30% !important;
+        width: 28% !important;
         padding-left: 0.3rem !important;
-        padding-right: 0.3rem !important;
+        padding-right: 0.5rem !important;
+        white-space: nowrap !important;
     }
     
     .table th:nth-child(10), /* Actions */
     .table td:nth-child(10) {
-        width: 25% !important;
-        min-width: 90px !important;
+        width: 27% !important;
+        min-width: 100px !important;
+        padding-left: 0.5rem !important;
         padding-right: 0.5rem !important;
     }
     
@@ -1112,24 +1114,26 @@ h4, .h4 { font-size: 1.1rem; }
         font-size: 0.85rem !important;
     }
     
-    /* Table action buttons - display in a row */
+    /* Table action buttons - display in a row with proper spacing */
     .table .btn-link {
-        padding: 0.15rem 0.25rem !important;
+        padding: 0.2rem 0.3rem !important;
         margin: 0 !important;
         display: inline-flex !important;
         align-items: center !important;
         justify-content: center !important;
+        min-width: 32px !important;
     }
     
     .table .btn-link i {
-        font-size: 1.1rem !important;
+        font-size: 1rem !important;
     }
     
-    /* Reduce gap between action buttons - override gap-1 */
+    /* Reduce gap between action buttons with proper spacing to prevent overlap */
     .table td .d-flex.gap-1,
     .table .d-flex.gap-2 {
-        gap: 0.15rem !important;
+        gap: 0.25rem !important;
         justify-content: flex-end !important;
+        flex-wrap: nowrap !important;
     }
     
     /* Make availability badges more compact on mobile */
